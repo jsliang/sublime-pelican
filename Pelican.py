@@ -89,8 +89,8 @@ class PelicanAutogenSlug(sublime_plugin.EventListener):
         if not auto_generate_slug_on_save:
             return
 
-        article_filename_filter = view.settings().get('article_filename_filter', global_settings.get('article_filename_filter', '*'))
-        if not re.search(article_filename_filter, view.file_name()):
+        filepath_filter = view.settings().get('filepath_filter', global_settings.get('filepath_filter', '*'))
+        if not re.search(filepath_filter, view.file_name()):
             return
 
         if view.find(':?slug:\s*\w+', 0, sublime.IGNORECASE) > -1:

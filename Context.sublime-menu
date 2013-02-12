@@ -1,6 +1,8 @@
 [
     { "caption": "-" },
     { "id": "pelican", "caption": "Pelican", "children": [
+        { "caption": "New Markdown Article", "command": "pelican_new_markdown" },
+        { "caption": "New reStructuredText Article", "command": "pelican_new_restructuredtext" },
         { "caption": "Insert Markdown Article ...", "command": "pelican_insert_markdown" },
         { "caption": "Insert reStructuredText Article ...", "command": "pelican_insert_restructuredtext" }
     ]},

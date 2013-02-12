@@ -1,4 +1,7 @@
 [
+    { "caption": "Pelican: New Markdown Article", "command": "pelican_new_markdown" },
+    { "caption": "Pelican: New reStructuredText Article", "command": "pelican_new_restructuredtext" },
+
     { "caption": "Pelican: Insert Markdown Article", "command": "pelican_insert_markdown" },
     { "caption": "Pelican: Insert reStructuredText Article", "command": "pelican_insert_restructuredtext" }
 ]

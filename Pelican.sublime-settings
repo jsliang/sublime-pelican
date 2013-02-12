@@ -1,4 +1,4 @@
 {
     "auto_generate_slug_on_save": 1,
-    "filename_filter": "\\.(markdown|mdown|md|rst)$"
+    "filename_filter": "\\.(md|markdown|mkd|rst)$"
 }

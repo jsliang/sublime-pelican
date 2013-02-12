@@ -1,0 +1,4 @@
+[
+    { "caption": "Pelican: Insert Markdown Article", "command": "pelican_insert_markdown" },
+    { "caption": "Pelican: Insert reStructuredText Article", "command": "pelican_insert_restructuredtext" }
+]

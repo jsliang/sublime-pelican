@@ -9,9 +9,26 @@ A plugin for [Pelican](http://getpelican.com/) integration of [Sublime Text 2](h
 
 ## Features
 
-* Generate article metadata quickly
-  - Auto generate date on metadata creation/insertion
-  - Auto generate slug from article title on save
+* Article metadata generation
+  - **Auto generate article date** on metadata creation/insertion
+  - **Auto generate article slug** from article title on save
+
+## Configuration
+
+### Article metadata generation
+
+* **auto_generate_slug_on_save** (default: `true`)
+
+  Set to `false` to prevent auto generation of slug on save.
+
+* **force_slug_regeneration_on_save** (default: `false`)
+
+  By default, auto generation of slug does not work if a slug has already defined in the article.
+  Set to `true` to force slug regeneration on save.
+
+* **article_filename_filter** (default: `"\\.(md|markdown|mkd|rst)$"`)
+
+  Filename filter for Pelican articles, written in Python regex.
 
 ## TODOs
 

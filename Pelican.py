@@ -81,8 +81,8 @@ class PelicanAutogenSlug(sublime_plugin.EventListener):
     def on_pre_save(self, view):
         global_settings = sublime.load_settings(__name__ + '.sublime-settings')
 
-        auto_generate_slug = view.settings().get('auto_generate_slug', global_settings.get('auto_generate_slug', '*'))
-        if not auto_generate_slug is 1:
+        auto_generate_slug_on_save = view.settings().get('auto_generate_slug_on_save', global_settings.get('auto_generate_slug_on_save', '*'))
+        if not auto_generate_slug_on_save is 1:
             return
 
         filename_filter = view.settings().get('filename_filter', global_settings.get('filename_filter', '*'))

@@ -23,7 +23,7 @@ A plugin for [Pelican](http://getpelican.com/) integration to [Sublime Text 2](h
 
 * **force_slug_regeneration_on_save** (default: `false`)
 
-  By default, auto generation of slug does not work if a slug has already defined in the article.
+  By default, auto generation of slug does not work if a slug has been defined in the article.
   Set to `true` to force slug regeneration on save.
 
 * **article_filename_filter** (default: `"\\.(md|markdown|mkd|rst)$"`)

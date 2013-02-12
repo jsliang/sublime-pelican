@@ -3,7 +3,7 @@
     "auto_generate_slug_on_save": true,
 
     // By default, auto generation of slug does not work if a slug
-    // has already defined in the article.
+    // has been defined in the article.
     // Set to true to force slug regeneration on save.
     "force_slug_regeneration_on_save": false,
 

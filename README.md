@@ -4,8 +4,8 @@ A plugin for [Pelican](http://getpelican.com/) integration for [Sublime Text 2](
 
 ## Usage
 
-* Type `Pelican` in Command Palette to view a list of available commands.
-* Right click on a file being edit, and access the related commands at the bottom item **Pelican** of the context menu.
+* Type `Pelican` in Command Palette to view a list of Sublime-Pelican commands.
+* Right click on a file being edit, and access Sublime-Pelican commands at the bottom item **Pelican** of the context menu.
 
 ## Features
 

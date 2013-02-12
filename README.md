@@ -10,8 +10,8 @@ A plugin for [Pelican](http://getpelican.com/) integration to [Sublime Text 2](h
 ## Features
 
 * Article metadata generation
-  - **Auto generate article date** on metadata creation/insertion
-  - **Auto generate article slug** from article title on save
+  - **Automatically generate article date** on metadata creation/insertion
+  - **Automatically generate article slug** from article title on save
 
 ## Settings
 

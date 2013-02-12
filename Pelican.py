@@ -34,7 +34,7 @@ pelican_slug_template = {
     "rst": ":slug: %s\n",
 }
 
-def strPelicanDateNow():
+def strDateNow():
     now = datetime.datetime.now()
     return datetime.datetime.strftime(now, "%Y-%m-%d %H:%M:%S")
 
@@ -57,17 +57,20 @@ class PelicanGenerateSlugCommand(sublime_plugin.TextCommand):
     def run(self, edit):
         title_region = self.view.find(':?title:.+\s*', 0, sublime.IGNORECASE)
         if title_region > -1:
-            title_str = self.view.substr(title_region).strip()
+            orig_title_str = self.view.substr(title_region).strip()
 
             regex = re.compile(":?title:(?P<title>.+)\s*",re.IGNORECASE)
-            r = regex.search(title_str)
+            r = regex.search(orig_title_str)
+            if not r:
+                return
+
             title_str = r.groupdict()['title'].strip()
 
             slug = self.slugify(title_str)
 
-            if re.search("rst", self.view.file_name()):
+            if re.search(":title:", orig_title_str, re.IGNORECASE):
                 meta_type = "rst"
-            else:
+            else: # "title: ..."
                 meta_type = "md"
 
             slug_insert_position = title_region.end()
@@ -94,19 +97,18 @@ class PelicanAutogenSlug(sublime_plugin.EventListener):
 class PelicanNewMarkdownCommand(sublime_plugin.TextCommand):
     def run(self, edit):
         new_view = self.view.window().new_file()
-        new_view.insert(edit, 0, pelican_meta_template["md"] % {"date": strPelicanDateNow()})
-
+        new_view.insert(edit, 0, pelican_meta_template["md"] % {"date": strDateNow()})
 
 class PelicanNewRestructuredtextCommand(sublime_plugin.TextCommand):
     def run(self, edit):
         new_view = self.view.window().new_file()
-        new_view.insert(edit, 0, pelican_meta_template["rst"] % {"date": strPelicanDateNow()})
+        new_view.insert(edit, 0, pelican_meta_template["rst"] % {"date": strDateNow()})
 
 class PelicanInsertMarkdownCommand(sublime_plugin.TextCommand):
     def run(self, edit):
-        self.view.insert(edit, 0, pelican_meta_template["md"] % {"date": strPelicanDateNow()})
+        self.view.insert(edit, 0, pelican_meta_template["md"] % {"date": strDateNow()})
 
 
 class PelicanInsertRestructuredtextCommand(sublime_plugin.TextCommand):
     def run(self, edit):
-        self.view.insert(edit, 0, pelican_meta_template["rst"] % {"date": strPelicanDateNow()})
+        self.view.insert(edit, 0, pelican_meta_template["rst"] % {"date": strDateNow()})

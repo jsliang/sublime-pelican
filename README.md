@@ -13,7 +13,7 @@ A plugin for [Pelican](http://getpelican.com/) integration to [Sublime Text 2](h
   - **Auto generate article date** on metadata creation/insertion
   - **Auto generate article slug** from article title on save
 
-## Configurations
+## Settings
 
 ### Article metadata generation
 
@@ -26,14 +26,16 @@ A plugin for [Pelican](http://getpelican.com/) integration to [Sublime Text 2](h
   By default, auto generation of slug does not work if a slug has been defined in the article.
   Set to `true` to force slug regeneration on save.
 
-* **filepath_filter** (default: `"\\.(md|markdown|mkd|rst)$"`)
+* **filepath_filter** (default: `"content/.*\\.(md|markdown|mkd|rst)$"`)
 
   Filename filter for Pelican articles, written in Python regex.
+  By default, only Markdown/reStructuredText files under `content/` directory are deemed as Pelican article files.
 
 ## TODOs
 
 * Build system integration
 * Auto completions for categories / tags
+* More flexible setting of **filepath_filter**: automatically retrieve the value of `INPUTDIR` variable from Pelican directory's `Makefile`
 
 ## License
 

@@ -2,13 +2,13 @@
 import sublime, sublime_plugin
 import re
 
-import unicodedata
+import datetime
 
 pelican_meta_template = {
     "md":
         (
         "title: \n"
-        "date: \n"
+        "date: %(date)s\n"
         "tags: \n"
         "category: \n"
         "author: \n"
@@ -19,7 +19,7 @@ pelican_meta_template = {
     "rst":
         (
         ":title: \n"
-        ":date: \n"
+        ":date: %(date)s\n"
         ":tags: \n"
         ":category: \n"
         ":author: \n"
@@ -33,6 +33,11 @@ pelican_slug_template = {
     "md": "slug: %s\n",
     "rst": ":slug: %s\n",
 }
+
+def strPelicanDateNow():
+    now = datetime.datetime.now()
+    return datetime.datetime.strftime(now, "%Y-%m-%d %H:%M:%S")
+
 
 class PelicanGenerateSlugCommand(sublime_plugin.TextCommand):
     def slugify(self, value):
@@ -89,19 +94,19 @@ class PelicanAutogenSlug(sublime_plugin.EventListener):
 class PelicanNewMarkdownCommand(sublime_plugin.TextCommand):
     def run(self, edit):
         new_view = self.view.window().new_file()
-        new_view.insert(edit, 0, pelican_meta_template["md"])
+        new_view.insert(edit, 0, pelican_meta_template["md"] % {"date": strPelicanDateNow()})
 
 
 class PelicanNewRestructuredtextCommand(sublime_plugin.TextCommand):
     def run(self, edit):
         new_view = self.view.window().new_file()
-        new_view.insert(edit, 0, pelican_meta_template["rst"])
+        new_view.insert(edit, 0, pelican_meta_template["rst"] % {"date": strPelicanDateNow()})
 
 class PelicanInsertMarkdownCommand(sublime_plugin.TextCommand):
     def run(self, edit):
-        self.view.insert(edit, 0, pelican_meta_template["md"])
+        self.view.insert(edit, 0, pelican_meta_template["md"] % {"date": strPelicanDateNow()})
 
 
 class PelicanInsertRestructuredtextCommand(sublime_plugin.TextCommand):
     def run(self, edit):
-        self.view.insert(edit, 0, pelican_meta_template["rst"])
+        self.view.insert(edit, 0, pelican_meta_template["rst"] % {"date": strPelicanDateNow()})

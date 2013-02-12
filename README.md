@@ -13,7 +13,7 @@ A plugin for [Pelican](http://getpelican.com/) integration of [Sublime Text 2](h
   - **Auto generate article date** on metadata creation/insertion
   - **Auto generate article slug** from article title on save
 
-## Configuration
+## Configurations
 
 ### Article metadata generation
 

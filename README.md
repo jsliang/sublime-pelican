@@ -1,6 +1,6 @@
 # Sublime Plugin: SublimePelican
 
-A plugin for [Pelican](http://getpelican.com/) integration of [Sublime Text 2](http://www.sublimetext.com/2).
+A plugin for [Pelican](http://getpelican.com/) integration to [Sublime Text 2](http://www.sublimetext.com/2).
 
 ## Usage
 

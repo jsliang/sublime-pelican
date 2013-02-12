@@ -1,0 +1,4 @@
+{
+    "auto_generate_slug": 1,
+    "filename_filter": "\\.(markdown|mdown|md|rst)$"
+}

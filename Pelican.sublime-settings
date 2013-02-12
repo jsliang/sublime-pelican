@@ -1,4 +1,12 @@
 {
-    "auto_generate_slug_on_save": 1,
-    "filename_filter": "\\.(md|markdown|mkd|rst)$"
+    // Set to false to prevent auto generation of slug on save.
+    "auto_generate_slug_on_save": true,
+
+    // By default, auto generation of slug does not work if a slug
+    // has already defined in the article.
+    // Set to true to force slug regeneration on save.
+    "force_slug_regeneration_on_save": false,
+
+    // Filename filter for articles
+    "article_filename_filter": "\\.(md|markdown|mkd|rst)$"
 }

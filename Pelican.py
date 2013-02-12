@@ -55,6 +55,9 @@ class PelicanGenerateSlugCommand(sublime_plugin.TextCommand):
         return value.decode('ascii')
 
     def run(self, edit):
+        slug_region = self.view.find(':?slug:.+\s*', 0, sublime.IGNORECASE)
+        self.view.erase(edit, slug_region)
+
         title_region = self.view.find(':?title:.+\s*', 0, sublime.IGNORECASE)
         if title_region > -1:
             orig_title_str = self.view.substr(title_region).strip()
@@ -82,15 +85,17 @@ class PelicanAutogenSlug(sublime_plugin.EventListener):
         global_settings = sublime.load_settings(__name__ + '.sublime-settings')
 
         auto_generate_slug_on_save = view.settings().get('auto_generate_slug_on_save', global_settings.get('auto_generate_slug_on_save', '*'))
-        if not auto_generate_slug_on_save is 1:
+        if not auto_generate_slug_on_save:
             return
 
-        filename_filter = view.settings().get('filename_filter', global_settings.get('filename_filter', '*'))
-        if not re.search(filename_filter, view.file_name()):
+        article_filename_filter = view.settings().get('article_filename_filter', global_settings.get('article_filename_filter', '*'))
+        if not re.search(article_filename_filter, view.file_name()):
             return
 
         if view.find(':?slug:\s*\w+', 0, sublime.IGNORECASE) > -1:
-            return
+            force_slug_regeneration_on_save = view.settings().get('force_slug_regeneration_on_save', global_settings.get('force_slug_regeneration_on_save', '*'))
+            if not force_slug_regeneration_on_save:
+                return
 
         view.run_command('pelican_generate_slug' )
 

@@ -56,7 +56,8 @@ class PelicanGenerateSlugCommand(sublime_plugin.TextCommand):
 
     def run(self, edit):
         slug_region = self.view.find(':?slug:.+\s*', 0, sublime.IGNORECASE)
-        self.view.erase(edit, slug_region)
+        if slug_region > -1:
+            self.view.erase(edit, slug_region)
 
         title_region = self.view.find(':?title:.+\s*', 0, sublime.IGNORECASE)
         if title_region > -1:

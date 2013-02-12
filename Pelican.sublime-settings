@@ -8,5 +8,5 @@
     "force_slug_regeneration_on_save": false,
 
     // Filename filter for articles
-    "article_filename_filter": "\\.(md|markdown|mkd|rst)$"
+    "article_filename_filter": "content/.*\\.(md|markdown|mkd|rst)$"
 }

@@ -1,4 +1,4 @@
-# Sublime-Pelican
+# Sublime Plugin: SublimePelican
 
 A plugin for [Pelican](http://getpelican.com/) integration of [Sublime Text 2](http://www.sublimetext.com/2).
 
@@ -20,7 +20,7 @@ A plugin for [Pelican](http://getpelican.com/) integration of [Sublime Text 2](h
 
 ## License
 
-Sublime-Pelican is licensed under the MIT license.
+SublimePelican is licensed under the MIT license.
 
 Copyright (c) 2013, Jui-Shan Liang &lt;jenny@jsliang.com&gt;
 

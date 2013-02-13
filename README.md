@@ -16,6 +16,10 @@ A plugin for [Pelican](http://getpelican.com/) integration to [Sublime Text 2](h
 
 ## Settings
 
+For the latest information on what SublimePelican settings are available, select the menu item Preferences > Package Settings > Pelican > Settings - Default.
+
+Please do NOT edit the settings in "Settings - Default" as changes will be lost when SublimePelican is updated. Instead, edit the user Pelican settings through Preferences > Package Settings > Pelican > Settings - User.
+
 ### Smart article metadata generation
 
 #### Slug generation

@@ -33,6 +33,16 @@ class PelicanSetting():
 
         return view.settings().get(setting_name, self.global_settings.get(setting_name, default_value))
 
+    def load_article_metadata_template(self, view):
+        article_metadata_template = self.load_setting(view, "article_metadata_template", {})
+        if len(article_metadata_template) < 1:
+            return
+        for key, value in article_metadata_template.iteritems():
+            article_metadata_template[key] = "\n".join(value)
+
+        return article_metadata_template
+
+
 class PelicanGenerateSlugCommand(sublime_plugin.TextCommand):
     def slugify(self, value):
         """
@@ -95,11 +105,7 @@ class PelicanAutogenSlug(sublime_plugin.EventListener):
 class PelicanNewMarkdownCommand(sublime_plugin.TextCommand):
     def run(self, edit):
         pelican_setting = PelicanSetting()
-        article_metadata_template = pelican_setting.load_setting(self.view, "article_metadata_template", {})
-        if len(article_metadata_template) < 1:
-            return
-        for key, value in article_metadata_template.iteritems():
-            article_metadata_template[key] = "\n".join(value)
+        article_metadata_template = pelican_setting.load_article_metadata_template(self.view)
 
         new_view = self.view.window().new_file()
         new_view.insert(edit, 0, article_metadata_template["md"] % {"date": strDateNow()})
@@ -107,11 +113,7 @@ class PelicanNewMarkdownCommand(sublime_plugin.TextCommand):
 class PelicanNewRestructuredtextCommand(sublime_plugin.TextCommand):
     def run(self, edit):
         pelican_setting = PelicanSetting()
-        article_metadata_template = pelican_setting.load_setting(self.view, "article_metadata_template", {})
-        if len(article_metadata_template) < 1:
-            return
-        for key, value in article_metadata_template.iteritems():
-            article_metadata_template[key] = "\n".join(value)
+        article_metadata_template = pelican_setting.load_article_metadata_template(self.view)
 
         new_view = self.view.window().new_file()
         new_view.insert(edit, 0, article_metadata_template["rst"] % {"date": strDateNow()})
@@ -119,11 +121,7 @@ class PelicanNewRestructuredtextCommand(sublime_plugin.TextCommand):
 class PelicanInsertMarkdownCommand(sublime_plugin.TextCommand):
     def run(self, edit):
         pelican_setting = PelicanSetting()
-        article_metadata_template = pelican_setting.load_setting(self.view, "article_metadata_template", {})
-        if len(article_metadata_template) < 1:
-            return
-        for key, value in article_metadata_template.iteritems():
-            article_metadata_template[key] = "\n".join(value)
+        article_metadata_template = pelican_setting.load_article_metadata_template(self.view)
 
         self.view.insert(edit, 0, article_metadata_template["md"] % {"date": strDateNow()})
 
@@ -131,10 +129,6 @@ class PelicanInsertMarkdownCommand(sublime_plugin.TextCommand):
 class PelicanInsertRestructuredtextCommand(sublime_plugin.TextCommand):
     def run(self, edit):
         pelican_setting = PelicanSetting()
-        article_metadata_template = pelican_setting.load_setting(self.view, "article_metadata_template", {})
-        if len(article_metadata_template) < 1:
-            return
-        for key, value in article_metadata_template.iteritems():
-            article_metadata_template[key] = "\n".join(value)
+        article_metadata_template = pelican_setting.load_article_metadata_template(self.view)
 
         self.view.insert(edit, 0, article_metadata_template["rst"] % {"date": strDateNow()})

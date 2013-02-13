@@ -134,12 +134,12 @@ class PelicanAutogenSlug(sublime_plugin.EventListener):
 class PelicanNewMarkdownCommand(sublime_plugin.TextCommand):
     def run(self, edit):
         new_view = self.view.window().new_file()
-        new_view.run_command('pelican_insert_metadata', {"meta_type": "md"})
+        new_view.run_command('pelican_insert_metadata', {"select_metadata": False, "meta_type": "md"})
 
 class PelicanNewRestructuredtextCommand(sublime_plugin.TextCommand):
     def run(self, edit):
         new_view = self.view.window().new_file()
-        new_view.run_command('pelican_insert_metadata', {"meta_type": "rst"})
+        new_view.run_command('pelican_insert_metadata', {"select_metadata": False, "meta_type": "rst"})
 
 class PelicanSelectMetadataCommand(sublime_plugin.TextCommand):
     def run(self, edit):
@@ -167,7 +167,7 @@ class PelicanSelectMetadataCommand(sublime_plugin.TextCommand):
         self.view.show(self.view.sel())
 
 class PelicanInsertMetadataCommand(sublime_plugin.TextCommand):
-    def run(self, edit, meta_type = None):
+    def run(self, edit, select_metadata = True, meta_type = None):
         pelican_tools = PelicanTools()
 
         if meta_type is None:
@@ -194,10 +194,12 @@ class PelicanInsertMetadataCommand(sublime_plugin.TextCommand):
         if len(self.view.sel()) > 0:
             for sel in self.view.sel():
                 metadata_str = self.view.substr(sel)
-                regex = re.compile(":?(\w+):(.+)")
+                regex = re.compile(":?(\w+):(.*)")
                 find_all = regex.findall(metadata_str)
                 if len(find_all) > 0:
                     (key, value) = find_all[0]
+                    key = key.strip()
+                    value = value.strip()
                     if not key in metadata:
                         new_meta = "%s: %s" % (key, value)
                         if meta_type is "rst":
@@ -214,10 +216,10 @@ class PelicanInsertMetadataCommand(sublime_plugin.TextCommand):
 
         article_metadata_template = pelican_tools.normalize_line_endings(self.view, "\n".join(article_metadata_template_lines))
         article_metadata_str = article_metadata_template % metadata
-        article_metadata_str = article_metadata_str + "\n"
         if len(self.view.sel()) > 0:
             self.view.replace(edit, old_metadata_region, article_metadata_str)
         else:
             self.view.insert(edit, 0, article_metadata_str)
 
-        self.view.run_command('pelican_select_metadata')
+        if select_metadata:
+            self.view.run_command('pelican_select_metadata')

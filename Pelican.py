@@ -12,12 +12,12 @@ def strDateNow():
     now = datetime.datetime.now()
     return datetime.datetime.strftime(now, "%Y-%m-%d %H:%M:%S")
 
-class PelicanSetting():
+class PelicanTools():
     _singleton_instance = None
 
     def __new__(cls):
         if not cls._singleton_instance:
-            cls._singleton_instance = super(PelicanSetting, cls).__new__()
+            cls._singleton_instance = super(PelicanTools, cls).__new__()
         return cls._singleton_instance
 
     def __init__(self):
@@ -31,15 +31,23 @@ class PelicanSetting():
 
         return view.settings().get(setting_name, self.global_settings.get(setting_name, default_value))
 
+    def normalize_line_endings(self, view, string):
+        string = string.replace('\r\n', '\n').replace('\r', '\n')
+        line_endings = self.load_setting(view, 'default_line_ending', 'unix')
+        if line_endings == 'windows':
+            string = string.replace('\n', '\r\n')
+        elif line_endings == 'mac':
+            string = string.replace('\n', '\r')
+        return string
+
     def load_article_metadata_template(self, view):
         article_metadata_template = self.load_setting(view, "article_metadata_template", {})
         if not article_metadata_template or len(article_metadata_template) < 1:
             return
         for key, value in article_metadata_template.iteritems():
-            article_metadata_template[key] = "\n".join(value)
+            article_metadata_template[key] = self.normalize_line_endings(view, "\n".join(value))
 
         return article_metadata_template
-
 
 class PelicanGenerateSlugCommand(sublime_plugin.TextCommand):
     def slugify(self, value):
@@ -85,6 +93,7 @@ class PelicanGenerateSlugCommand(sublime_plugin.TextCommand):
 
 class PelicanAutogenSlug(sublime_plugin.EventListener):
     def on_pre_save(self, view):
+        pelican_setting = PelicanTools()
         auto_generate_slug_on_save = pelican_setting.load_setting(view, "auto_generate_slug_on_save", True)
         if not auto_generate_slug_on_save:
             return
@@ -102,7 +111,7 @@ class PelicanAutogenSlug(sublime_plugin.EventListener):
 
 class PelicanNewMarkdownCommand(sublime_plugin.TextCommand):
     def run(self, edit):
-        pelican_setting = PelicanSetting()
+        pelican_setting = PelicanTools()
         article_metadata_template = pelican_setting.load_article_metadata_template(self.view)
         if not article_metadata_template:
             return
@@ -112,7 +121,7 @@ class PelicanNewMarkdownCommand(sublime_plugin.TextCommand):
 
 class PelicanNewRestructuredtextCommand(sublime_plugin.TextCommand):
     def run(self, edit):
-        pelican_setting = PelicanSetting()
+        pelican_setting = PelicanTools()
         article_metadata_template = pelican_setting.load_article_metadata_template(self.view)
         if not article_metadata_template:
             return
@@ -122,7 +131,7 @@ class PelicanNewRestructuredtextCommand(sublime_plugin.TextCommand):
 
 class PelicanInsertMarkdownCommand(sublime_plugin.TextCommand):
     def run(self, edit):
-        pelican_setting = PelicanSetting()
+        pelican_setting = PelicanTools()
         article_metadata_template = pelican_setting.load_article_metadata_template(self.view)
         if not article_metadata_template:
             return
@@ -131,7 +140,7 @@ class PelicanInsertMarkdownCommand(sublime_plugin.TextCommand):
 
 class PelicanInsertRestructuredtextCommand(sublime_plugin.TextCommand):
     def run(self, edit):
-        pelican_setting = PelicanSetting()
+        pelican_setting = PelicanTools()
         article_metadata_template = pelican_setting.load_article_metadata_template(self.view)
         if not article_metadata_template:
             return

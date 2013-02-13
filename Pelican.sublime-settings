@@ -1,11 +1,14 @@
 {
-    // Set to `false` to prevent automatic generation of slug on save.
-    "auto_generate_slug_on_save": true,
+    // Slug generation
+    // Set to "title_change" to generate slug when article title changes
+    // Set to "save" to generate slug on save
+    // Set to "none" to disable slug generation
+    "generate_slug_from_title": "save",
 
     // By default, slug is not automatically generated if a slug has
     // been defined in the article.
-    // Set to `true` to force slug automatic regeneration on save.
-    "force_slug_regeneration_on_save": false,
+    // Set to `true` to force slug regeneration.
+    "force_slug_regeneration": false,
 
     // Filename filter for Pelican articles, written in Python regex.
     // By default, only Markdown/reStructuredText files under

@@ -77,11 +77,11 @@ class PelicanTools():
 class PelicanGenerateSlugCommand(sublime_plugin.TextCommand):
     def run(self, edit):
         slug_region = self.view.find(':?slug:.+\s*', 0, sublime.IGNORECASE)
-        if slug_region > -1:
+        if slug_region:
             self.view.erase(edit, slug_region)
 
         title_region = self.view.find(':?title:.+\s*', 0, sublime.IGNORECASE)
-        if title_region > -1:
+        if title_region:
             orig_title_str = self.view.substr(title_region).strip()
 
             regex = re.compile(":?title:(?P<title>.+)\s*",re.IGNORECASE)
@@ -100,12 +100,26 @@ class PelicanGenerateSlugCommand(sublime_plugin.TextCommand):
             slug_insert_position = title_region.end()
             self.view.insert(edit, slug_insert_position, pelican_slug_template[meta_type] % slug)
 
-
 class PelicanAutogenSlug(sublime_plugin.EventListener):
+    def on_modified(self, view):
+        pelican_tools = PelicanTools()
+        generate_slug_from_title = pelican_tools.load_setting(view, "generate_slug_from_title", True)
+        if generate_slug_from_title != "title_change":
+            return
+
+        filepath_filter = pelican_tools.load_setting(view, "filepath_filter", '*')
+        if not re.search(filepath_filter, view.file_name()):
+            return
+
+        if len(view.sel()) > 0:
+            current_line = view.line(view.sel()[0].begin())
+            if view.find("title:", current_line.begin(), sublime.IGNORECASE):
+                view.run_command('pelican_generate_slug')
+
     def on_pre_save(self, view):
         pelican_tools = PelicanTools()
-        auto_generate_slug_on_save = pelican_tools.load_setting(view, "auto_generate_slug_on_save", True)
-        if not auto_generate_slug_on_save:
+        generate_slug_from_title = pelican_tools.load_setting(view, "generate_slug_from_title", True)
+        if generate_slug_from_title != "save":
             return
 
         filepath_filter = pelican_tools.load_setting(view, "filepath_filter", '*')
@@ -120,8 +134,8 @@ class PelicanAutogenSlug(sublime_plugin.EventListener):
             if len(find_all) > 0:
                 slug_str = find_all[0].strip()
 
-                force_slug_regeneration_on_save = pelican_tools.load_setting(view, "force_slug_regeneration_on_save", False)
-                if len(slug_str) > 0 and not force_slug_regeneration_on_save:
+                force_slug_regeneration = pelican_tools.load_setting(view, "force_slug_regeneration", False)
+                if len(slug_str) > 0 and not force_slug_regeneration:
                     return
 
                 edit = view.begin_edit()
@@ -220,8 +234,8 @@ class PelicanInsertMetadataCommand(sublime_plugin.TextCommand):
         else:
             self.view.insert(edit, 0, article_metadata_str)
 
-        force_slug_regeneration_on_save = pelican_tools.load_setting(self.view, "force_slug_regeneration_on_save", False)
-        if force_slug_regeneration_on_save or len(metadata["slug"]) is 0:
+        force_slug_regeneration = pelican_tools.load_setting(self.view, "force_slug_regeneration", False)
+        if force_slug_regeneration or len(metadata["slug"]) is 0:
             self.view.run_command('pelican_generate_slug')
 
         if select_metadata:

@@ -18,18 +18,23 @@ A plugin for [Pelican](http://getpelican.com/) integration to [Sublime Text 2](h
 
 ### Smart article metadata generation
 
-*   **auto_generate_slug_on_save**
+#### Slug generation
 
-    Set to `false` to prevent automatic generation of slug on save.
+*   **generate_slug_from_title**
+    -   Set to "title_change" to generate slug when article title changes
+    -   Set to "save" to generate slug on save
+    -   Set to "none" to disable slug generation
 
-    Default value: `true`
+    Default value: `save`
 
-*   **force_slug_regeneration_on_save**
+*   **force_slug_regeneration**
 
     By default, slug is not automatically generated if a slug has been defined in the article.
-    Set to `true` to force slug automatic regeneration on save.
+    Set to `true` to force slug regeneration.
 
     Default value: `false`
+
+#### Others
 
 *   **filepath_filter**
 

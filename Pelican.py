@@ -73,6 +73,22 @@ class PelicanTools():
             return "rst"
         return "md"
 
+class PelicanUpdateDateCommand(sublime_plugin.TextCommand):
+    def run(self, edit):
+        print "PelicanUpdateDateCommand"
+        date_region = self.view.find(':?date:\s*', 0)
+        print date_region
+        if not date_region:
+            return
+
+        old_datestr_region = sublime.Region(date_region.end(), self.view.line(date_region).end())
+        self.view.replace(edit, old_datestr_region, strDateNow())
+
+        new_datestr_region = sublime.Region(date_region.end(), self.view.line(date_region).end())
+        self.view.sel().clear()
+        self.view.sel().add(new_datestr_region)
+
+        self.view.show(new_datestr_region)
 
 class PelicanGenerateSlugCommand(sublime_plugin.TextCommand):
     def run(self, edit):

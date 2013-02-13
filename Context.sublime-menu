@@ -7,7 +7,8 @@
         { "caption": "Insert Article Metadata", "command": "pelican_insert_metadata" },
         { "caption": "Select Article Metadata", "command": "pelican_select_metadata" }
         { "caption": "-" },
-        { "caption": "Generate Slug from Title", "command": "pelican_generate_slug" },
+        { "caption": "Update Slug using Title", "command": "pelican_generate_slug" },
+        { "caption": "Update Article Date", "command": "pelican_update_date" }
     ]},
     { "caption": "-", "id": "end" }
 ]

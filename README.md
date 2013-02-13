@@ -18,7 +18,7 @@ The plugin prepares metadata fields for you, with the ability to fill in date an
         These commands open a new article and have metadata fields prepared for you.
 
         Metadata are generated according to your metadata template.
-        Refer to the [customizable metadata template](#customizable-metadata-template) section for instructions on metadata template customization.
+        Refer to [Settings](#settings) > [Customizable metadata template](#customizable-metadata-template) for instructions on metadata template customization.
 
     -   **Pelican: Insert Metadata**
 

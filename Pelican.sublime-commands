@@ -4,5 +4,6 @@
 
     { "caption": "Pelican: Insert Metadata (Markdown)", "command": "pelican_insert_markdown" },
     { "caption": "Pelican: Insert Metadata (reStructuredText)", "command": "pelican_insert_restructuredtext" },
-    { "caption": "Pelican: Generate Slug from Title", "command": "pelican_generate_slug" }
+    { "caption": "Pelican: Generate Slug from Title", "command": "pelican_generate_slug" },
+    { "caption": "Pelican: Select Article Metadata", "command": "pelican_select_metadata" }
 ]

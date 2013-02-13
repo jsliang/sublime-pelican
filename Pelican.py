@@ -1,4 +1,3 @@
-
 import sublime, sublime_plugin
 import re
 
@@ -99,7 +98,7 @@ class PelicanAutogenSlug(sublime_plugin.EventListener):
             if not force_slug_regeneration_on_save:
                 return
 
-        view.run_command('pelican_generate_slug')
+        view.run_command('pelican_generate_slug' )
 
 class PelicanNewMarkdownCommand(sublime_plugin.TextCommand):
     def run(self, edit):
@@ -130,7 +129,6 @@ class PelicanInsertMarkdownCommand(sublime_plugin.TextCommand):
 
         self.view.insert(edit, 0, article_metadata_template["md"] % {"date": strDateNow()})
 
-
 class PelicanInsertRestructuredtextCommand(sublime_plugin.TextCommand):
     def run(self, edit):
         pelican_setting = PelicanSetting()
@@ -139,3 +137,15 @@ class PelicanInsertRestructuredtextCommand(sublime_plugin.TextCommand):
             return
 
         self.view.insert(edit, 0, article_metadata_template["rst"] % {"date": strDateNow()})
+
+class PelicanSelectMetadataCommand(sublime_plugin.TextCommand):
+    def run(self, edit):
+        self.view.sel().clear()
+
+        metadata_regions = self.view.find_all(':?\w+:.+\s*', 0)
+
+        for region in metadata_regions:
+            line_regions = self.view.lines(region)
+            for line_region in line_regions:
+                if not line_region.empty():
+                    self.view.sel().add(line_region)

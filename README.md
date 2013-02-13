@@ -38,11 +38,12 @@ Instead, customize your settings in Preferences > Package Settings > Pelican > S
 
     -   Set to `"title_change"` to generate slug when article title changes
 
-        Please note that, when set to `"title_change"`, slug will be regenerated everytime you type in the title line, even if `force_slug_regeneration` is set to `false`.
+        Note that when set to `"title_change"`, slug will be regenerated everytime you type in the title line, even if `force_slug_regeneration` is set to `false`.
 
     -   Set to `"save"` to generate slug on save
 
-        To prevent unwanted slug change, slug is not automatically generated if a slug has been defined in the article by default.
+        By default, slug is not automatically generated if a slug has been defined in the article.
+        This is to prevent unwanted slug change.
         If you want to force slug regeneration on each save, you have to set `force_slug_regeneration` to `true`.
 
     Default value: `"save"`

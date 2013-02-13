@@ -1,9 +1,8 @@
 [
+    { "caption": "Pelican: Insert Metadata", "command": "pelican_insert_metadata" },
     { "caption": "Pelican: New Article (Markdown)", "command": "pelican_new_markdown" },
     { "caption": "Pelican: New Article (reStructuredText)", "command": "pelican_new_restructuredtext" },
-
-    { "caption": "Pelican: Insert Metadata", "command": "pelican_insert_metadata" },
-    { "caption": "Pelican: Update Slug using Title", "command": "pelican_generate_slug" },
+    { "caption": "Pelican: Select Article Metadata", "command": "pelican_select_metadata" },
     { "caption": "Pelican: Update Article Date", "command": "pelican_update_date" },
-    { "caption": "Pelican: Select Article Metadata", "command": "pelican_select_metadata" }
+    { "caption": "Pelican: Update Slug using Title", "command": "pelican_generate_slug" }
 ]

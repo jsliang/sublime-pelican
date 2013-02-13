@@ -10,9 +10,28 @@ A plugin for [Pelican](http://getpelican.com/) integration to [Sublime Text 2](h
 ## Features
 
 *   Smart article metadata generation
+
+    -   Prepare metadata fields for you when you create a new article
+
+        Commands available from the Command Palette as **Pelican: New Article (Markdown)** and **Pelican: New Article (reStructuredText)**
+
+        Metadata are generated according to your metadata template.
+        Refer to [Settings](#settings) for instructions on metadata template customization.
+
+    -   Insert metadata field to current article
+
+        Command available from the Command Palette as  **Pelican: Insert Metadata**
+
+        Metadata fields are inserted in the same order as your metadata template.
+        Fields not listed in the metadata template are preserved too.
+
     -   **Automatically generate article date** on metadata creation/insertion
+        -   Command available from the Command Palette as **Pelican: Update Article Date**
+
     -   **Automatically generate article slug** from article title on save or on title change
-    -   Customizable metadata template
+        -   also available from the Command Palette as **Pelican: Update Slug using Title**
+
+*   Customizable metadata template
 
 ## Settings
 

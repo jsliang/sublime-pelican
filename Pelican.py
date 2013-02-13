@@ -62,7 +62,6 @@ class PelicanTools():
             return "rst"
         return "md"
 
-class PelicanGenerateSlugCommand(sublime_plugin.TextCommand):
     def slugify(self, value):
         """
         Normalizes string, converts to lowercase, removes non-alpha characters,
@@ -77,6 +76,7 @@ class PelicanGenerateSlugCommand(sublime_plugin.TextCommand):
         # but Pelican should generally use only unicode
         return value.decode('ascii')
 
+class PelicanGenerateSlugCommand(sublime_plugin.TextCommand):
     def run(self, edit):
         slug_region = self.view.find(':?slug:.+\s*', 0, sublime.IGNORECASE)
         if slug_region > -1:
@@ -93,9 +93,10 @@ class PelicanGenerateSlugCommand(sublime_plugin.TextCommand):
 
             title_str = r.groupdict()['title'].strip()
 
-            slug = self.slugify(title_str)
-
             pelican_tools = PelicanTools()
+
+            slug = pelican_tools.slugify(title_str)
+
             meta_type = pelican_tools.detect_article_type(self.view)
 
             slug_insert_position = title_region.end()
@@ -129,7 +130,7 @@ class PelicanAutogenSlug(sublime_plugin.EventListener):
                 view.replace(edit, view.full_line(slug_region.begin()), "")
                 view.end_edit(edit)
 
-        view.run_command('pelican_generate_slug' )
+        view.run_command('pelican_generate_slug')
 
 class PelicanNewMarkdownCommand(sublime_plugin.TextCommand):
     def run(self, edit):
@@ -205,7 +206,7 @@ class PelicanInsertMetadataCommand(sublime_plugin.TextCommand):
                         if meta_type is "rst":
                             new_meta = ":" + new_meta
                         article_metadata_template_lines.append(new_meta)
-                    metadata[key] = value
+                    metadata[key] = value.strip()
 
             old_metadata_begin = self.view.sel()[0].begin()
             old_metadata_end = self.view.sel()[len(self.view.sel()) - 1].end()
@@ -220,6 +221,10 @@ class PelicanInsertMetadataCommand(sublime_plugin.TextCommand):
             self.view.replace(edit, old_metadata_region, article_metadata_str)
         else:
             self.view.insert(edit, 0, article_metadata_str)
+
+        force_slug_regeneration_on_save = pelican_tools.load_setting(self.view, "force_slug_regeneration_on_save", False)
+        if force_slug_regeneration_on_save or len(metadata["slug"]) is 0:
+            self.view.run_command('pelican_generate_slug')
 
         if select_metadata:
             self.view.run_command('pelican_select_metadata')

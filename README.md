@@ -37,6 +37,8 @@ The plugin prepares metadata fields for you, with the ability to fill in date an
 
 *   Customizable metadata template
 
+    Refer to [Settings](#settings) > [Customizable metadata template](#customizable-metadata-template) for instructions on metadata template customization.
+
 ## Settings
 
 For the latest information on what SublimePelican settings are available, select the menu item Preferences > Package Settings > Pelican > Settings - Default.

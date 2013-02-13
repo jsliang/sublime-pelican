@@ -4,32 +4,73 @@ A plugin for [Pelican](http://getpelican.com/) integration to [Sublime Text 2](h
 
 ## Usage
 
-* Type `Pelican` in Command Palette to view a list of available commands.
-* Right click on a file being edit, and access the related commands under the **Pelican** item.
+*   Type `Pelican` in Command Palette to view a list of available commands.
+*   Right click on a file being edit, and access the related commands under the **Pelican** item.
 
 ## Features
 
-* Article metadata generation
-  - **Automatically generate article date** on metadata creation/insertion
-  - **Automatically generate article slug** from article title on save
+*   Automatic article metadata generation
+    -   **Automatically generate article date** on metadata creation/insertion
+    -   **Automatically generate article slug** from article title on save
+    -   Customizable metadata template
 
 ## Settings
 
-### Article metadata generation
+### Automatic article metadata generation
 
-* **auto_generate_slug_on_save** (default: `true`)
+*   **auto_generate_slug_on_save**
 
-  Set to `false` to prevent automatic generation of slug on save.
+    Set to `false` to prevent automatic generation of slug on save.
 
-* **force_slug_regeneration_on_save** (default: `false`)
+    Default value: `true`
 
-  By default, slug is not automatically generated if a slug has been defined in the article.
-  Set to `true` to force slug automatic regeneration on save.
+*   **force_slug_regeneration_on_save**
 
-* **filepath_filter** (default: `"content/.*\\.(md|markdown|mkd|rst)$"`)
+    By default, slug is not automatically generated if a slug has been defined in the article.
+    Set to `true` to force slug automatic regeneration on save.
 
-  Filename filter for Pelican articles, written in Python regex.
-  By default, only Markdown/reStructuredText files under `content/` directory are deemed as Pelican article files.
+    Default value: `false`
+
+*   **filepath_filter**
+
+    Filename filter for Pelican articles, written in Python regex.
+    By default, only Markdown/reStructuredText files under `content/` directory are deemed as Pelican article files.
+
+    Default value: `"content/.*\\.(md|markdown|mkd|rst)$"`
+
+*   **article_metadata_template**
+
+    Metadata template for Markdown & reStructuredText articles.
+
+    Default value:
+
+```
+{
+    // Metadata template for Markdown articles
+    "md":
+        [
+            "title: ",
+            "date: %(date)s",
+            "tags: ",
+            "category: ",
+            "author: ",
+            "lang: en",
+            "summary: "
+        ],
+    // Metadata template for reStructuredText articles
+    "rst":
+        [
+            ":title: ",
+            ":date: %(date)s",
+            ":tags: ",
+            ":category: ",
+            ":author: ",
+            ":lang: en",
+            ":summary: "
+        ]
+}
+```
+
 
 ## TODOs
 

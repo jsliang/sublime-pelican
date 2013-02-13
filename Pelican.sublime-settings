@@ -12,7 +12,8 @@
     // `content/` directory are deemed as Pelican article files.
     "filepath_filter": "content/.*\\.(md|markdown|mkd|rst)$",
 
-    "pelican_meta_template": {
+    "article_metadata_template": {
+        // Metadata template for Markdown articles
         "md":
             [
                 "title: ",
@@ -23,6 +24,8 @@
                 "lang: en",
                 "summary: "
             ],
+
+        // Metadata template for reStructuredText articles
         "rst":
             [
                 ":title: ",

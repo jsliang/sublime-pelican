@@ -37,7 +37,7 @@ The plugin prepares metadata fields for you, with the ability to fill in date an
 
 For the latest information on what SublimePelican settings are available, select the menu item Preferences > Package Settings > Pelican > Settings - Default.
 
-Please do NOT edit the settings in "Settings - Default" as changes will be lost when SublimePelican is updated.
+DO NOT edit the settings in "Settings - Default" as changes will be lost when SublimePelican is updated.
 Instead, customize your settings in Preferences > Package Settings > Pelican > Settings - User.
 
 ### Smart metadata fields generation

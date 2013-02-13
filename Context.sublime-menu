@@ -4,11 +4,10 @@
         { "caption": "New Article (Markdown)", "command": "pelican_new_markdown" },
         { "caption": "New Article (reStructuredText)", "command": "pelican_new_restructuredtext" },
         { "caption": "-" },
-        { "caption": "Insert Metadata", "command": "pelican_insert_metadata" },
+        { "caption": "Insert Article Metadata", "command": "pelican_insert_metadata" },
+        { "caption": "Select Article Metadata", "command": "pelican_select_metadata" }
         { "caption": "-" },
         { "caption": "Generate Slug from Title", "command": "pelican_generate_slug" },
-        { "caption": "-" },
-        { "caption": "Select Article Metadata", "command": "pelican_select_metadata" }
     ]},
     { "caption": "-", "id": "end" }
 ]

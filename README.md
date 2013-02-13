@@ -49,24 +49,27 @@ A plugin for [Pelican](http://getpelican.com/) integration to [Sublime Text 2](h
     // Metadata template for Markdown articles
     "md":
         [
-            "title: ",
+            "title: %(title)s",
+            "slug: %(slug)s",
             "date: %(date)s",
-            "tags: ",
-            "category: ",
-            "author: ",
-            "lang: en",
-            "summary: "
+            "tags: %(tags)s",
+            "category: %(category)s",
+            "author: %(author)s",
+            "lang: %(lang)s",
+            "summary: %(summary)s"
         ],
+
     // Metadata template for reStructuredText articles
     "rst":
         [
-            ":title: ",
+            ":title: %(title)s",
+            ":slug: %(slug)s",
             ":date: %(date)s",
-            ":tags: ",
-            ":category: ",
-            ":author: ",
-            ":lang: en",
-            ":summary: "
+            ":tags: %(tags)s",
+            ":category: %(category)s",
+            ":author: %(author)s",
+            ":lang: %(lang)s",
+            ":summary: %(summary)s"
         ]
 }
 ```

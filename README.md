@@ -11,33 +11,27 @@ The plugin prepares metadata fields for you, with the ability to fill in date an
 
 ### SublimePelican Commands
 
-*   Smart metadata fields generation
+*   **Pelican: New Article (Markdown)** and **Pelican: New Article (reStructuredText)**
 
-    -   **Pelican: New Article (Markdown)** and **Pelican: New Article (reStructuredText)**
+    These commands open a new article and have metadata fields prepared for you.
 
-        These commands open a new article and have metadata fields prepared for you.
-
-        Metadata are generated according to your metadata template.
-        Refer to [Settings](#settings) > [Customizable metadata template](#customizable-metadata-template) for instructions on metadata template customization.
-
-    -   **Pelican: Insert Metadata**
-
-        This command inserts metadata field to current article
-
-        Metadata fields are inserted in the same order as your metadata template.
-        Fields not listed in the metadata template are preserved too.
-
-    -   **Pelican: Update Article Date**
-
-        This command updates the date metadata field to current date and time.
-
-    -   **Pelican: Update Slug using Title**
-
-        This command generates the slug field from article title.
-
-*   Customizable metadata template
-
+    Metadata are generated according to your metadata template.
     Refer to [Settings](#settings) > [Customizable metadata template](#customizable-metadata-template) for instructions on metadata template customization.
+
+*   **Pelican: Insert Metadata**
+
+    This command inserts metadata field to current article
+
+    Metadata fields are inserted in the same order as your metadata template.
+    Fields not listed in the metadata template are preserved too.
+
+*   **Pelican: Update Article Date**
+
+    This command updates the date metadata field to current date and time.
+
+*   **Pelican: Update Slug using Title**
+
+    This command generates the slug field from article title.
 
 ## Settings
 

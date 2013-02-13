@@ -10,5 +10,28 @@
     // Filename filter for Pelican articles, written in Python regex.
     // By default, only Markdown/reStructuredText files under
     // `content/` directory are deemed as Pelican article files.
-    "filepath_filter": "content/.*\\.(md|markdown|mkd|rst)$"
+    "filepath_filter": "content/.*\\.(md|markdown|mkd|rst)$",
+
+    "pelican_meta_template": {
+        "md":
+            [
+                "title: ",
+                "date: %(date)s",
+                "tags: ",
+                "category: ",
+                "author: ",
+                "lang: en",
+                "summary: "
+            ],
+        "rst":
+            [
+                ":title: ",
+                ":date: %(date)s",
+                ":tags: ",
+                ":category: ",
+                ":author: ",
+                ":lang: en",
+                ":summary: "
+            ]
+    }
 }

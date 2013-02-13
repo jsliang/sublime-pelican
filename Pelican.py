@@ -12,19 +12,16 @@ def strDateNow():
     now = datetime.datetime.now()
     return datetime.datetime.strftime(now, "%Y-%m-%d %H:%M:%S")
 
-def slugify(origin_str):
+def slugify(value):
     """
     Normalizes string, converts to lowercase, removes non-alpha characters,
     and converts spaces to hyphens.
 
     Took from django sources.
     """
-    origin_str = re.sub('[^\w\s-]', '', origin_str).strip().lower()
-    origin_str = re.sub('[-\s]+', '-', origin_str)
-    # we want only ASCII chars
-    origin_str = origin_str.encode('ascii', 'ignore')
-    # but Pelican should generally use only unicode
-    return origin_str.decode('ascii')
+    value = re.sub('[^\w\s-]', '', value).strip().lower()
+    value = re.sub('[-\s]+', '-', value)
+    return value
 
 class PelicanTools():
     _singleton_instance = None

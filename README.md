@@ -35,6 +35,8 @@ A plugin for [Pelican](http://getpelican.com/) integration to [Sublime Text 2](h
 
 * Build system integration
 * Auto-completions for categories / tags
+* Customizable article metada template
+  - Smarter metadata insertion
 * More flexible **filepath_filter**: automatically retrieve the value of `INPUTDIR` variable from Pelican directory's `Makefile`
 
 ## License

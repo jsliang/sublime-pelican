@@ -40,23 +40,22 @@ class PelicanTools():
             string = string.replace('\n', '\r')
         return string
 
-    def load_article_metadata_template(self, view):
+    def load_article_metadata_template_lines(self, view, meta_type = None):
+        if meta_type is None:
+            meta_type = self.detect_article_type(view)
+
         article_metadata_template = self.load_setting(view, "article_metadata_template", {})
         if not article_metadata_template or len(article_metadata_template) < 1:
             return
-        for key, value in article_metadata_template.iteritems():
-            article_metadata_template[key] = self.normalize_line_endings(view, "\n".join(value))
 
-        return article_metadata_template
+        return article_metadata_template[meta_type]
 
-    def load_article_metadata_template_str(self, view):
-        article_metadata_template = self.load_article_metadata_template()
-        if not article_metadata_template or len(article_metadata_template) < 1:
-            return
-        for key, value in article_metadata_template.iteritems():
-            article_metadata_template[key] = self.normalize_line_endings(view, "\n".join(value))
+    def load_article_metadata_template_str(self, view, meta_type = None):
+        if meta_type is None:
+            meta_type = self.detect_article_type(view)
 
-        return article_metadata_template
+        article_metadata_template = self.load_article_metadata_template_lines(view, meta_type)
+        return self.normalize_line_endings(view, "\n".join(article_metadata_template))
 
     def detect_article_type(self, view):
         if view.find("^:\w+:", 0):
@@ -114,40 +113,33 @@ class PelicanAutogenSlug(sublime_plugin.EventListener):
         if not re.search(filepath_filter, view.file_name()):
             return
 
-        if view.find(':?slug:\s*\w+', 0, sublime.IGNORECASE) > -1:
-            force_slug_regeneration_on_save = pelican_tools.load_setting(view, "force_slug_regeneration_on_save", False)
-            if not force_slug_regeneration_on_save:
-                return
+        slug_region = view.find(':?slug:\s*.+', 0, sublime.IGNORECASE)
+        if slug_region:
+            slug_line = view.substr(view.line(slug_region.begin()))
+            regex = re.compile(":?slug:(.*)",re.IGNORECASE)
+            find_all = regex.findall(slug_line)
+            if len(find_all) > 0:
+                slug_str = find_all[0].strip()
+
+                force_slug_regeneration_on_save = pelican_tools.load_setting(view, "force_slug_regeneration_on_save", False)
+                if len(slug_str) > 0 and not force_slug_regeneration_on_save:
+                    return
+
+                edit = view.begin_edit()
+                view.replace(edit, view.full_line(slug_region.begin()), "")
+                view.end_edit(edit)
 
         view.run_command('pelican_generate_slug' )
 
 class PelicanNewMarkdownCommand(sublime_plugin.TextCommand):
     def run(self, edit):
-        pelican_tools = PelicanTools()
-        article_metadata_template = pelican_tools.load_article_metadata_template(self.view)
-        if not article_metadata_template:
-            return
-
         new_view = self.view.window().new_file()
-        new_view.insert(edit, 0, article_metadata_template["md"] % {"date": strDateNow()})
+        new_view.run_command('pelican_insert_metadata', {"meta_type": "md"})
 
 class PelicanNewRestructuredtextCommand(sublime_plugin.TextCommand):
     def run(self, edit):
-        pelican_tools = PelicanTools()
-        article_metadata_template = pelican_tools.load_article_metadata_template(self.view)
-        if not article_metadata_template:
-            return
-
         new_view = self.view.window().new_file()
-        new_view.insert(edit, 0, article_metadata_template["rst"] % {"date": strDateNow()})
-
-#class PelicanInsertMarkdownCommand(sublime_plugin.TextCommand):
-#    def run(self, edit):
-#        self.view.run_command('pelican_parse_and_apply_metadata', {"meta_type": "md"})
-
-#class PelicanInsertRestructuredtextCommand(sublime_plugin.TextCommand):
-#    def run(self, edit):
-#        self.view.run_command('pelican_parse_and_apply_metadata', {"meta_type": "rst"})
+        new_view.run_command('pelican_insert_metadata', {"meta_type": "rst"})
 
 class PelicanSelectMetadataCommand(sublime_plugin.TextCommand):
     def run(self, edit):
@@ -184,9 +176,8 @@ class PelicanInsertMetadataCommand(sublime_plugin.TextCommand):
             else: # "title: ..."
                 meta_type = "md"
 
-        article_metadata_template = pelican_tools.load_article_metadata_template(self.view)
         article_metadata_template_keys = []
-        article_metadata_template_lines = [x.strip() for x in article_metadata_template[meta_type].split("\n")]
+        article_metadata_template_lines = pelican_tools.load_article_metadata_template_lines(self.view)
         for article_metadata_template_line in article_metadata_template_lines:
             regex = re.compile(":?(\w+):")
             find_all = regex.findall(article_metadata_template_line)
@@ -207,6 +198,11 @@ class PelicanInsertMetadataCommand(sublime_plugin.TextCommand):
                 find_all = regex.findall(metadata_str)
                 if len(find_all) > 0:
                     (key, value) = find_all[0]
+                    if not key in metadata:
+                        new_meta = "%s: %s" % (key, value)
+                        if meta_type is "rst":
+                            new_meta = ":" + new_meta
+                        article_metadata_template_lines.append(new_meta)
                     metadata[key] = value
 
             old_metadata_begin = self.view.sel()[0].begin()
@@ -216,7 +212,8 @@ class PelicanInsertMetadataCommand(sublime_plugin.TextCommand):
         if metadata["date"] is "":
             metadata["date"] = strDateNow()
 
-        article_metadata_str = article_metadata_template[meta_type] % metadata
+        article_metadata_template = pelican_tools.normalize_line_endings(self.view, "\n".join(article_metadata_template_lines))
+        article_metadata_str = article_metadata_template % metadata
         article_metadata_str = article_metadata_str + "\n"
         if len(self.view.sel()) > 0:
             self.view.replace(edit, old_metadata_region, article_metadata_str)

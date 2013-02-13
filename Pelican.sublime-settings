@@ -17,6 +17,7 @@
         "md":
             [
                 "title: %(title)s",
+                "slug: %(slug)s",
                 "date: %(date)s",
                 "tags: %(tags)s",
                 "category: %(category)s",
@@ -29,6 +30,7 @@
         "rst":
             [
                 ":title: %(title)s",
+                ":slug: %(slug)s",
                 ":date: %(date)s",
                 ":tags: %(tags)s",
                 ":category: %(category)s",

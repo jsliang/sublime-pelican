@@ -2,34 +2,38 @@
 
 A plugin for [Pelican](http://getpelican.com/) integration to [Sublime Text 2](http://www.sublimetext.com/2).
 
+The plugin prepares metadata fields for you, with the ability to fill in date and slug fields automatically.
+
 ## Usage
 
 *   Type `Pelican` in Command Palette to view a list of available commands.
 *   Right click on a file being edit, and access the related commands under the **Pelican** item.
 
-## Features
+### SublimePelican Commands
 
-*   Smart article metadata generation
+*   Smart metadata fields generation
 
-    -   Prepare metadata fields for you when you create a new article
+    -   **Pelican: New Article (Markdown)** and **Pelican: New Article (reStructuredText)**
 
-        Commands available from the Command Palette as **Pelican: New Article (Markdown)** and **Pelican: New Article (reStructuredText)**
+        These commands prepare metadata fields for you when you create a new article.
 
         Metadata are generated according to your metadata template.
-        Refer to [Settings](#settings) for instructions on metadata template customization.
+        Refer to the [customizable metadata template](#customizable-metadata-template) section for instructions on metadata template customization.
 
-    -   Insert metadata field to current article
+    -   **Pelican: Insert Metadata**
 
-        Command available from the Command Palette as  **Pelican: Insert Metadata**
+        This command inserts metadata field to current article
 
         Metadata fields are inserted in the same order as your metadata template.
         Fields not listed in the metadata template are preserved too.
 
-    -   **Automatically generate article date** on metadata creation/insertion
-        -   Command available from the Command Palette as **Pelican: Update Article Date**
+    -   **Pelican: Update Article Date**
 
-    -   **Automatically generate article slug** from article title on save or on title change
-        -   also available from the Command Palette as **Pelican: Update Slug using Title**
+        This command updates the date metadata field to current date and time.
+
+    -   **Pelican: Update Slug using Title**
+
+        This command generates the slug field from article title.
 
 *   Customizable metadata template
 
@@ -40,7 +44,7 @@ For the latest information on what SublimePelican settings are available, select
 Please do NOT edit the settings in "Settings - Default" as changes will be lost when SublimePelican is updated.
 Instead, customize your settings in Preferences > Package Settings > Pelican > Settings - User.
 
-### Smart article metadata generation
+### Smart metadata fields generation
 
 #### Slug generation
 
@@ -67,14 +71,7 @@ Instead, customize your settings in Preferences > Package Settings > Pelican > S
 
     Default value: `"save"`
 
-#### Others
-
-*   **filepath_filter**
-
-    Filename filter for Pelican articles, written in a Python regular expression.
-    By default, only Markdown/reStructuredText files under `content/` directory are deemed as Pelican article files.
-
-    Default value: `"content/.*\\.(md|markdown|mkd|rst)$"`
+### Customizable metadata template
 
 *   **article_metadata_template**
 
@@ -111,6 +108,15 @@ Instead, customize your settings in Preferences > Package Settings > Pelican > S
         ]
 }
 ```
+
+#### Others
+
+*   **filepath_filter**
+
+    Filename filter for Pelican articles, written in a Python regular expression.
+    By default, only Markdown/reStructuredText files under `content/` directory are deemed as Pelican article files.
+
+    Default value: `"content/.*\\.(md|markdown|mkd|rst)$"`
 
 
 ## TODOs

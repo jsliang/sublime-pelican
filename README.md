@@ -111,7 +111,7 @@ Instead, customize your settings in Preferences > Package Settings > Pelican > S
 }
 ```
 
-#### Others
+### Others
 
 *   **filepath_filter**
 

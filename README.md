@@ -25,13 +25,6 @@ Instead, customize your settings in Preferences > Package Settings > Pelican > S
 
 #### Slug generation
 
-*   **generate_slug_from_title**
-    -   Set to "title_change" to generate slug when article title changes
-    -   Set to "save" to generate slug on save
-    -   Set to "none" to disable slug generation
-
-    Default value: `save`
-
 *   **force_slug_regeneration**
 
     By default, slug is not automatically generated if a slug has been defined in the article.
@@ -39,11 +32,26 @@ Instead, customize your settings in Preferences > Package Settings > Pelican > S
 
     Default value: `false`
 
+*   **generate_slug_from_title**
+
+    -   Set to `"none"` to disable slug generation
+
+    -   Set to `"title_change"` to generate slug when article title changes
+
+        Please note that, when set to `"title_change"`, slug will be regenerated everytime you type in the title line, even if `force_slug_regeneration` is set to `false`.
+
+    -   Set to `"save"` to generate slug on save
+
+        To prevent unwanted slug change, slug is not automatically generated if a slug has been defined in the article by default.
+        If you want to force slug regeneration on each save, you have to set `force_slug_regeneration` to `true`.
+
+    Default value: `"save"`
+
 #### Others
 
 *   **filepath_filter**
 
-    Filename filter for Pelican articles, written in Python regex.
+    Filename filter for Pelican articles, written in a Python regular expression.
     By default, only Markdown/reStructuredText files under `content/` directory are deemed as Pelican article files.
 
     Default value: `"content/.*\\.(md|markdown|mkd|rst)$"`

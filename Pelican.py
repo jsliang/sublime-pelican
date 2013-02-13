@@ -49,6 +49,20 @@ class PelicanTools():
 
         return article_metadata_template
 
+    def load_article_metadata_template_str(self, view):
+        article_metadata_template = self.load_article_metadata_template()
+        if not article_metadata_template or len(article_metadata_template) < 1:
+            return
+        for key, value in article_metadata_template.iteritems():
+            article_metadata_template[key] = self.normalize_line_endings(view, "\n".join(value))
+
+        return article_metadata_template
+
+    def detect_article_type(self, view):
+        if view.find("^:\w+:", 0):
+            return "rst"
+        return "md"
+
 class PelicanGenerateSlugCommand(sublime_plugin.TextCommand):
     def slugify(self, value):
         """
@@ -82,10 +96,8 @@ class PelicanGenerateSlugCommand(sublime_plugin.TextCommand):
 
             slug = self.slugify(title_str)
 
-            if re.search(":title:", orig_title_str, re.IGNORECASE):
-                meta_type = "rst"
-            else: # "title: ..."
-                meta_type = "md"
+            pelican_tools = PelicanTools()
+            meta_type = pelican_tools.detect_article_type(self.view)
 
             slug_insert_position = title_region.end()
             self.view.insert(edit, slug_insert_position, pelican_slug_template[meta_type] % slug)
@@ -93,17 +105,17 @@ class PelicanGenerateSlugCommand(sublime_plugin.TextCommand):
 
 class PelicanAutogenSlug(sublime_plugin.EventListener):
     def on_pre_save(self, view):
-        pelican_setting = PelicanTools()
-        auto_generate_slug_on_save = pelican_setting.load_setting(view, "auto_generate_slug_on_save", True)
+        pelican_tools = PelicanTools()
+        auto_generate_slug_on_save = pelican_tools.load_setting(view, "auto_generate_slug_on_save", True)
         if not auto_generate_slug_on_save:
             return
 
-        filepath_filter = pelican_setting.load_setting(view, "filepath_filter", '*')
+        filepath_filter = pelican_tools.load_setting(view, "filepath_filter", '*')
         if not re.search(filepath_filter, view.file_name()):
             return
 
         if view.find(':?slug:\s*\w+', 0, sublime.IGNORECASE) > -1:
-            force_slug_regeneration_on_save = pelican_setting.load_setting(view, "force_slug_regeneration_on_save", False)
+            force_slug_regeneration_on_save = pelican_tools.load_setting(view, "force_slug_regeneration_on_save", False)
             if not force_slug_regeneration_on_save:
                 return
 
@@ -111,8 +123,8 @@ class PelicanAutogenSlug(sublime_plugin.EventListener):
 
 class PelicanNewMarkdownCommand(sublime_plugin.TextCommand):
     def run(self, edit):
-        pelican_setting = PelicanTools()
-        article_metadata_template = pelican_setting.load_article_metadata_template(self.view)
+        pelican_tools = PelicanTools()
+        article_metadata_template = pelican_tools.load_article_metadata_template(self.view)
         if not article_metadata_template:
             return
 
@@ -121,40 +133,94 @@ class PelicanNewMarkdownCommand(sublime_plugin.TextCommand):
 
 class PelicanNewRestructuredtextCommand(sublime_plugin.TextCommand):
     def run(self, edit):
-        pelican_setting = PelicanTools()
-        article_metadata_template = pelican_setting.load_article_metadata_template(self.view)
+        pelican_tools = PelicanTools()
+        article_metadata_template = pelican_tools.load_article_metadata_template(self.view)
         if not article_metadata_template:
             return
 
         new_view = self.view.window().new_file()
         new_view.insert(edit, 0, article_metadata_template["rst"] % {"date": strDateNow()})
 
-class PelicanInsertMarkdownCommand(sublime_plugin.TextCommand):
-    def run(self, edit):
-        pelican_setting = PelicanTools()
-        article_metadata_template = pelican_setting.load_article_metadata_template(self.view)
-        if not article_metadata_template:
-            return
+#class PelicanInsertMarkdownCommand(sublime_plugin.TextCommand):
+#    def run(self, edit):
+#        self.view.run_command('pelican_parse_and_apply_metadata', {"meta_type": "md"})
 
-        self.view.insert(edit, 0, article_metadata_template["md"] % {"date": strDateNow()})
-
-class PelicanInsertRestructuredtextCommand(sublime_plugin.TextCommand):
-    def run(self, edit):
-        pelican_setting = PelicanTools()
-        article_metadata_template = pelican_setting.load_article_metadata_template(self.view)
-        if not article_metadata_template:
-            return
-
-        self.view.insert(edit, 0, article_metadata_template["rst"] % {"date": strDateNow()})
+#class PelicanInsertRestructuredtextCommand(sublime_plugin.TextCommand):
+#    def run(self, edit):
+#        self.view.run_command('pelican_parse_and_apply_metadata', {"meta_type": "rst"})
 
 class PelicanSelectMetadataCommand(sublime_plugin.TextCommand):
     def run(self, edit):
         self.view.sel().clear()
 
-        metadata_regions = self.view.find_all(':?\w+:.+\s*', 0)
+        metadata_regions = self.view.find_all(':?\w+:', 0)
 
-        for region in metadata_regions:
+        for i in range(0, len(metadata_regions)):
+            region = metadata_regions[i]
+
+            # select consecutive metadata lines at the beginning of the file
+            if i > 0:
+                prev_region = metadata_regions[i-1]
+                prev_line_no, __ = self.view.rowcol(prev_region.begin())
+                this_line_no, __ = self.view.rowcol(region.begin())
+
+                if this_line_no - prev_line_no > 1:
+                    break
+
             line_regions = self.view.lines(region)
             for line_region in line_regions:
                 if not line_region.empty():
                     self.view.sel().add(line_region)
+
+        self.view.show(self.view.sel())
+
+class PelicanInsertMetadataCommand(sublime_plugin.TextCommand):
+    def run(self, edit, meta_type = None):
+        pelican_tools = PelicanTools()
+
+        if meta_type is None:
+            if self.view.find("^:\w+:", 0):
+                meta_type = "rst"
+            else: # "title: ..."
+                meta_type = "md"
+
+        article_metadata_template = pelican_tools.load_article_metadata_template(self.view)
+        article_metadata_template_keys = []
+        article_metadata_template_lines = [x.strip() for x in article_metadata_template[meta_type].split("\n")]
+        for article_metadata_template_line in article_metadata_template_lines:
+            regex = re.compile(":?(\w+):")
+            find_all = regex.findall(article_metadata_template_line)
+            if len(find_all) > 0:
+                metadata_key = regex.findall(article_metadata_template_line)[0]
+                if not metadata_key in article_metadata_template_keys:
+                    article_metadata_template_keys.append(metadata_key)
+
+        metadata = {}
+        for article_metadata_template_key in article_metadata_template_keys:
+            metadata[article_metadata_template_key] = ""
+
+        self.view.run_command('pelican_select_metadata')
+        if len(self.view.sel()) > 0:
+            for sel in self.view.sel():
+                metadata_str = self.view.substr(sel)
+                regex = re.compile(":?(\w+):(.+)")
+                find_all = regex.findall(metadata_str)
+                if len(find_all) > 0:
+                    (key, value) = find_all[0]
+                    metadata[key] = value
+
+            old_metadata_begin = self.view.sel()[0].begin()
+            old_metadata_end = self.view.sel()[len(self.view.sel()) - 1].end()
+            old_metadata_region = sublime.Region(old_metadata_begin, old_metadata_end)
+
+        if metadata["date"] is "":
+            metadata["date"] = strDateNow()
+
+        article_metadata_str = article_metadata_template[meta_type] % metadata
+        article_metadata_str = article_metadata_str + "\n"
+        if len(self.view.sel()) > 0:
+            self.view.replace(edit, old_metadata_region, article_metadata_str)
+        else:
+            self.view.insert(edit, 0, article_metadata_str)
+
+        self.view.run_command('pelican_select_metadata')

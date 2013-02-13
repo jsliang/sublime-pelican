@@ -1,0 +1,226 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset='utf-8'>
+    <meta http-equiv="X-UA-Compatible" content="chrome=1">
+    <meta name="viewport" content="width=640" />
+
+    <link rel="stylesheet" href="stylesheets/core.css" media="screen"/>
+    <link rel="stylesheet" href="stylesheets/mobile.css" media="handheld, only screen and (max-device-width:640px)"/>
+    <link rel="stylesheet" href="stylesheets/pygment_trac.css"/>
+
+    <script type="text/javascript" src="javascripts/modernizr.js"></script>
+    <script type="text/javascript" src="https://ajax.googleapis.com/ajax/libs/jquery/1.7.1/jquery.min.js"></script>
+    <script type="text/javascript" src="javascripts/headsmart.min.js"></script>
+    <script type="text/javascript">
+      $(document).ready(function () {
+        $('#main_content').headsmart()
+      })
+    </script>
+    <title>SublimePelican by jsliang</title>
+  </head>
+
+  <body>
+    <a id="forkme_banner" href="https://github.com/jsliang/sublime-pelican">View on GitHub</a>
+    <div class="shell">
+
+      <header>
+        <span class="ribbon-outer">
+          <span class="ribbon-inner">
+            <h1>SublimePelican</h1>
+            <h2>A plugin for Pelican integration to Sublime Text 2.</h2>
+          </span>
+          <span class="left-tail"></span>
+          <span class="right-tail"></span>
+        </span>
+      </header>
+
+      <section id="downloads">
+        <span class="inner">
+          <a href="https://github.com/jsliang/sublime-pelican/zipball/master" class="zip"><em>download</em> .ZIP</a><a href="https://github.com/jsliang/sublime-pelican/tarball/master" class="tgz"><em>download</em> .TGZ</a>
+        </span>
+      </section>
+
+
+      <span class="banner-fix"></span>
+
+
+      <section id="main_content">
+        <h1>Sublime Plugin: SublimePelican</h1>
+
+<p>A plugin for <a href="http://getpelican.com/">Pelican</a> integration to <a href="http://www.sublimetext.com/2">Sublime Text 2</a>.</p>
+
+<p>The plugin prepares metadata fields for you, with the ability to fill in date and slug fields automatically.</p>
+
+<h2>Usage</h2>
+
+<ul>
+<li>  Type <code>Pelican</code> in Command Palette to view a list of available commands.</li>
+<li>  Right click on a file being edit, and access the related commands under the <strong>Pelican</strong> item.</li>
+</ul><h3>SublimePelican Commands</h3>
+
+<ul>
+<li>
+<p><strong>Pelican: New Article (Markdown)</strong> and <strong>Pelican: New Article (reStructuredText)</strong></p>
+
+<p>These commands open a new article and have metadata fields prepared for you.</p>
+
+<p>Metadata are generated according to your metadata template.
+Refer to <a href="#settings">Settings</a> &gt; <a href="#customizable-metadata-template">Customizable metadata template</a> for instructions on metadata template customization.</p>
+</li>
+<li>
+<p><strong>Pelican: Insert Metadata</strong></p>
+
+<p>This command inserts metadata field to current article</p>
+
+<p>Metadata fields are inserted in the same order as your metadata template.
+Fields not listed in the metadata template are preserved too.</p>
+</li>
+<li>
+<p><strong>Pelican: Update Article Date</strong></p>
+
+<p>This command updates the date metadata field to current date and time.</p>
+</li>
+<li>
+<p><strong>Pelican: Update Slug using Title</strong></p>
+
+<p>This command generates the slug field from article title.</p>
+</li>
+</ul><h2>Settings</h2>
+
+<p>For the latest information on what SublimePelican settings are available, select the menu item Preferences &gt; Package Settings &gt; Pelican &gt; Settings - Default.</p>
+
+<p>Please do NOT edit the settings in "Settings - Default" as changes will be lost when SublimePelican is updated.
+Instead, customize your settings in Preferences &gt; Package Settings &gt; Pelican &gt; Settings - User.</p>
+
+<h3>Smart metadata fields generation</h3>
+
+<h4>Slug generation</h4>
+
+<ul>
+<li>
+<p><strong>force_slug_regeneration</strong></p>
+
+<p>By default, slug is not automatically generated if a slug has been defined in the article.
+Set to <code>true</code> to force slug regeneration.</p>
+
+<p>Default value: <code>false</code></p>
+</li>
+<li>
+<p><strong>generate_slug_from_title</strong></p>
+
+<ul>
+<li>  Set to <code>"none"</code> to disable slug generation</li>
+<li>
+<p>Set to <code>"title_change"</code> to generate slug when article title changes</p>
+
+<p>Note that when set to <code>"title_change"</code>, slug will be regenerated everytime you type in the title line, even if <code>force_slug_regeneration</code> is set to <code>false</code>.</p>
+</li>
+<li>
+<p>Set to <code>"save"</code> to generate slug on save</p>
+
+<p>By default, slug is not automatically generated if a slug has been defined in the article.
+This is to prevent unwanted slug change.
+If you want to force slug regeneration on each save, you have to set <code>force_slug_regeneration</code> to <code>true</code>.</p>
+</li>
+</ul>
+<p>Default value: <code>"save"</code></p>
+</li>
+</ul><h3>Customizable metadata template</h3>
+
+<ul>
+<li>
+<p><strong>article_metadata_template</strong></p>
+
+<p>Metadata template for Markdown &amp; reStructuredText articles.</p>
+
+<p>Default value:</p>
+</li>
+</ul><pre><code>{
+    // Metadata template for Markdown articles
+    "md":
+        [
+            "title: %(title)s",
+            "slug: %(slug)s",
+            "date: %(date)s",
+            "tags: %(tags)s",
+            "category: %(category)s",
+            "author: %(author)s",
+            "lang: %(lang)s",
+            "summary: %(summary)s"
+        ],
+
+    // Metadata template for reStructuredText articles
+    "rst":
+        [
+            ":title: %(title)s",
+            ":slug: %(slug)s",
+            ":date: %(date)s",
+            ":tags: %(tags)s",
+            ":category: %(category)s",
+            ":author: %(author)s",
+            ":lang: %(lang)s",
+            ":summary: %(summary)s"
+        ]
+}
+</code></pre>
+
+<h3>Others</h3>
+
+<ul>
+<li>
+<p><strong>filepath_filter</strong></p>
+
+<p>Filename filter for Pelican articles, written in a Python regular expression.
+By default, only Markdown/reStructuredText files under <code>content/</code> directory are deemed as Pelican article files.</p>
+
+<p>Default value: <code>"content/.*\\.(md|markdown|mkd|rst)$"</code></p>
+</li>
+</ul><h2>TODOs</h2>
+
+<ul>
+<li>Build system integration</li>
+<li>Auto-completions for categories / tags</li>
+<li>More flexible <strong>filepath_filter</strong>: automatically retrieve the value of <code>INPUTDIR</code> variable from Pelican directory's <code>Makefile</code>
+</li>
+<li>Slug generation for non-ascii characters (unidecode?)</li>
+</ul><h2>License</h2>
+
+<p>SublimePelican is licensed under the MIT license.</p>
+
+<p>Copyright (c) 2013, Jui-Shan Liang &lt;<a href="mailto:jenny@jsliang.com">jenny@jsliang.com</a>&gt;</p>
+
+<p>Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated documentation files (the "Software"), to deal in the Software without restriction, including without limitation the rights to use, copy, modify, merge, publish, distribute, sublicense, and/or sell copies of the Software, and to permit persons to whom the Software is furnished to do so, subject to the following conditions:</p>
+
+<p>The above copyright notice and this permission notice shall be included in all copies or substantial portions of the Software.</p>
+
+<p>THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.</p>
+      </section>
+
+      <footer>
+        <span class="ribbon-outer">
+          <span class="ribbon-inner">
+            <p>this project by <a href="https://github.com/jsliang">jsliang</a> can be found on <a href="https://github.com/jsliang/sublime-pelican">GitHub</a></p>
+          </span>
+          <span class="left-tail"></span>
+          <span class="right-tail"></span>
+        </span>
+        <p>Generated with <a href="http://pages.github.com">GitHub Pages</a> using Merlot</p>
+        <span class="octocat"></span>
+      </footer>
+
+    </div>
+
+              <script type="text/javascript">
+            var gaJsHost = (("https:" == document.location.protocol) ? "https://ssl." : "http://www.");
+            document.write(unescape("%3Cscript src='" + gaJsHost + "google-analytics.com/ga.js' type='text/javascript'%3E%3C/script%3E"));
+          </script>
+          <script type="text/javascript">
+            try {
+              var pageTracker = _gat._getTracker("UA-37740364-1");
+            pageTracker._trackPageview();
+            } catch(err) {}
+          </script>
+
+  </body>
+</html>

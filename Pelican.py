@@ -12,6 +12,20 @@ def strDateNow():
     now = datetime.datetime.now()
     return datetime.datetime.strftime(now, "%Y-%m-%d %H:%M:%S")
 
+def slugify(origin_str):
+    """
+    Normalizes string, converts to lowercase, removes non-alpha characters,
+    and converts spaces to hyphens.
+
+    Took from django sources.
+    """
+    origin_str = re.sub('[^\w\s-]', '', origin_str).strip().lower()
+    origin_str = re.sub('[-\s]+', '-', origin_str)
+    # we want only ASCII chars
+    origin_str = origin_str.encode('ascii', 'ignore')
+    # but Pelican should generally use only unicode
+    return origin_str.decode('ascii')
+
 class PelicanTools():
     _singleton_instance = None
 
@@ -62,19 +76,6 @@ class PelicanTools():
             return "rst"
         return "md"
 
-    def slugify(self, value):
-        """
-        Normalizes string, converts to lowercase, removes non-alpha characters,
-        and converts spaces to hyphens.
-
-        Took from django sources.
-        """
-        value = re.sub('[^\w\s-]', '', value).strip().lower()
-        value = re.sub('[-\s]+', '-', value)
-        # we want only ASCII chars
-        value = value.encode('ascii', 'ignore')
-        # but Pelican should generally use only unicode
-        return value.decode('ascii')
 
 class PelicanGenerateSlugCommand(sublime_plugin.TextCommand):
     def run(self, edit):
@@ -95,7 +96,7 @@ class PelicanGenerateSlugCommand(sublime_plugin.TextCommand):
 
             pelican_tools = PelicanTools()
 
-            slug = pelican_tools.slugify(title_str)
+            slug = slugify(title_str)
 
             meta_type = pelican_tools.detect_article_type(self.view)
 

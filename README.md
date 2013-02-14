@@ -12,14 +12,14 @@ Support for the [Package Control plugin](http://wbond.net/sublime_packages/packa
 ### Installation without Git
 
 1.  Download the [latest source from GitHub](https://nodeload.github.com/jsliang/sublime-pelican/zip/master).
-2.  Copy the `sublime-pelican-master` folder to your **Sublime Text 2 "Packages" directory**.
+2.  Copy the `sublime-pelican-master` folder to your Sublime Text 2 Packages directory.
 3.  Renamed the `sublime-pelican-master` folder to `Pelican`.
 
-If you're not sure where your **Sublime Text 2 "Packages" directory** is, open Sublime Text 2 and select menu item **Preference** > **Browse Packages...**
+If you're not sure where your Sublime Text 2 Packages directory is, open Sublime Text 2 and select menu item **Preference** > **Browse Packages...**
 
 ### Installation with Git
 
-Clone this repository into your **Sublime Text 2 "Packages" directory**:
+Clone this repository into your Sublime Text 2 Packages directory:
 
     git clone https://github.com/jsliang/sublime-pelican.git
     mv sublime-pelican Pelican
@@ -28,7 +28,7 @@ which is equivalent to:
 
     git clone https://github.com/jsliang/sublime-pelican.git Pelican
 
-If you're not sure where your **Sublime Text 2 "Packages" directory** is, open Sublime Text 2 and select menu item **Preference** > **Browse Packages...**
+If you're not sure where your Sublime Text 2 Packages directory is, open Sublime Text 2 and select menu item **Preference** > **Browse Packages...**
 
 ## Usage
 

@@ -41,12 +41,9 @@ class PelicanAutogenSlug(sublime_plugin.EventListener):
             if len(find_all) > 0:
                 slug_str = find_all[0].strip()
 
-                force_slug_regeneration = PelicanPluginTools.load_setting(view, "force_slug_regeneration", False)
-                if len(slug_str) > 0 and not force_slug_regeneration:
-                    return
-
-                edit = view.begin_edit()
-                view.replace(edit, view.full_line(slug_region.begin()), "")
-                view.end_edit(edit)
+                if len(slug_str) > 0:
+                    force_slug_regeneration = PelicanPluginTools.load_setting(view, "force_slug_regeneration", False)
+                    if not force_slug_regeneration:
+                        return
 
         view.run_command('pelican_generate_slug')

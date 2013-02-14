@@ -1,15 +1,50 @@
 # Sublime Plugin: SublimePelican
 
-A plugin for [Pelican](http://getpelican.com/) integration to [Sublime Text 2](http://www.sublimetext.com/2).
+**SublimePelican** is a plugin for [Pelican](http://getpelican.com/) integration to [Sublime Text 2](http://www.sublimetext.com/2).
 
 The plugin prepares metadata fields for you, with the ability to fill in date and slug fields automatically.
 
+## Installation
+
+You can install the SublimePelican plugin with or without Git.
+Support for the [Package Control plugin](http://wbond.net/sublime_packages/package_control) is pending pull request.
+
+### Installation without Git
+
+1.  Download the [latest source from GitHub](https://nodeload.github.com/jsliang/sublime-pelican/zip/master).
+2.  Copy the `sublime-pelican-master` folder to your **Sublime Text 2 "Packages" directory**.
+3.  Renamed the `sublime-pelican-master` folder to `Pelican`.
+
+The **Sublime Text 2 "Packages" directory** is located at:
+
+-   OS X: `~/Library/Application Support/Sublime Text 2/Packages/`
+-   Linux: `~/.config/sublime-text-2/Packages/`
+-   Windows: `%APPDATA%/Sublime Text 2/Packages/`
+
+### Installation with Git
+
+Clone this repository into your **Sublime Text 2 "Packages" directory**:
+
+    git clone https://github.com/jsliang/sublime-pelican.git Pelican
+
+The **Sublime Text 2 "Packages" directory** is located at:
+
+-   OS X: `~/Library/Application Support/Sublime Text 2/Packages/`
+-   Linux: `~/.config/sublime-text-2/Packages/`
+-   Windows: `%APPDATA%/Sublime Text 2/Packages/`
+
 ## Usage
 
-*   Type `Pelican` in Command Palette to view a list of available commands.
-*   Right click on a file being edit, and access the related commands under the **Pelican** item.
+### Access commands from Command Palette
 
-### SublimePelican Commands
+1.  After installation, bring up the Command Palette (OS X: `Command+Shift+P` on OS X, Linux/Windows: `Control+Shift+P`).
+2.  Type `Pelican` in Command Palette to view a list of available commands.
+
+### Access commands from Context Menu
+
+Right click on a file being edit, and access the commands under the **Pelican** item.
+
+## SublimePelican Commands
 
 *   **Pelican: New Article (Markdown)** and **Pelican: New Article (reStructuredText)**
 

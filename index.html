@@ -172,7 +172,9 @@ If you want to force slug regeneration on each save, you have to set <code>force
 <p><strong>filepath_filter</strong></p>
 
 <p>Filename filter for Pelican articles, written in a Python regular expression.
-By default, only Markdown/reStructuredText files under <code>content/</code> directory are deemed as Pelican article files.</p>
+This is to prevent automatic slug generation annoyly effects other Markdown/reStrcturedText files that are not Pelican articles.</p>
+
+<p>By default, only Markdown/reStructuredText files under <code>content/</code> directory are deemed as Pelican article files.</p>
 
 <p>Default value: <code>"content/.*\\.(md|markdown|mkd|rst)$"</code></p>
 </li>

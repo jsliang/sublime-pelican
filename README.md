@@ -20,7 +20,7 @@ The plugin prepares metadata fields for you, with the ability to fill in date an
 
 *   **Pelican: Insert Metadata**
 
-    This command inserts metadata field to current article
+    This command inserts metadata field to current article.
 
     Metadata fields are inserted in the same order as your metadata template.
     Fields not listed in the metadata template are preserved too.
@@ -110,6 +110,8 @@ Instead, customize your settings in Preferences > Package Settings > Pelican > S
 *   **filepath_filter**
 
     Filename filter for Pelican articles, written in a Python regular expression.
+    This is to prevent automatic slug generation annoyly effects other Markdown/reStrcturedText files that are not Pelican articles.
+
     By default, only Markdown/reStructuredText files under `content/` directory are deemed as Pelican article files.
 
     Default value: `"content/.*\\.(md|markdown|mkd|rst)$"`

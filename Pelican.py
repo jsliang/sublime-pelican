@@ -30,10 +30,6 @@ class PelicanUpdateDateCommand(sublime_plugin.TextCommand):
 
 class PelicanGenerateSlugCommand(sublime_plugin.TextCommand):
     def run(self, edit):
-        slug_region = self.view.find(':?slug:.+\s*', 0, sublime.IGNORECASE)
-        if slug_region:
-            self.view.erase(edit, slug_region)
-
         title_region = self.view.find(':?title:.+\s*', 0, sublime.IGNORECASE)
         if title_region:
             orig_title_str = self.view.substr(title_region).strip()
@@ -49,8 +45,13 @@ class PelicanGenerateSlugCommand(sublime_plugin.TextCommand):
 
             meta_type = PelicanPluginTools.detect_article_type(self.view)
 
-            slug_insert_position = title_region.end()
-            self.view.insert(edit, slug_insert_position, PelicanPluginTools.pelican_slug_template[meta_type] % slug)
+            slug_region = self.view.find(':?slug:.+\s*', 0, sublime.IGNORECASE)
+            if slug_region:
+                self.view.replace(edit, slug_region, PelicanPluginTools.pelican_slug_template[meta_type] % slug)
+            else:
+                slug_insert_position = title_region.end()
+                self.view.insert(edit, slug_insert_position, PelicanPluginTools.pelican_slug_template[meta_type] % slug)
+
 
 class PelicanNewMarkdownCommand(sublime_plugin.WindowCommand):
     def run(self):

@@ -48,16 +48,58 @@
       <section id="main_content">
         <h1>Sublime Plugin: SublimePelican</h1>
 
-<p>A plugin for <a href="http://getpelican.com/">Pelican</a> integration to <a href="http://www.sublimetext.com/2">Sublime Text 2</a>.</p>
+<p><strong>SublimePelican</strong> is a plugin for <a href="http://getpelican.com/">Pelican</a> integration to <a href="http://www.sublimetext.com/2">Sublime Text 2</a>.</p>
 
 <p>The plugin prepares metadata fields for you, with the ability to fill in date and slug fields automatically.</p>
 
-<h2>Usage</h2>
+<h2>Installation</h2>
+
+<p>You can install the SublimePelican plugin with or without Git.
+Support for the <a href="http://wbond.net/sublime_packages/package_control">Package Control plugin</a> is pending pull request.</p>
+
+<h3>Installation without Git</h3>
+
+<ol>
+<li> Download the <a href="https://nodeload.github.com/jsliang/sublime-pelican/zip/master">latest source from GitHub</a>.</li>
+<li> Copy the <code>sublime-pelican-master</code> folder to your <strong>Sublime Text 2 "Packages" directory</strong>.</li>
+<li> Renamed the <code>sublime-pelican-master</code> folder to <code>Pelican</code>.</li>
+</ol><p>The <strong>Sublime Text 2 "Packages" directory</strong> is located at:</p>
 
 <ul>
-<li>  Type <code>Pelican</code> in Command Palette to view a list of available commands.</li>
-<li>  Right click on a file being edit, and access the related commands under the <strong>Pelican</strong> item.</li>
-</ul><h3>SublimePelican Commands</h3>
+<li>  OS X: <code>~/Library/Application Support/Sublime Text 2/Packages/</code>
+</li>
+<li>  Linux: <code>~/.config/sublime-text-2/Packages/</code>
+</li>
+<li>  Windows: <code>%APPDATA%/Sublime Text 2/Packages/</code>
+</li>
+</ul><h3>Installation with Git</h3>
+
+<p>Clone this repository into your <strong>Sublime Text 2 "Packages" directory</strong>:</p>
+
+<pre><code>git clone https://github.com/jsliang/sublime-pelican.git Pelican
+</code></pre>
+
+<p>The <strong>Sublime Text 2 "Packages" directory</strong> is located at:</p>
+
+<ul>
+<li>  OS X: <code>~/Library/Application Support/Sublime Text 2/Packages/</code>
+</li>
+<li>  Linux: <code>~/.config/sublime-text-2/Packages/</code>
+</li>
+<li>  Windows: <code>%APPDATA%/Sublime Text 2/Packages/</code>
+</li>
+</ul><h2>Usage</h2>
+
+<h3>Access commands from Command Palette</h3>
+
+<ol>
+<li> After installation, bring up the Command Palette (OS X: <code>Command+Shift+P</code> on OS X, Linux/Windows: <code>Control+Shift+P</code>).</li>
+<li> Type <code>Pelican</code> in Command Palette to view a list of available commands.</li>
+</ol><h3>Access commands from Context Menu</h3>
+
+<p>Right click on a file being edit, and access the commands under the <strong>Pelican</strong> item.</p>
+
+<h2>SublimePelican Commands</h2>
 
 <ul>
 <li>

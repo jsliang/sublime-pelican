@@ -45,12 +45,13 @@ class PelicanGenerateSlugCommand(sublime_plugin.TextCommand):
 
             meta_type = PelicanPluginTools.detect_article_type(self.view)
 
+            pelican_slug_template = PelicanPluginTools.normalize_line_endings(self.view, PelicanPluginTools.pelican_slug_template[meta_type])
             slug_region = self.view.find(':?slug:.+\s*', 0, sublime.IGNORECASE)
             if slug_region:
-                self.view.replace(edit, slug_region, PelicanPluginTools.pelican_slug_template[meta_type] % slug)
+                self.view.replace(edit, slug_region, pelican_slug_template % slug)
             else:
                 slug_insert_position = title_region.end()
-                self.view.insert(edit, slug_insert_position, PelicanPluginTools.pelican_slug_template[meta_type] % slug)
+                self.view.insert(edit, slug_insert_position, pelican_slug_template % slug)
 
 
 class PelicanNewMarkdownCommand(sublime_plugin.WindowCommand):

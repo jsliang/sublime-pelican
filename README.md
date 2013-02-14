@@ -1,4 +1,4 @@
-# Sublime Plugin: SublimePelican
+# SublimePelican: Pelican integration to Sublime Text 2
 
 **SublimePelican** is a plugin for [Pelican](http://getpelican.com/) integration to [Sublime Text 2](http://www.sublimetext.com/2).
 

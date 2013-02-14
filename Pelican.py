@@ -160,14 +160,14 @@ class PelicanAutogenSlug(sublime_plugin.EventListener):
 
         view.run_command('pelican_generate_slug')
 
-class PelicanNewMarkdownCommand(sublime_plugin.TextCommand):
-    def run(self, edit):
-        new_view = self.view.window().new_file()
+class PelicanNewMarkdownCommand(sublime_plugin.WindowCommand):
+    def run(self):
+        new_view = self.window.new_file()
         new_view.run_command('pelican_insert_metadata', {"select_metadata": False, "meta_type": "md"})
 
-class PelicanNewRestructuredtextCommand(sublime_plugin.TextCommand):
-    def run(self, edit):
-        new_view = self.view.window().new_file()
+class PelicanNewRestructuredtextCommand(sublime_plugin.WindowCommand):
+    def run(self):
+        new_view = self.window.new_file()
         new_view.run_command('pelican_insert_metadata', {"select_metadata": False, "meta_type": "rst"})
 
 class PelicanSelectMetadataCommand(sublime_plugin.TextCommand):

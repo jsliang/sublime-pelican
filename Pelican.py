@@ -93,10 +93,7 @@ class PelicanSelectMetadataCommand(sublime_plugin.TextCommand):
 class PelicanInsertMetadataCommand(sublime_plugin.TextCommand):
     def run(self, edit, select_metadata = True, meta_type = None):
         if meta_type is None:
-            if self.view.find("^:\w+:", 0):
-                meta_type = "rst"
-            else: # "title: ..."
-                meta_type = "md"
+            meta_type = PelicanPluginTools.detect_article_type(self.view)
 
         article_metadata_template_keys = []
         article_metadata_template_lines = PelicanPluginTools.load_article_metadata_template_lines(self.view)

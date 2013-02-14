@@ -72,6 +72,11 @@ def load_article_metadata_template_str(view, meta_type = None):
     return normalize_line_endings(view, "\n".join(article_metadata_template))
 
 def detect_article_type(view):
+    if isPelicanArticle(view):
+        if re.search("rst", view.file_name()):
+            return "rst"
+        return "md"
+
     if view.find("^:\w+:", 0):
         return "rst"
     return "md"

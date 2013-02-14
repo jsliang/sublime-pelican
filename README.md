@@ -15,11 +15,7 @@ Support for the [Package Control plugin](http://wbond.net/sublime_packages/packa
 2.  Copy the `sublime-pelican-master` folder to your **Sublime Text 2 "Packages" directory**.
 3.  Renamed the `sublime-pelican-master` folder to `Pelican`.
 
-The **Sublime Text 2 "Packages" directory** is located at:
-
--   OS X: `~/Library/Application Support/Sublime Text 2/Packages/`
--   Linux: `~/.config/sublime-text-2/Packages/`
--   Windows: `%APPDATA%/Sublime Text 2/Packages/`
+If you're not sure where your **Sublime Text 2 "Packages" directory** is, open Sublime Text 2 and select menu item **Preference** > **Browse Packages...**
 
 ### Installation with Git
 
@@ -32,11 +28,7 @@ which is equivalent to:
 
     git clone https://github.com/jsliang/sublime-pelican.git Pelican
 
-The **Sublime Text 2 "Packages" directory** is located at:
-
--   OS X: `~/Library/Application Support/Sublime Text 2/Packages/`
--   Linux: `~/.config/sublime-text-2/Packages/`
--   Windows: `%APPDATA%/Sublime Text 2/Packages/`
+If you're not sure where your **Sublime Text 2 "Packages" directory** is, open Sublime Text 2 and select menu item **Preference** > **Browse Packages...**
 
 ## Usage
 
@@ -75,10 +67,10 @@ Right click on a file being edit, and access the commands under the **Pelican** 
 
 ## Settings
 
-For the latest information on what SublimePelican settings are available, select the menu item Preferences > Package Settings > Pelican > Settings - Default.
+For the latest information on what SublimePelican settings are available, select the menu item **Preferences** > **Package Settings** > **Pelican** > **Settings - Default**.
 
 DO NOT edit the settings in "Settings - Default" as changes will be lost when SublimePelican is updated.
-Instead, customize your settings in Preferences > Package Settings > Pelican > Settings - User.
+Instead, customize your settings in **Preferences** > **Package Settings** > **Pelican** > **Settings - User**.
 
 ### Smart metadata fields generation
 

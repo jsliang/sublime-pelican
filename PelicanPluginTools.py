@@ -25,9 +25,10 @@ def isPelicanArticle(view):
     if view.id() in pelican_article_views:
         return True
 
-    filepath_filter = load_setting(view, "filepath_filter", '*')
-    if re.search(filepath_filter, view.file_name()):
-        return True
+    if view.file_name():
+        filepath_filter = load_setting(view, "filepath_filter", '*')
+        if re.search(filepath_filter, view.file_name()):
+            return True
 
     return False
 
@@ -70,7 +71,7 @@ def load_article_metadata_template_str(view, meta_type = None):
     return normalize_line_endings(view, "\n".join(article_metadata_template))
 
 def detect_article_type(view):
-    if isPelicanArticle(view):
+    if isPelicanArticle(view) and view.file_name():
         if re.search("rst", view.file_name()):
             return "rst"
         return "md"

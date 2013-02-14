@@ -1,7 +1,37 @@
 import sublime, sublime_plugin
 import datetime
+import re
+
+pelican_slug_template = {
+    "md": "slug: %s\n",
+    "rst": ":slug: %s\n",
+}
 
 global_settings = sublime.load_settings("Pelican.sublime-settings")
+
+pelican_article_views = []
+
+def addPelicanArticle(view):
+    view_id = view.id()
+    if not view_id in pelican_article_views:
+        pelican_article_views.append(view_id)
+    print pelican_article_views
+
+def removePelicanArticle(view):
+    view_id = view.id()
+    if view_id in pelican_article_views:
+        pelican_article_views.remove(view_id)
+    print pelican_article_views
+
+def isPelicanArticle(view):
+    if view.id() in pelican_article_views:
+        return True
+
+    filepath_filter = load_setting(view, "filepath_filter", '*')
+    if re.search(filepath_filter, view.file_name()):
+        return True
+
+    return False
 
 def strDateNow():
     now = datetime.datetime.now()

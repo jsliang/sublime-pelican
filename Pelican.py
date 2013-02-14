@@ -52,6 +52,10 @@ class PelicanGenerateSlugCommand(sublime_plugin.TextCommand):
             slug_insert_position = title_region.end()
             self.view.insert(edit, slug_insert_position, PelicanPluginTools.pelican_slug_template[meta_type] % slug)
 
+class PelicanArticleClose(sublime_plugin.EventListener):
+    def on_close(self, view):
+        PelicanPluginTools.removePelicanArticle(view)
+
 class PelicanAutogenSlug(sublime_plugin.EventListener):
     def isInTitleLine(self, view):
         if len(view.sel()) > 0:
@@ -60,18 +64,12 @@ class PelicanAutogenSlug(sublime_plugin.EventListener):
                 return True
         return False
 
-    def isPelicanArticle(self, view):
-        filepath_filter = PelicanPluginTools.load_setting(view, "filepath_filter", '*')
-        if re.search(filepath_filter, view.file_name()):
-            return True
-        return False
-
     def on_modified(self, view):
         generate_slug_from_title = PelicanPluginTools.load_setting(view, "generate_slug_from_title", True)
         if generate_slug_from_title != "title_change":
             return
 
-        if not self.isPelicanArticle(view):
+        if not PelicanPluginTools.isPelicanArticle(view):
             return
 
         if self.isInTitleLine(view):
@@ -82,7 +80,7 @@ class PelicanAutogenSlug(sublime_plugin.EventListener):
         if generate_slug_from_title != "save":
             return
 
-        if not self.isPelicanArticle(view):
+        if not PelicanPluginTools.isPelicanArticle(view):
             return
 
         slug_region = view.find(':?slug:\s*.+', 0, sublime.IGNORECASE)
@@ -106,11 +104,13 @@ class PelicanAutogenSlug(sublime_plugin.EventListener):
 class PelicanNewMarkdownCommand(sublime_plugin.WindowCommand):
     def run(self):
         new_view = self.window.new_file()
+        PelicanPluginTools.addPelicanArticle(new_view)
         new_view.run_command('pelican_insert_metadata', {"select_metadata": False, "meta_type": "md"})
 
 class PelicanNewRestructuredtextCommand(sublime_plugin.WindowCommand):
     def run(self):
         new_view = self.window.new_file()
+        PelicanPluginTools.addPelicanArticle(new_view)
         new_view.run_command('pelican_insert_metadata', {"select_metadata": False, "meta_type": "rst"})
 
 class PelicanSelectMetadataCommand(sublime_plugin.TextCommand):

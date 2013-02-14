@@ -66,7 +66,7 @@ class PelicanNewRestructuredtextCommand(sublime_plugin.WindowCommand):
         new_view.run_command('pelican_insert_metadata', {"select_metadata": False, "meta_type": "rst"})
 
 class PelicanSelectMetadataCommand(sublime_plugin.TextCommand):
-    def run(self, edit):
+    def run(self, edit, mode = "single"):
         self.view.sel().clear()
 
         metadata_regions = self.view.find_all(':?\w+:', 0)
@@ -87,6 +87,20 @@ class PelicanSelectMetadataCommand(sublime_plugin.TextCommand):
             for line_region in line_regions:
                 if not line_region.empty():
                     self.view.sel().add(line_region)
+
+        if mode == "single":
+            if len(self.view.sel()) > 0:
+                region_begin = self.view.sel()[0].begin()
+                region_end = self.view.sel()[len(self.view.sel())-1].end()
+                self.view.sel().clear()
+                self.view.sel().add(sublime.Region(region_begin, region_end))
+        elif mode == "multiple":
+            pass # already selected
+        elif mode == "at_the_end":
+            if len(self.view.sel()) > 0:
+                region_end = self.view.sel()[len(self.view.sel())-1].end()
+                self.view.sel().clear()
+                self.view.sel().add(sublime.Region(region_end, region_end))
 
         self.view.show(self.view.sel())
 

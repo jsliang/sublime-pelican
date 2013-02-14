@@ -15,13 +15,11 @@ def addPelicanArticle(view):
     view_id = view.id()
     if not view_id in pelican_article_views:
         pelican_article_views.append(view_id)
-    print pelican_article_views
 
 def removePelicanArticle(view):
     view_id = view.id()
     if view_id in pelican_article_views:
         pelican_article_views.remove(view_id)
-    print pelican_article_views
 
 def isPelicanArticle(view):
     if view.id() in pelican_article_views:

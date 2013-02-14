@@ -52,9 +52,10 @@ Right click on a file being edit, and access the commands under the **Pelican** 
 
 *   **Pelican: Insert Metadata**
 
-    This command inserts metadata field to current article.
+    This command inserts and reorganizes metadata fields in the current opening article file.
+    Metadata fields are listed in the same order as your metadata template definition.
 
-    Metadata fields are inserted in the same order as your metadata template.
+    If the opening article has existing metadata fields, the command preserves these field values.
     Fields not listed in the metadata template are preserved too.
 
 *   **Pelican: Update Article Date**

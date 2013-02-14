@@ -25,6 +25,11 @@ The **Sublime Text 2 "Packages" directory** is located at:
 
 Clone this repository into your **Sublime Text 2 "Packages" directory**:
 
+    git clone https://github.com/jsliang/sublime-pelican.git
+    mv sublime-pelican Pelican
+
+which is equivalent to:
+
     git clone https://github.com/jsliang/sublime-pelican.git Pelican
 
 The **Sublime Text 2 "Packages" directory** is located at:

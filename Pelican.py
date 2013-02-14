@@ -117,29 +117,40 @@ class PelicanGenerateSlugCommand(sublime_plugin.TextCommand):
             self.view.insert(edit, slug_insert_position, pelican_slug_template[meta_type] % slug)
 
 class PelicanAutogenSlug(sublime_plugin.EventListener):
+    def isInTitleLine(self, view):
+        if len(view.sel()) > 0:
+            current_line = view.line(view.sel()[0].begin())
+            if view.find("title:", current_line.begin(), sublime.IGNORECASE):
+                return True
+        return False
+
+    def isPelicanArticle(self, view):
+        filepath_filter = pelican_tools.load_setting(view, "filepath_filter", '*')
+        if re.search(filepath_filter, view.file_name()):
+            return True
+        return False
+
     def on_modified(self, view):
         pelican_tools = PelicanTools()
+
         generate_slug_from_title = pelican_tools.load_setting(view, "generate_slug_from_title", True)
         if generate_slug_from_title != "title_change":
             return
 
-        filepath_filter = pelican_tools.load_setting(view, "filepath_filter", '*')
-        if not re.search(filepath_filter, view.file_name()):
+        if not self.isPelicanArticle(view):
             return
 
-        if len(view.sel()) > 0:
-            current_line = view.line(view.sel()[0].begin())
-            if view.find("title:", current_line.begin(), sublime.IGNORECASE):
-                view.run_command('pelican_generate_slug')
+        if self.isInTitleLine(view):
+            view.run_command('pelican_generate_slug')
 
     def on_pre_save(self, view):
         pelican_tools = PelicanTools()
+
         generate_slug_from_title = pelican_tools.load_setting(view, "generate_slug_from_title", True)
         if generate_slug_from_title != "save":
             return
 
-        filepath_filter = pelican_tools.load_setting(view, "filepath_filter", '*')
-        if not re.search(filepath_filter, view.file_name()):
+        if not self.isPelicanArticle(view):
             return
 
         slug_region = view.find(':?slug:\s*.+', 0, sublime.IGNORECASE)

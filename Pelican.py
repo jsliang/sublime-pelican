@@ -96,7 +96,7 @@ class PelicanInsertMetadataCommand(sublime_plugin.TextCommand):
             meta_type = PelicanPluginTools.detect_article_type(self.view)
 
         article_metadata_template_keys = []
-        article_metadata_template_lines = PelicanPluginTools.load_article_metadata_template_lines(self.view)
+        article_metadata_template_lines = PelicanPluginTools.load_article_metadata_template_lines(self.view, meta_type)
         if article_metadata_template_lines:
             for article_metadata_template_line in article_metadata_template_lines:
                 regex = re.compile(":?(\w+):")

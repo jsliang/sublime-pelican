@@ -1,16 +1,6 @@
 import sublime, sublime_plugin
 import re
-
-import datetime
-
-pelican_slug_template = {
-    "md": "slug: %s\n",
-    "rst": ":slug: %s\n",
-}
-
-def strDateNow():
-    now = datetime.datetime.now()
-    return datetime.datetime.strftime(now, "%Y-%m-%d %H:%M:%S")
+import PelicanPluginTools
 
 def slugify(value):
     """
@@ -23,56 +13,6 @@ def slugify(value):
     value = re.sub('[-\s]+', '-', value)
     return value
 
-class PelicanTools():
-    _singleton_instance = None
-
-    def __new__(cls):
-        if not cls._singleton_instance:
-            cls._singleton_instance = super(PelicanTools, cls).__new__()
-        return cls._singleton_instance
-
-    def __init__(self):
-        self.global_settings = sublime.load_settings(__name__ + '.sublime-settings')
-
-    def load_setting(self, view, setting_name, default_value):
-        if len(setting_name) < 1:
-            if default_value:
-                return default_value
-            return None
-
-        return view.settings().get(setting_name, self.global_settings.get(setting_name, default_value))
-
-    def normalize_line_endings(self, view, string):
-        string = string.replace('\r\n', '\n').replace('\r', '\n')
-        line_endings = self.load_setting(view, 'default_line_ending', 'unix')
-        if line_endings == 'windows':
-            string = string.replace('\n', '\r\n')
-        elif line_endings == 'mac':
-            string = string.replace('\n', '\r')
-        return string
-
-    def load_article_metadata_template_lines(self, view, meta_type = None):
-        if meta_type is None:
-            meta_type = self.detect_article_type(view)
-
-        article_metadata_template = self.load_setting(view, "article_metadata_template", {})
-        if not article_metadata_template or len(article_metadata_template) < 1:
-            return
-
-        return article_metadata_template[meta_type]
-
-    def load_article_metadata_template_str(self, view, meta_type = None):
-        if meta_type is None:
-            meta_type = self.detect_article_type(view)
-
-        article_metadata_template = self.load_article_metadata_template_lines(view, meta_type)
-        return self.normalize_line_endings(view, "\n".join(article_metadata_template))
-
-    def detect_article_type(self, view):
-        if view.find("^:\w+:", 0):
-            return "rst"
-        return "md"
-
 class PelicanUpdateDateCommand(sublime_plugin.TextCommand):
     def run(self, edit):
         date_region = self.view.find(':?date:\s*', 0)
@@ -80,7 +20,7 @@ class PelicanUpdateDateCommand(sublime_plugin.TextCommand):
             return
 
         old_datestr_region = sublime.Region(date_region.end(), self.view.line(date_region).end())
-        self.view.replace(edit, old_datestr_region, strDateNow())
+        self.view.replace(edit, old_datestr_region, PelicanPluginTools.strDateNow())
 
         new_datestr_region = sublime.Region(date_region.end(), self.view.line(date_region).end())
         self.view.sel().clear()
@@ -105,14 +45,12 @@ class PelicanGenerateSlugCommand(sublime_plugin.TextCommand):
 
             title_str = r.groupdict()['title'].strip()
 
-            pelican_tools = PelicanTools()
-
             slug = slugify(title_str)
 
-            meta_type = pelican_tools.detect_article_type(self.view)
+            meta_type = PelicanPluginTools.detect_article_type(self.view)
 
             slug_insert_position = title_region.end()
-            self.view.insert(edit, slug_insert_position, pelican_slug_template[meta_type] % slug)
+            self.view.insert(edit, slug_insert_position, PelicanPluginTools.pelican_slug_template[meta_type] % slug)
 
 class PelicanAutogenSlug(sublime_plugin.EventListener):
     def isInTitleLine(self, view):
@@ -123,15 +61,13 @@ class PelicanAutogenSlug(sublime_plugin.EventListener):
         return False
 
     def isPelicanArticle(self, view):
-        filepath_filter = pelican_tools.load_setting(view, "filepath_filter", '*')
+        filepath_filter = PelicanPluginTools.load_setting(view, "filepath_filter", '*')
         if re.search(filepath_filter, view.file_name()):
             return True
         return False
 
     def on_modified(self, view):
-        pelican_tools = PelicanTools()
-
-        generate_slug_from_title = pelican_tools.load_setting(view, "generate_slug_from_title", True)
+        generate_slug_from_title = PelicanPluginTools.load_setting(view, "generate_slug_from_title", True)
         if generate_slug_from_title != "title_change":
             return
 
@@ -142,9 +78,7 @@ class PelicanAutogenSlug(sublime_plugin.EventListener):
             view.run_command('pelican_generate_slug')
 
     def on_pre_save(self, view):
-        pelican_tools = PelicanTools()
-
-        generate_slug_from_title = pelican_tools.load_setting(view, "generate_slug_from_title", True)
+        generate_slug_from_title = PelicanPluginTools.load_setting(view, "generate_slug_from_title", True)
         if generate_slug_from_title != "save":
             return
 
@@ -159,7 +93,7 @@ class PelicanAutogenSlug(sublime_plugin.EventListener):
             if len(find_all) > 0:
                 slug_str = find_all[0].strip()
 
-                force_slug_regeneration = pelican_tools.load_setting(view, "force_slug_regeneration", False)
+                force_slug_regeneration = PelicanPluginTools.load_setting(view, "force_slug_regeneration", False)
                 if len(slug_str) > 0 and not force_slug_regeneration:
                     return
 
@@ -206,8 +140,6 @@ class PelicanSelectMetadataCommand(sublime_plugin.TextCommand):
 
 class PelicanInsertMetadataCommand(sublime_plugin.TextCommand):
     def run(self, edit, select_metadata = True, meta_type = None):
-        pelican_tools = PelicanTools()
-
         if meta_type is None:
             if self.view.find("^:\w+:", 0):
                 meta_type = "rst"
@@ -215,14 +147,15 @@ class PelicanInsertMetadataCommand(sublime_plugin.TextCommand):
                 meta_type = "md"
 
         article_metadata_template_keys = []
-        article_metadata_template_lines = pelican_tools.load_article_metadata_template_lines(self.view)
-        for article_metadata_template_line in article_metadata_template_lines:
-            regex = re.compile(":?(\w+):")
-            find_all = regex.findall(article_metadata_template_line)
-            if len(find_all) > 0:
-                metadata_key = regex.findall(article_metadata_template_line)[0]
-                if not metadata_key in article_metadata_template_keys:
-                    article_metadata_template_keys.append(metadata_key)
+        article_metadata_template_lines = PelicanPluginTools.load_article_metadata_template_lines(self.view)
+        if article_metadata_template_lines:
+            for article_metadata_template_line in article_metadata_template_lines:
+                regex = re.compile(":?(\w+):")
+                find_all = regex.findall(article_metadata_template_line)
+                if len(find_all) > 0:
+                    metadata_key = regex.findall(article_metadata_template_line)[0]
+                    if not metadata_key in article_metadata_template_keys:
+                        article_metadata_template_keys.append(metadata_key)
 
         metadata = {}
         for article_metadata_template_key in article_metadata_template_keys:
@@ -250,16 +183,16 @@ class PelicanInsertMetadataCommand(sublime_plugin.TextCommand):
             old_metadata_region = sublime.Region(old_metadata_begin, old_metadata_end)
 
         if metadata["date"] is "":
-            metadata["date"] = strDateNow()
+            metadata["date"] = PelicanPluginTools.strDateNow()
 
-        article_metadata_template = pelican_tools.normalize_line_endings(self.view, "\n".join(article_metadata_template_lines))
+        article_metadata_template = PelicanPluginTools.normalize_line_endings(self.view, "\n".join(article_metadata_template_lines))
         article_metadata_str = article_metadata_template % metadata
         if len(self.view.sel()) > 0:
             self.view.replace(edit, old_metadata_region, article_metadata_str)
         else:
             self.view.insert(edit, 0, article_metadata_str)
 
-        force_slug_regeneration = pelican_tools.load_setting(self.view, "force_slug_regeneration", False)
+        force_slug_regeneration = PelicanPluginTools.load_setting(self.view, "force_slug_regeneration", False)
         if force_slug_regeneration or len(metadata["slug"]) is 0:
             self.view.run_command('pelican_generate_slug')
 

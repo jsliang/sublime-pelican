@@ -75,9 +75,7 @@ class PelicanTools():
 
 class PelicanUpdateDateCommand(sublime_plugin.TextCommand):
     def run(self, edit):
-        print "PelicanUpdateDateCommand"
         date_region = self.view.find(':?date:\s*', 0)
-        print date_region
         if not date_region:
             return
 

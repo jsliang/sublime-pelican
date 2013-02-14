@@ -1,36 +1,51 @@
 <!DOCTYPE html>
 <html>
-
   <head>
-    <meta charset='utf-8' />
-    <meta http-equiv="X-UA-Compatible" content="chrome=1" />
-    <meta name="description" content="SublimePelican : A plugin for Pelican integration to Sublime Text 2." />
+    <meta charset='utf-8'>
+    <meta http-equiv="X-UA-Compatible" content="chrome=1">
+    <meta name="viewport" content="width=640" />
 
-    <link rel="stylesheet" type="text/css" media="screen" href="stylesheets/stylesheet.css">
+    <link rel="stylesheet" href="stylesheets/core.css" media="screen"/>
+    <link rel="stylesheet" href="stylesheets/mobile.css" media="handheld, only screen and (max-device-width:640px)"/>
+    <link rel="stylesheet" href="stylesheets/pygment_trac.css"/>
 
-    <title>SublimePelican</title>
+    <script type="text/javascript" src="javascripts/modernizr.js"></script>
+    <script type="text/javascript" src="https://ajax.googleapis.com/ajax/libs/jquery/1.7.1/jquery.min.js"></script>
+    <script type="text/javascript" src="javascripts/headsmart.min.js"></script>
+    <script type="text/javascript">
+      $(document).ready(function () {
+        $('#main_content').headsmart()
+      })
+    </script>
+    <title>SublimePelican by jsliang</title>
   </head>
 
   <body>
+    <a id="forkme_banner" href="https://github.com/jsliang/sublime-pelican">View on GitHub</a>
+    <div class="shell">
 
-    <!-- HEADER -->
-    <div id="header_wrap" class="outer">
-        <header class="inner">
-          <a id="forkme_banner" href="https://github.com/jsliang/sublime-pelican">View on GitHub</a>
+      <header>
+        <span class="ribbon-outer">
+          <span class="ribbon-inner">
+            <h1>SublimePelican</h1>
+            <h2>A plugin for Pelican integration to Sublime Text 2.</h2>
+          </span>
+          <span class="left-tail"></span>
+          <span class="right-tail"></span>
+        </span>
+      </header>
 
-          <h1 id="project_title">SublimePelican</h1>
-          <h2 id="project_tagline">A plugin for Pelican integration to Sublime Text 2.</h2>
+      <section id="downloads">
+        <span class="inner">
+          <a href="https://github.com/jsliang/sublime-pelican/zipball/master" class="zip"><em>download</em> .ZIP</a><a href="https://github.com/jsliang/sublime-pelican/tarball/master" class="tgz"><em>download</em> .TGZ</a>
+        </span>
+      </section>
 
-            <section id="downloads">
-              <a class="zip_download_link" href="https://github.com/jsliang/sublime-pelican/zipball/master">Download this project as a .zip file</a>
-              <a class="tar_download_link" href="https://github.com/jsliang/sublime-pelican/tarball/master">Download this project as a tar.gz file</a>
-            </section>
-        </header>
-    </div>
 
-    <!-- MAIN CONTENT -->
-    <div id="main_content_wrap" class="outer">
-      <section id="main_content" class="inner">
+      <span class="banner-fix"></span>
+
+
+      <section id="main_content">
         <h1>SublimePelican: Pelican integration to Sublime Text 2</h1>
 
 <p><strong>SublimePelican</strong> is a plugin for <a href="http://getpelican.com/">Pelican</a> integration to <a href="http://www.sublimetext.com/2">Sublime Text 2</a>.</p>
@@ -46,13 +61,13 @@ Support for the <a href="http://wbond.net/sublime_packages/package_control">Pack
 
 <ol>
 <li> Download the <a href="https://nodeload.github.com/jsliang/sublime-pelican/zip/master">latest source from GitHub</a>.</li>
-<li> Copy the <code>sublime-pelican-master</code> folder to your <strong>Sublime Text 2 "Packages" directory</strong>.</li>
+<li> Copy the <code>sublime-pelican-master</code> folder to your Sublime Text 2 Packages directory.</li>
 <li> Renamed the <code>sublime-pelican-master</code> folder to <code>Pelican</code>.</li>
-</ol><p>If you're not sure where your Sublime Text 2 "Packages" directory is, open Sublime Text 2 and select menu item <strong>Preference</strong> &gt; <strong>Browse Packages...</strong></p>
+</ol><p>If you're not sure where your Sublime Text 2 Packages directory is, open Sublime Text 2 and select menu item <strong>Preference</strong> &gt; <strong>Browse Packages...</strong></p>
 
 <h3>Installation with Git</h3>
 
-<p>Clone this repository into your <strong>Sublime Text 2 "Packages" directory</strong>:</p>
+<p>Clone this repository into your Sublime Text 2 Packages directory:</p>
 
 <pre><code>git clone https://github.com/jsliang/sublime-pelican.git
 mv sublime-pelican Pelican
@@ -63,7 +78,7 @@ mv sublime-pelican Pelican
 <pre><code>git clone https://github.com/jsliang/sublime-pelican.git Pelican
 </code></pre>
 
-<p>If you're not sure where your Sublime Text 2 "Packages" directory is, open Sublime Text 2 and select menu item <strong>Preference</strong> &gt; <strong>Browse Packages...</strong></p>
+<p>If you're not sure where your Sublime Text 2 Packages directory is, open Sublime Text 2 and select menu item <strong>Preference</strong> &gt; <strong>Browse Packages...</strong></p>
 
 <h2>Usage</h2>
 
@@ -217,14 +232,19 @@ This is to prevent automatic slug generation from annoyly affecting other Markdo
 
 <p>THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.</p>
       </section>
-    </div>
 
-    <!-- FOOTER  -->
-    <div id="footer_wrap" class="outer">
-      <footer class="inner">
-        <p class="copyright">SublimePelican maintained by <a href="https://github.com/jsliang">jsliang</a></p>
-        <p>Published with <a href="http://pages.github.com">GitHub Pages</a></p>
+      <footer>
+        <span class="ribbon-outer">
+          <span class="ribbon-inner">
+            <p>this project by <a href="https://github.com/jsliang">jsliang</a> can be found on <a href="https://github.com/jsliang/sublime-pelican">GitHub</a></p>
+          </span>
+          <span class="left-tail"></span>
+          <span class="right-tail"></span>
+        </span>
+        <p>Generated with <a href="http://pages.github.com">GitHub Pages</a> using Merlot</p>
+        <span class="octocat"></span>
       </footer>
+
     </div>
 
               <script type="text/javascript">
@@ -237,7 +257,6 @@ This is to prevent automatic slug generation from annoyly affecting other Markdo
             pageTracker._trackPageview();
             } catch(err) {}
           </script>
-
 
   </body>
 </html>

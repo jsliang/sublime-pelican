@@ -149,8 +149,8 @@ Instead, customize your settings in Preferences > Package Settings > Pelican > S
 
 *   **filepath_filter**
 
-    Filename filter for Pelican articles, written in a Python regular expression.
-    This is to prevent automatic slug generation annoyly effects other Markdown/reStrcturedText files that are not Pelican articles.
+    Filepath filter for Pelican articles, written in a Python regular expression.
+    This is to prevent automatic slug generation annoyly affects other Markdown/reStrcturedText files that are not Pelican articles.
 
     By default, only Markdown/reStructuredText files under `content/` directory are deemed as Pelican article files.
 

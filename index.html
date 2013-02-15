@@ -1,51 +1,44 @@
-<!DOCTYPE html>
+<!doctype html>
 <html>
   <head>
-    <meta charset='utf-8'>
+    <meta charset="utf-8">
     <meta http-equiv="X-UA-Compatible" content="chrome=1">
-    <meta name="viewport" content="width=640" />
-
-    <link rel="stylesheet" href="stylesheets/core.css" media="screen"/>
-    <link rel="stylesheet" href="stylesheets/mobile.css" media="handheld, only screen and (max-device-width:640px)"/>
-    <link rel="stylesheet" href="stylesheets/pygment_trac.css"/>
-
-    <script type="text/javascript" src="javascripts/modernizr.js"></script>
-    <script type="text/javascript" src="https://ajax.googleapis.com/ajax/libs/jquery/1.7.1/jquery.min.js"></script>
-    <script type="text/javascript" src="javascripts/headsmart.min.js"></script>
-    <script type="text/javascript">
-      $(document).ready(function () {
-        $('#main_content').headsmart()
-      })
-    </script>
     <title>SublimePelican by jsliang</title>
-  </head>
+    <link rel="stylesheet" href="stylesheets/styles.css">
+    <link rel="stylesheet" href="stylesheets/pygment_trac.css">
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.7.1/jquery.min.js"></script>
+    <script src="javascripts/main.js"></script>
+    <!--[if lt IE 9]>
+      <script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script>
+    <![endif]-->
+    <meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no">
 
+  </head>
   <body>
-    <a id="forkme_banner" href="https://github.com/jsliang/sublime-pelican">View on GitHub</a>
-    <div class="shell">
 
       <header>
-        <span class="ribbon-outer">
-          <span class="ribbon-inner">
-            <h1>SublimePelican</h1>
-            <h2>A plugin for Pelican integration to Sublime Text 2.</h2>
-          </span>
-          <span class="left-tail"></span>
-          <span class="right-tail"></span>
-        </span>
+        <h1>SublimePelican</h1>
+        <p>A plugin for Pelican integration to Sublime Text 2.</p>
       </header>
 
-      <section id="downloads">
-        <span class="inner">
-          <a href="https://github.com/jsliang/sublime-pelican/zipball/master" class="zip"><em>download</em> .ZIP</a><a href="https://github.com/jsliang/sublime-pelican/tarball/master" class="tgz"><em>download</em> .TGZ</a>
-        </span>
-      </section>
+      <div id="banner">
+        <span id="logo"></span>
 
+        <a href="https://github.com/jsliang/sublime-pelican" class="button fork"><strong>View On GitHub</strong></a>
+        <div class="downloads">
+          <span>Downloads:</span>
+          <ul>
+            <li><a href="https://github.com/jsliang/sublime-pelican/zipball/master" class="button">ZIP</a></li>
+            <li><a href="https://github.com/jsliang/sublime-pelican/tarball/master" class="button">TAR</a></li>
+          </ul>
+        </div>
+      </div><!-- end banner -->
 
-      <span class="banner-fix"></span>
-
-
-      <section id="main_content">
+    <div class="wrapper">
+      <nav>
+        <ul></ul>
+      </nav>
+      <section>
         <h1>SublimePelican: Pelican integration to Sublime Text 2</h1>
 
 <p><strong>SublimePelican</strong> is a plugin for <a href="http://getpelican.com/">Pelican</a> integration to <a href="http://www.sublimetext.com/2">Sublime Text 2</a>.</p>
@@ -201,14 +194,23 @@ If you want to force slug regeneration on each save, you have to set <code>force
 }
 </code></pre>
 
-<h3>Others</h3>
+<h3>File Path Filter for Pelican Articles</h3>
+
+<p>To prevent automatic slug generation from annoyly affecting other Markdown/reStrcturedText files that are not Pelican articles, SublimePelican processes only the Markdown/reStructuredText files under the <code>INPUTDIR</code> configured in your Pelican Makefile.</p>
 
 <ul>
+<li>
+<p><strong>use_input_folder_in_makefile</strong></p>
+
+<p>When set to <code>false</code>, SublimePelican will use the regular expression defined in <code>filepath_filter</code> as the file path filter for Pelican articles.</p>
+
+<p>Default value: <code>true</code></p>
+</li>
 <li>
 <p><strong>filepath_filter</strong></p>
 
 <p>File path filter for Pelican articles, written in a Python regular expression.
-This is to prevent automatic slug generation from annoyly affecting other Markdown/reStrcturedText files that are not Pelican articles.</p>
+Effective only if <code>use_input_folder_in_makefile</code> is set to <code>false</code>.</p>
 
 <p>By default, only Markdown/reStructuredText files under <code>content/</code> directory are deemed as Pelican article files.</p>
 
@@ -231,21 +233,12 @@ You can also find <a href="https://github.com/jsliang/sublime-pelican/issues?lab
 
 <p>THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.</p>
       </section>
-
       <footer>
-        <span class="ribbon-outer">
-          <span class="ribbon-inner">
-            <p>this project by <a href="https://github.com/jsliang">jsliang</a> can be found on <a href="https://github.com/jsliang/sublime-pelican">GitHub</a></p>
-          </span>
-          <span class="left-tail"></span>
-          <span class="right-tail"></span>
-        </span>
-        <p>Generated with <a href="http://pages.github.com">GitHub Pages</a> using Merlot</p>
-        <span class="octocat"></span>
+        <p>Project maintained by <a href="https://github.com/jsliang">jsliang</a></p>
+        <p><small>Hosted on GitHub Pages &mdash; Theme by <a href="http://twitter.com/#!/michigangraham">mattgraham</a></small></p>
       </footer>
-
     </div>
-
+    <!--[if !IE]><script>fixScale(document);</script><![endif]-->
               <script type="text/javascript">
             var gaJsHost = (("https:" == document.location.protocol) ? "https://ssl." : "http://www.");
             document.write(unescape("%3Cscript src='" + gaJsHost + "google-analytics.com/ga.js' type='text/javascript'%3E%3C/script%3E"));

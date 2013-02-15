@@ -3,6 +3,7 @@
 **SublimePelican** is a plugin for [Pelican](http://getpelican.com/) integration to [Sublime Text 2](http://www.sublimetext.com/2).
 
 The plugin prepares metadata fields for you, with the ability to fill in date and slug fields automatically.
+[More features](https://github.com/jsliang/sublime-pelican/issues?labels=enhancement&page=1&state=open) to be added.
 
 ## Installation
 

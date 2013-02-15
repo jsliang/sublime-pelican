@@ -1,6 +1,7 @@
 import sublime, sublime_plugin
 import datetime
 import re
+import os
 
 pelican_slug_template = {
     "md": "slug: %s\n",
@@ -79,3 +80,43 @@ def detect_article_type(view):
     if view.find("^:\w+:", 0):
         return "rst"
     return "md"
+
+def parse_makefile(window):
+    makefile_path = None
+    current_filename = window.active_view().file_name()
+    current_folder = os.path.dirname(current_filename)
+    current_folders = window.folders()
+    for folder in current_folders:
+        if folder in current_folder:
+            break
+    makefile_dir = folder
+    makefile_path = os.path.join(makefile_dir, "Makefile")
+    if os.path.exists(makefile_path):
+        makefile_path = makefile_path
+
+    if not makefile_path:
+        return
+
+    # parse parameters in Makefile
+    regex = re.compile("(\S+)=(.*)")
+    makefile_content = ""
+    with open(makefile_path, 'r') as f:
+        makefile_content = f.read()
+
+    if len(makefile_content) > 0:
+        origin_makefile_params = []
+        origin_makefile_params = regex.findall(makefile_content)
+
+        if len(origin_makefile_params) > 0:
+
+            makefile_params = {"CURDIR": makefile_dir}
+
+            for (key, value) in origin_makefile_params:
+                if not key in makefile_params:
+                    # replace "$(var)" to "%(var)s"
+                    value = re.sub(r"\$\((\S+)\)", r"%(\1)s", value)
+
+                    makefile_params[key] = value % makefile_params
+
+            return makefile_params
+    return None

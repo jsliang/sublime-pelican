@@ -152,7 +152,7 @@ Instead, customize your settings in **Preferences** > **Package Settings** > **P
 
 ## TODOs
 
-* Slug generation for non-ASCII characters - issue #1
+* Slug generation for non-ASCII characters ([Issue #1](https://github.com/jsliang/sublime-pelican/issues/1))
 * Build system integration
 * Auto-completions for categories / tags
 * More flexible **filepath_filter**: automatically retrieve the value of `INPUTDIR` variable from Pelican directory's `Makefile`

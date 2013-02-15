@@ -139,12 +139,20 @@ Instead, customize your settings in **Preferences** > **Package Settings** > **P
 }
 ```
 
-### Others
+### File Path Filter for Pelican Articles
+
+To prevent automatic slug generation from annoyly affecting other Markdown/reStrcturedText files that are not Pelican articles, SublimePelican processes only the Markdown/reStructuredText files under the `INPUTDIR` configured in your Pelican Makefile.
+
+*   **use_input_folder_in_makefile**
+
+    When set to `false`, SublimePelican will use the regular expression defined in `filepath_filter` as the file path filter for Pelican articles.
+
+    Default value: `true`
 
 *   **filepath_filter**
 
     File path filter for Pelican articles, written in a Python regular expression.
-    This is to prevent automatic slug generation from annoyly affecting other Markdown/reStrcturedText files that are not Pelican articles.
+    Effective only if `use_input_folder_in_makefile` is set to `false`.
 
     By default, only Markdown/reStructuredText files under `content/` directory are deemed as Pelican article files.
 

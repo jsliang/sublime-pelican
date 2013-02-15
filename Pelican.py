@@ -1,6 +1,6 @@
 import sublime, sublime_plugin
 import re
-import PelicanPluginTools, PelicanPluginEvents
+import PelicanPluginTools
 
 def slugify(value):
     """

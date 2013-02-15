@@ -1,4 +1,4 @@
-import sublime, sublime_plugin
+import sublime
 import datetime
 import re
 import os

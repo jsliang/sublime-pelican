@@ -29,21 +29,16 @@ def isPelicanArticle(view):
         return True
 
     if view.file_name():
-        filepath_filter = None
+        filepath_filter = load_setting(view, "filepath_filter", default_filter)
 
         use_input_folder_in_makefile = load_setting(view, "use_input_folder_in_makefile", True)
         if use_input_folder_in_makefile:
             makefile_params = parse_makefile(view.window())
             if makefile_params and "INPUTDIR" in makefile_params:
                 filepath_filter = makefile_params['INPUTDIR'] + "/" + default_filter
-            else:
-                filepath_filter = load_setting(view, "filepath_filter", default_filter)
-        else:
-            filepath_filter = load_setting(view, "filepath_filter", default_filter)
 
-        if filepath_filter:
-            if re.search(filepath_filter, view.file_name()):
-                return True
+        if re.search(filepath_filter, view.file_name()):
+            return True
 
     return False
 

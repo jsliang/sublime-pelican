@@ -152,10 +152,8 @@ Instead, customize your settings in **Preferences** > **Package Settings** > **P
 
 ## TODOs
 
-* Slug generation for non-ASCII characters ([Issue #1](https://github.com/jsliang/sublime-pelican/issues/1))
-* Build system integration ([Issue #2](https://github.com/jsliang/sublime-pelican/issues/2))
-* Auto-completions for categories / tags ([Issue #3](https://github.com/jsliang/sublime-pelican/issues/3))
-* More flexible **filepath_filter** ([Issue #4](https://github.com/jsliang/sublime-pelican/issues/4))
+Please refer to [Issues](https://github.com/jsliang/sublime-pelican/issues).
+You can also find [enhancements to be done](https://github.com/jsliang/sublime-pelican/issues?labels=enhancement&page=1&state=open) there.
 
 ## License
 

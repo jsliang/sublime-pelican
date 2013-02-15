@@ -23,13 +23,27 @@ def removePelicanArticle(view):
         pelican_article_views.remove(view_id)
 
 def isPelicanArticle(view):
+    default_filter = '.*\\.(md|markdown|mkd|rst)$'
+
     if view.id() in pelican_article_views:
         return True
 
     if view.file_name():
-        filepath_filter = load_setting(view, "filepath_filter", '*')
-        if re.search(filepath_filter, view.file_name()):
-            return True
+        filepath_filter = None
+
+        use_input_folder_in_makefile = load_setting(view, "use_input_folder_in_makefile", True)
+        if use_input_folder_in_makefile:
+            makefile_params = parse_makefile(view.window())
+            if makefile_params and "INPUTDIR" in makefile_params:
+                filepath_filter = makefile_params['INPUTDIR'] + "/" + default_filter
+            else:
+                filepath_filter = load_setting(view, "filepath_filter", default_filter)
+        else:
+            filepath_filter = load_setting(view, "filepath_filter", default_filter)
+
+        if filepath_filter:
+            if re.search(filepath_filter, view.file_name()):
+                return True
 
     return False
 
@@ -91,11 +105,8 @@ def parse_makefile(window):
             break
     makefile_dir = folder
     makefile_path = os.path.join(makefile_dir, "Makefile")
-    if os.path.exists(makefile_path):
-        makefile_path = makefile_path
-
-    if not makefile_path:
-        return
+    if not os.path.exists(makefile_path):
+        return None
 
     # parse parameters in Makefile
     regex = re.compile("(\S+)=(.*)")

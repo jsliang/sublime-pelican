@@ -61,11 +61,15 @@
   // Others
   // ======
 
-  // File path filter for Pelican articles, written in a Python regular
-  //   expression.
-  // This is to prevent automatic slug generation from annoyly affecting
-  //   other Markdown/reStrcturedText files that are not Pelican articles.
+  // Set to `true` to prevent automatic slug generation from annoyly
+  //   affecting other Markdown/reStrcturedText files that are not Pelican
+  //   articles.
   // By default, only Markdown/reStructuredText files under `content/`
   //   directory are deemed as Pelican article files.
+  "use_input_folder_in_makefile": true,
+
+  // File path filter for Pelican articles, written in a Python regular
+  //   expression.
+  // Effective only if `use_input_folder_in_makefile` is set to false.
   "filepath_filter": "content/.*\\.(md|markdown|mkd|rst)$"
 }

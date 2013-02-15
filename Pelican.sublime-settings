@@ -1,5 +1,7 @@
 {
+  // ===============
   // Slug generation
+  // ===============
 
   // By default, slug is not automatically generated if a slug has been
   //   defined in the article.
@@ -16,16 +18,13 @@
   //     `force_slug_regeneration` to `true`.
   //   By default, slug is not automatically generated if a slug has been
   //     defined in the article. This is to prevent unwanted slug change.
-
   "generate_slug_from_title": "save",
 
-  // File path filter for Pelican articles, written in a Python regular
-  //   expression.
-  // This is to prevent automatic slug generation from annoyly affecting
-  //   other Markdown/reStrcturedText files that are not Pelican articles.
-  // By default, only Markdown/reStructuredText files under `content/`
-  //   directory are deemed as Pelican article files.
-  "filepath_filter": "content/.*\\.(md|markdown|mkd|rst)$",
+
+
+  // ==============================
+  // Customizable metadata template
+  // ==============================
 
   // Metadata template for Markdown & reStructuredText articles.
   "article_metadata_template": {
@@ -54,5 +53,19 @@
         ":lang: %(lang)s",
         ":summary: %(summary)s"
       ]
-  }
+  },
+
+
+
+  // ======
+  // Others
+  // ======
+
+  // File path filter for Pelican articles, written in a Python regular
+  //   expression.
+  // This is to prevent automatic slug generation from annoyly affecting
+  //   other Markdown/reStrcturedText files that are not Pelican articles.
+  // By default, only Markdown/reStructuredText files under `content/`
+  //   directory are deemed as Pelican article files.
+  "filepath_filter": "content/.*\\.(md|markdown|mkd|rst)$"
 }

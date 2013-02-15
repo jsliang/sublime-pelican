@@ -35,7 +35,7 @@ If you're not sure where your Sublime Text 2 Packages directory is, open Sublime
 
 ### Access commands from Command Palette
 
-1.  After installation, bring up the Command Palette (OS X: `Command+Shift+P` on OS X, Linux/Windows: `Control+Shift+P`).
+1.  After installation, bring up the Command Palette (OS X: `Command+Shift+P`; Linux/Windows: `Control+Shift+P`).
 2.  Type `Pelican` in Command Palette to view a list of available commands.
 
 ### Access commands from Context Menu

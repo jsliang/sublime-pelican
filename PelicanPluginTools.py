@@ -1,12 +1,21 @@
+# -*- coding: utf-8 -*-
+
 import sublime
 import datetime
 import re
 import os
 
+import sys
+if sys.getdefaultencoding() != 'utf-8':
+    reload(sys)
+    sys.setdefaultencoding('utf-8')
+
 pelican_slug_template = {
     "md": "slug: %s\n",
     "rst": ":slug: %s\n",
 }
+
+default_filter = '.*\\.(md|markdown|mkd|rst)$'
 
 global_settings = sublime.load_settings("Pelican.sublime-settings")
 
@@ -23,8 +32,6 @@ def removePelicanArticle(view):
         pelican_article_views.remove(view_id)
 
 def isPelicanArticle(view):
-    default_filter = '.*\\.(md|markdown|mkd|rst)$'
-
     if view.id() in pelican_article_views:
         return True
 
@@ -126,3 +133,49 @@ def parse_makefile(window):
 
             return makefile_params
     return None
+
+def get_categories_tags(window, mode = "tag"):
+    # load INPUTDIR
+    inputdir = None
+    makefile_params = parse_makefile(window)
+    if makefile_params and "INPUTDIR" in makefile_params:
+        inputdir = makefile_params['INPUTDIR']
+    else:
+        return
+
+    # get paths of all articles in INPUTDIR
+    articles_paths = []
+    inputdir_structure = os.walk(inputdir)
+    if inputdir_structure:
+        for (dirpath, dirnames, filenames) in inputdir_structure:
+            for filename in filenames:
+                article_path = os.path.join(dirpath, filename)
+                if re.search(default_filter, article_path):
+                    articles_paths.append(article_path)
+    else:
+        return
+
+    # retrieve categories or tags
+    results = []
+    for article_path in articles_paths:
+        if mode == "category":
+            regex = re.compile("category:(.*)", re.IGNORECASE)
+        else:
+            regex = re.compile("tags:(.*)", re.IGNORECASE)
+
+        with open(article_path) as f:
+            content_str = f.read()
+
+        regex_results = regex.findall(content_str)
+        if len(regex_results) > 0:
+            for result in regex_results:
+                results.extend( [x.strip() for x in result.split(",")] )
+
+    if len(results) == 0:
+        return None
+
+    list_results = sorted(list(set(results)))
+    if '' in list_results:
+        list_results.remove('')
+
+    return list_results

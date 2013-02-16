@@ -1,5 +1,8 @@
+# -*- coding: utf-8 -*-
+
 import sublime, sublime_plugin
 import re
+import threading
 import PelicanPluginTools
 
 class PelicanUpdateDateCommand(sublime_plugin.TextCommand):
@@ -162,3 +165,94 @@ class PelicanInsertMetadataCommand(sublime_plugin.TextCommand):
 
         if select_metadata:
             self.view.run_command('pelican_select_metadata')
+
+class PelicanInsertTagCommand(sublime_plugin.TextCommand):
+    def run(self, edit):
+        thread = PelicanInsertTagCategoryThread(self, edit, "tag")
+        thread.start()
+
+class PelicanInsertCategoryCommand(sublime_plugin.TextCommand):
+    def run(self, edit):
+        thread = PelicanInsertTagCategoryThread(self, edit, "category")
+        thread.start()
+
+class PelicanInsertTagCategoryThread(threading.Thread):
+    def __init__(self, txtcmd, edit, mode = "tag"):
+        self.window = txtcmd.view.window()
+        self.view = txtcmd.view
+        self.edit = edit
+        self.mode = mode
+        threading.Thread.__init__(self)
+
+    def get_content_region(self):
+        meta_type = PelicanPluginTools.detect_article_type(self.view)
+
+        if self.mode == "tag":
+            region = self.view.find('tags:', 0)
+            template = PelicanPluginTools.normalize_line_endings(self.view, PelicanPluginTools.pelican_tags_template[meta_type])
+        else:
+            region = self.view.find('category:', 0)
+            template = PelicanPluginTools.normalize_line_endings(self.view, PelicanPluginTools.pelican_categories_template[meta_type])
+
+        if not region:
+            self.view.run_command('pelican_select_metadata', {'mode': 'single'})
+
+            insert_position = self.view.sel()[0].end()
+            self.view.insert(self.edit, insert_position, template)
+
+            if self.mode == "tag":
+                region = self.view.find('tags:', 0)
+            else:
+                region = self.view.find('category:', 0)
+
+        content_start = region.end()
+        content_end = self.view.line(region).end()
+        content_region = sublime.Region(content_start, content_end)
+
+        return content_region
+
+    def on_done(self, picked):
+        if picked == -1:
+            return
+
+        picked_str = self.results[picked]
+
+        old_content_region = self.get_content_region()
+        old_content_str = self.view.substr(old_content_region)
+
+        self.view.sel().clear()
+        self.view.sel().add(old_content_region)
+
+        if len(old_content_str) > 0:
+            current_entries = [ x.strip() for x in old_content_str.split(',') ]
+
+            if not picked_str in current_entries:
+                current_entries.append(picked_str)
+
+            if '' in current_entries:
+                current_entries.remove('')
+
+            new_content_str = ", ".join(current_entries)
+        else:
+            new_content_str = picked_str
+
+        new_content_str = " " + new_content_str
+
+        self.view.replace(self.edit, self.view.sel()[0], new_content_str)
+
+        content_line = self.view.line(self.view.sel()[0])
+
+        self.view.sel().clear()
+        self.view.sel().add(content_line)
+        self.view.show(content_line)
+
+    def run(self):
+        self.results = PelicanPluginTools.get_categories_tags(self.window, mode = self.mode)
+
+        def show_quick_panel():
+            if not self.results:
+                sublime.error_message(('%s: There is no %s found.') % (__name__, self.mode))
+                return
+            self.window.show_quick_panel(self.results, self.on_done)
+
+        sublime.set_timeout(show_quick_panel, 10)

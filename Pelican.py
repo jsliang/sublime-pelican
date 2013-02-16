@@ -2,17 +2,6 @@ import sublime, sublime_plugin
 import re
 import PelicanPluginTools
 
-def slugify(value):
-    """
-    Normalizes string, converts to lowercase, removes non-alpha characters,
-    and converts spaces to hyphens.
-
-    Took from django sources.
-    """
-    value = re.sub('[^\w\s-]', '', value).strip().lower()
-    value = re.sub('[-\s]+', '-', value)
-    return value
-
 class PelicanUpdateDateCommand(sublime_plugin.TextCommand):
     def run(self, edit):
         date_region = self.view.find(':?date:\s*', 0)
@@ -29,6 +18,17 @@ class PelicanUpdateDateCommand(sublime_plugin.TextCommand):
         self.view.show(new_datestr_region)
 
 class PelicanGenerateSlugCommand(sublime_plugin.TextCommand):
+    def slugify(self, value):
+        """
+        Normalizes string, converts to lowercase, removes non-alpha characters,
+        and converts spaces to hyphens.
+
+        Took from django sources.
+        """
+        value = re.sub('[^\w\s-]', '', value).strip().lower()
+        value = re.sub('[-\s]+', '-', value)
+        return value
+
     def run(self, edit):
         title_region = self.view.find(':?title:.+\s*', 0, sublime.IGNORECASE)
         if title_region:
@@ -41,7 +41,7 @@ class PelicanGenerateSlugCommand(sublime_plugin.TextCommand):
 
             title_str = r.groupdict()['title'].strip()
 
-            slug = slugify(title_str)
+            slug = self.slugify(title_str)
 
             meta_type = PelicanPluginTools.detect_article_type(self.view)
 

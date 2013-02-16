@@ -15,6 +15,16 @@ pelican_slug_template = {
     "rst": ":slug: %s\n",
 }
 
+pelican_tags_template = {
+    "md": "\ntags: ",
+    "rst": "\n:tags: ",
+}
+
+pelican_categories_template = {
+    "md": "\ncategory: ",
+    "rst": "\n:category: ",
+}
+
 default_filter = '.*\\.(md|markdown|mkd|rst)$'
 
 global_settings = sublime.load_settings("Pelican.sublime-settings")

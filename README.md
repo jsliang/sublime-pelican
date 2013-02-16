@@ -59,6 +59,14 @@ Right click on a file being edit, and access the commands under the **Pelican** 
     If the opening article has existing metadata fields, the command preserves these field values.
     Fields not listed in the metadata template are preserved too.
 
+*   **Pelican: Insert Category**
+
+    List categories you've used in your Pelican site in the quick panel, allowig you to fuzzily select and insert a previously used category.
+
+*   **Pelican: Insert Tag**
+
+    List tags you've used in your Pelican site in the quick panel, allowig you to fuzzily select and insert a previously used tag.
+
 *   **Pelican: Update Article Date**
 
     This command updates the date metadata field to current date and time.

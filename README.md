@@ -1,8 +1,9 @@
 # SublimePelican: Pelican integration to Sublime Text 2
 
 **SublimePelican** is a plugin for [Pelican](http://getpelican.com/) integration to [Sublime Text 2](http://www.sublimetext.com/2).
+It is designed to help people write Pelican articles faster using Sublime Text 2.
 
-The plugin prepares metadata fields for you, with the ability to fill in date and slug fields automatically.
+The plugin prepares metadata fields for you, with the ability to fill in date, to generate slug, and to list categories and tags you've used.
 [More features](https://github.com/jsliang/sublime-pelican/issues?labels=enhancement&page=1&state=open) to be added.
 
 ## Installation
@@ -61,11 +62,13 @@ Right click on a file being edit, and access the commands under the **Pelican** 
 
 *   **Pelican: Insert Category**
 
-    List categories you've used in your Pelican site in the quick panel, allowig you to fuzzily select and insert a previously used category.
+    If you think it's hard to remember what categories you've used when writing articles, then this command is made for you.
+    This command lists categories you've used in your Pelican site in the quick panel, allowig you to fuzzily select and insert a previously used category quickly.
 
 *   **Pelican: Insert Tag**
 
-    List tags you've used in your Pelican site in the quick panel, allowig you to fuzzily select and insert a previously used tag.
+    If you think it's hard to remember what tags you've used when writing articles, then this command is made for you.
+    This command lists tags you've used in your Pelican site in the quick panel, allowig you to fuzzily select and insert a previously used tag quickly.
 
 *   **Pelican: Update Article Date**
 

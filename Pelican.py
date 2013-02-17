@@ -177,7 +177,7 @@ class PelicanInsertCategoryCommand(sublime_plugin.TextCommand):
         thread.start()
 
 class PelicanInsertTagCategoryThread(threading.Thread):
-    def __init__(self, txtcmd, edit, mode = "tag"):
+    def __init__(self, txtcmd, edit, mode):
         self.window = txtcmd.view.window()
         self.view = txtcmd.view
         self.edit = edit
@@ -223,7 +223,7 @@ class PelicanInsertTagCategoryThread(threading.Thread):
         self.view.sel().clear()
         self.view.sel().add(old_content_region)
 
-        if len(old_content_str) > 0:
+        if len(old_content_str) > 0 and self.mode == "tag":
             current_entries = [ x.strip() for x in old_content_str.split(',') ]
 
             if not picked_str in current_entries:

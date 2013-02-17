@@ -175,6 +175,12 @@ To prevent automatic slug generation from annoyly affecting other Markdown/reStr
 Please refer to [Issues](https://github.com/jsliang/sublime-pelican/issues).
 You are also welcomed to propose [enhancements](https://github.com/jsliang/sublime-pelican/issues?labels=enhancement&page=1&state=open) there.
 
+## Thanks
+
+*   [Pelican](http://getpelican.com/)
+*   [Sublime Text](http://www.sublimetext.com/)
+*   [DocumentUp](http://documentup.com/)
+
 ## License
 
 SublimePelican is licensed under the MIT license.

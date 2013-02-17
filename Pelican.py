@@ -72,40 +72,9 @@ class PelicanNewRestructuredtextCommand(sublime_plugin.WindowCommand):
 class PelicanSelectMetadataCommand(sublime_plugin.TextCommand):
     def run(self, edit, mode = "single"):
         self.view.sel().clear()
-
-        metadata_regions = self.view.find_all(':?\w+:', 0)
-
-        for i in range(0, len(metadata_regions)):
-            region = metadata_regions[i]
-
-            # select consecutive metadata lines at the beginning of the file
-            if i > 0:
-                prev_region = metadata_regions[i-1]
-                prev_line_no, __ = self.view.rowcol(prev_region.begin())
-                this_line_no, __ = self.view.rowcol(region.begin())
-
-                if this_line_no - prev_line_no > 1:
-                    break
-
-            line_regions = self.view.lines(region)
-            for line_region in line_regions:
-                if not line_region.empty():
-                    self.view.sel().add(line_region)
-
-        if mode == "single":
-            if len(self.view.sel()) > 0:
-                region_begin = self.view.sel()[0].begin()
-                region_end = self.view.sel()[len(self.view.sel())-1].end()
-                self.view.sel().clear()
-                self.view.sel().add(sublime.Region(region_begin, region_end))
-        elif mode == "multiple":
-            pass # already selected
-        elif mode == "at_the_end":
-            if len(self.view.sel()) > 0:
-                region_end = self.view.sel()[len(self.view.sel())-1].end()
-                self.view.sel().clear()
-                self.view.sel().add(sublime.Region(region_end, region_end))
-
+        metadata_regions = PelicanPluginTools.get_metadata_regions(self.view, mode)
+        for region in metadata_regions:
+            self.view.sel().add(region)
         self.view.show(self.view.sel())
 
 class PelicanInsertMetadataCommand(sublime_plugin.TextCommand):

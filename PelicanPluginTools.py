@@ -189,3 +189,40 @@ def get_categories_tags(window, mode = "tag"):
         list_results.remove('')
 
     return list_results
+
+def get_metadata_regions(view, mode):
+    metadata_regions = view.find_all(':?\w+:', 0)
+
+    regions = []
+    for i in range(0, len(metadata_regions)):
+        region = metadata_regions[i]
+
+        # select consecutive metadata lines at the beginning of the file
+        if i > 0:
+            prev_region = metadata_regions[i-1]
+            prev_line_no, __ = view.rowcol(prev_region.begin())
+            this_line_no, __ = view.rowcol(region.begin())
+
+            if this_line_no - prev_line_no > 1:
+                break
+
+        line_regions = view.lines(region)
+        for line_region in line_regions:
+            if (not line_region.empty()) and (not line_region in regions):
+                regions.append(line_region)
+
+    result_region_list = []
+    if mode == "single":
+        if len(regions) > 0:
+            region_begin = regions[0].begin()
+            region_end = regions[len(regions)-1].end()
+            result_region_list.append(sublime.Region(region_begin, region_end))
+    elif mode == "multiple":
+        for region in regions:
+            result_region_list.append(region)
+    elif mode == "at_the_end":
+        if len(regions) > 0:
+            region_end = regions[len(regions)-1].end()
+            result_region_list.append(sublime.Region(region_end, region_end))
+
+    return result_region_list

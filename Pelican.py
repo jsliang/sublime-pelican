@@ -167,19 +167,18 @@ class PelicanInsertMetadataCommand(sublime_plugin.TextCommand):
 
 class PelicanInsertTagCommand(sublime_plugin.TextCommand):
     def run(self, edit):
-        thread = PelicanInsertTagCategoryThread(self, edit, "tag")
+        thread = PelicanInsertTagCategoryThread(self, "tag")
         thread.start()
 
 class PelicanInsertCategoryCommand(sublime_plugin.TextCommand):
     def run(self, edit):
-        thread = PelicanInsertTagCategoryThread(self, edit, "category")
+        thread = PelicanInsertTagCategoryThread(self, "category")
         thread.start()
 
 class PelicanInsertTagCategoryThread(threading.Thread):
-    def __init__(self, txtcmd, edit, mode):
+    def __init__(self, txtcmd, mode):
         self.window = txtcmd.view.window()
         self.view = txtcmd.view
-        self.edit = edit
         self.mode = mode
         threading.Thread.__init__(self)
 
@@ -197,7 +196,9 @@ class PelicanInsertTagCategoryThread(threading.Thread):
             self.view.run_command('pelican_select_metadata', {'mode': 'single'})
 
             insert_position = self.view.sel()[0].end()
-            self.view.insert(self.edit, insert_position, template)
+            edit = self.view.begin_edit()
+            self.view.insert(edit, insert_position, template)
+            self.view.end_edit(edit)
 
             if self.mode == "tag":
                 region = self.view.find('tags:', 0)
@@ -237,7 +238,9 @@ class PelicanInsertTagCategoryThread(threading.Thread):
 
         new_content_str = " " + new_content_str
 
-        self.view.replace(self.edit, self.view.sel()[0], new_content_str)
+        edit = self.view.begin_edit()
+        self.view.replace(edit, self.view.sel()[0], new_content_str)
+        self.view.end_edit(edit)
 
         content_line = self.view.line(self.view.sel()[0])
 

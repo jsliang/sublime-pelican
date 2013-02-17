@@ -135,15 +135,14 @@ class PelicanInsertMetadataCommand(sublime_plugin.TextCommand):
                 regex = re.compile(":?(\w+):(.*)")
                 find_all = regex.findall(metadata_str)
                 if len(find_all) > 0:
-                    (key, value) = find_all[0]
-                    key = key.strip()
-                    value = value.strip()
-                    if not key in metadata:
-                        new_meta = "%s: %s" % (key, value)
-                        if meta_type is "rst":
-                            new_meta = ":" + new_meta
-                        article_metadata_template_lines.append(new_meta)
-                    metadata[key] = value.strip()
+                    for (field_name, field_value) in find_all:
+                        field_data = ( field_name.strip(), field_value.strip() )
+                        if not field_name in metadata:
+                            new_meta = "%s: %s" % field_data
+                            if meta_type is "rst":
+                                new_meta = ":" + new_meta
+                            article_metadata_template_lines.append(new_meta)
+                        metadata[field_name] = field_value.strip()
 
             old_metadata_begin = self.view.sel()[0].begin()
             old_metadata_end = self.view.sel()[len(self.view.sel()) - 1].end()

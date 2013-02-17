@@ -61,13 +61,13 @@ class PelicanNewMarkdownCommand(sublime_plugin.WindowCommand):
     def run(self):
         new_view = self.window.new_file()
         PelicanPluginTools.addPelicanArticle(new_view)
-        new_view.run_command('pelican_insert_metadata', {"select_metadata": False, "meta_type": "md"})
+        new_view.run_command('pelican_insert_metadata', {"meta_type": "md"})
 
 class PelicanNewRestructuredtextCommand(sublime_plugin.WindowCommand):
     def run(self):
         new_view = self.window.new_file()
         PelicanPluginTools.addPelicanArticle(new_view)
-        new_view.run_command('pelican_insert_metadata', {"select_metadata": False, "meta_type": "rst"})
+        new_view.run_command('pelican_insert_metadata', {"meta_type": "rst"})
 
 class PelicanSelectMetadataCommand(sublime_plugin.TextCommand):
     def run(self, edit, mode = "single"):
@@ -78,7 +78,7 @@ class PelicanSelectMetadataCommand(sublime_plugin.TextCommand):
         self.view.show(self.view.sel())
 
 class PelicanInsertMetadataCommand(sublime_plugin.TextCommand):
-    def run(self, edit, select_metadata = True, meta_type = None):
+    def run(self, edit, meta_type = None):
         if meta_type is None:
             meta_type = PelicanPluginTools.detect_article_type(self.view)
 
@@ -97,10 +97,10 @@ class PelicanInsertMetadataCommand(sublime_plugin.TextCommand):
         for article_metadata_template_key in article_metadata_template_keys:
             metadata[article_metadata_template_key] = ""
 
-        self.view.run_command('pelican_select_metadata')
-        if len(self.view.sel()) > 0:
-            for sel in self.view.sel():
-                metadata_str = self.view.substr(sel)
+        metadata_regions = PelicanPluginTools.get_metadata_regions(self.view, "multiple")
+        if len(metadata_regions) > 0:
+            for region in metadata_regions:
+                metadata_str = self.view.substr(region)
                 regex = re.compile(":?(\w+):(.*)")
                 find_all = regex.findall(metadata_str)
                 if len(find_all) > 0:
@@ -113,26 +113,28 @@ class PelicanInsertMetadataCommand(sublime_plugin.TextCommand):
                             article_metadata_template_lines.append(new_meta)
                         metadata[field_name] = field_value.strip()
 
-            old_metadata_begin = self.view.sel()[0].begin()
-            old_metadata_end = self.view.sel()[len(self.view.sel()) - 1].end()
+            old_metadata_begin = metadata_regions[0].begin()
+            old_metadata_end = metadata_regions[len(metadata_regions) - 1].end()
             old_metadata_region = sublime.Region(old_metadata_begin, old_metadata_end)
 
         if metadata["date"] is "":
             metadata["date"] = PelicanPluginTools.strDateNow()
 
+        e = self.view.begin_edit()
         article_metadata_template = PelicanPluginTools.normalize_line_endings(self.view, "\n".join(article_metadata_template_lines))
         article_metadata_str = article_metadata_template % metadata
-        if len(self.view.sel()) > 0:
-            self.view.replace(edit, old_metadata_region, article_metadata_str)
+        if len(metadata_regions) > 0:
+            self.view.replace(e, old_metadata_region, article_metadata_str)
         else:
-            self.view.insert(edit, 0, article_metadata_str)
+            self.view.insert(e, 0, article_metadata_str)
+        self.view.end_edit(e)
 
         force_slug_regeneration = PelicanPluginTools.load_setting(self.view, "force_slug_regeneration", False)
         if force_slug_regeneration or len(metadata["slug"]) is 0:
             self.view.run_command('pelican_generate_slug')
 
-        if select_metadata:
-            self.view.run_command('pelican_select_metadata')
+        # scroll to top
+        self.view.show(0)
 
 class PelicanInsertTagCommand(sublime_plugin.TextCommand):
     def run(self, edit):

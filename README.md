@@ -1,7 +1,6 @@
 # SublimePelican: Pelican integration to Sublime Text 2
 
-**SublimePelican** is a plugin for [Pelican](http://getpelican.com/) integration to [Sublime Text 2](http://www.sublimetext.com/2).
-It is designed to help people write Pelican articles faster using Sublime Text 2.
+**SublimePelican** is a Sublime Text 2 plugin that makes writing [Pelican](http://getpelican.com/) articles easier and faster.
 
 The plugin prepares metadata fields for you, with the ability to fill in date, to generate slug, and to list categories and tags you've used.
 [More features](https://github.com/jsliang/sublime-pelican/issues?labels=enhancement&page=1&state=open) to be added.

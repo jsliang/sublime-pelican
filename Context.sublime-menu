@@ -1,6 +1,6 @@
 [
     { "caption": "-" },
-    { "id": "pelican", "caption": "Pelican", "children": [
+    { "id": "SublimePelican", "caption": "SublimePelican", "children": [
         { "caption": "Insert Category", "command": "pelican_insert_category" },
         { "caption": "Insert Tag", "command": "pelican_insert_tag" },
         { "caption": "-" },

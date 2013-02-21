@@ -40,7 +40,7 @@ If you're not sure where your Sublime Text 2 Packages directory is, open Sublime
 
 ### Access commands from Context Menu
 
-Right click on a file being edit, and access the commands under the **Pelican** item.
+Right click on a file being edit, and access the commands under the **SublimePelican** item.
 
 ## SublimePelican Commands
 
@@ -79,10 +79,10 @@ Right click on a file being edit, and access the commands under the **Pelican** 
 
 ## Settings
 
-For the latest information on what SublimePelican settings are available, select the menu item **Preferences** > **Package Settings** > **Pelican** > **Settings - Default**.
+For the latest information on what SublimePelican settings are available, select the menu item **Preferences** > **Package Settings** > **SublimePelican** > **Settings - Default**.
 
 DO NOT edit the settings in "Settings - Default" as changes will be lost when SublimePelican is updated.
-Instead, customize your settings in **Preferences** > **Package Settings** > **Pelican** > **Settings - User**.
+Instead, customize your settings in **Preferences** > **Package Settings** > **SublimePelican** > **Settings - User**.
 
 ### Smart metadata fields generation
 

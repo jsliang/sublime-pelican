@@ -70,12 +70,12 @@ Right click on a file being edit, and access the commands under the **SublimePel
 *   **Pelican: Insert Category**
 
     If you think it's hard to remember what categories you've used when writing articles, then this command is made for you.
-    This command lists categories you've used in your Pelican site in the quick panel, allowig you to fuzzily select and insert a previously used category quickly.
+    This command lists categories you've used in your Pelican site in the quick panel, allowing you to fuzzily select and insert a previously used category quickly.
 
 *   **Pelican: Insert Tag**
 
     If you think it's hard to remember what tags you've used when writing articles, then this command is made for you.
-    This command lists tags you've used in your Pelican site in the quick panel, allowig you to fuzzily select and insert a previously used tag quickly.
+    This command lists tags you've used in your Pelican site in the quick panel, allowing you to fuzzily select and insert a previously used tag quickly.
 
 *   **Pelican: Update Article Date**
 

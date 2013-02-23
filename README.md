@@ -7,8 +7,16 @@ The plugin prepares metadata fields for you, with the ability to fill in current
 
 ## Installation
 
-You can install the SublimePelican plugin with or without Git.
-Support for the [Package Control plugin](http://wbond.net/sublime_packages/package_control) is pending pull request.
+### Installation with Package Control
+
+The easiest way to install SublimePelican is via [Sublime Package Control](http://wbond.net/sublime_packages/package_control) by [Will Bond](http://wbond.net/).
+Package Control automatically updates SublimePelican to the latest version for you.
+
+1.  If you haven't installed Sublime Package Control, follow the steps here: http://wbond.net/sublime_packages/package_control/installation
+2.  Open Sublime Text 2 and bring up the Command Palette (OS X: `Command+Shift+P`; Linux/Windows: `Control+Shift+P`).
+3.  Select "Package Control: Install Package", and wait for Package Control to fetch the package list.
+4.  When the list appears in the quick panel, type `Pelican` to select Pelican.
+
 
 ### Installation without Git
 
@@ -178,6 +186,7 @@ You are also welcomed to propose [enhancements](https://github.com/jsliang/subli
 
 *   [Pelican](http://getpelican.com/)
 *   [Sublime Text](http://www.sublimetext.com/)
+*   [Sublime Package Control](http://wbond.net/sublime_packages/package_control)
 *   [DocumentUp](http://documentup.com/)
 
 ## License

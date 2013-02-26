@@ -84,12 +84,13 @@ class PelicanInsertMetadataCommand(sublime_plugin.TextCommand):
 
         article_metadata_template_keys = []
         article_metadata_template_lines = PelicanPluginTools.load_article_metadata_template_lines(self.view, meta_type)
+        article_metadata_template_lines = PelicanPluginTools.normalize_article_metadata_case(article_metadata_template_lines)
         if article_metadata_template_lines:
             for article_metadata_template_line in article_metadata_template_lines:
                 regex = re.compile(":?(\w+):")
                 find_all = regex.findall(article_metadata_template_line)
                 if len(find_all) > 0:
-                    metadata_key = regex.findall(article_metadata_template_line)[0]
+                    metadata_key = find_all[0]
                     if not metadata_key in article_metadata_template_keys:
                         article_metadata_template_keys.append(metadata_key)
 
@@ -101,6 +102,7 @@ class PelicanInsertMetadataCommand(sublime_plugin.TextCommand):
         if len(metadata_regions) > 0:
             for region in metadata_regions:
                 metadata_str = self.view.substr(region)
+                metadata_str = PelicanPluginTools.normalize_article_metadata_case(metadata_str)[0]
                 regex = re.compile(":?(\w+):(.*)")
                 find_all = regex.findall(metadata_str)
                 if len(find_all) > 0:
@@ -117,8 +119,8 @@ class PelicanInsertMetadataCommand(sublime_plugin.TextCommand):
             old_metadata_end = metadata_regions[len(metadata_regions) - 1].end()
             old_metadata_region = sublime.Region(old_metadata_begin, old_metadata_end)
 
-        if metadata["date"] is "":
-            metadata["date"] = PelicanPluginTools.strDateNow()
+        if metadata["Date"] is "":
+            metadata["Date"] = PelicanPluginTools.strDateNow()
 
         e = self.view.begin_edit()
         article_metadata_template = PelicanPluginTools.normalize_line_endings(self.view, "\n".join(article_metadata_template_lines))
@@ -130,7 +132,7 @@ class PelicanInsertMetadataCommand(sublime_plugin.TextCommand):
         self.view.end_edit(e)
 
         force_slug_regeneration = PelicanPluginTools.load_setting(self.view, "force_slug_regeneration", False)
-        if force_slug_regeneration or len(metadata["slug"]) is 0:
+        if force_slug_regeneration or len(metadata["Slug"]) is 0:
             self.view.run_command('pelican_generate_slug')
 
         # scroll to top

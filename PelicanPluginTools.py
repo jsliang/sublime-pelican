@@ -11,17 +11,17 @@ if sys.getdefaultencoding() != 'utf-8':
     sys.setdefaultencoding('utf-8')
 
 pelican_slug_template = {
-    "md": "slug: %s\n",
+    "md": "Slug: %s\n",
     "rst": ":slug: %s\n",
 }
 
 pelican_tags_template = {
-    "md": "\ntags: ",
+    "md": "\nTags: ",
     "rst": "\n:tags: ",
 }
 
 pelican_categories_template = {
-    "md": "\ncategory: ",
+    "md": "\nCategory: ",
     "rst": "\n:category: ",
 }
 
@@ -226,3 +226,76 @@ def get_metadata_regions(view, mode):
             result_region_list.append(sublime.Region(region_end, region_end))
 
     return result_region_list
+
+def normalize_article_metadata_case(template_str, normalize_template_var=True):
+    '''
+    Markdown
+
+    >>> template_str = "title: %(title)s"
+    >>> print normalize_article_metadata_case(template_str)
+    ['Title: %(Title)s']
+    >>> print normalize_article_metadata_case(template_str, False)
+    ['Title: %(title)s']
+
+    >>> template_str = """
+    ... title: %(title)s
+    ... date: %(date)s
+    ... slug: %(slug)s
+    ... """
+    >>> print normalize_article_metadata_case(template_str)
+    ['Title: %(Title)s', 'Date: %(Date)s', 'Slug: %(Slug)s']
+    >>> print normalize_article_metadata_case(template_str, False)
+    ['Title: %(title)s', 'Date: %(date)s', 'Slug: %(slug)s']
+
+    reStructuredText
+
+    >>> template_str = ":TITLE: %(TITLE)s"
+    >>> print normalize_article_metadata_case(template_str)
+    [':title: %(title)s']
+    >>> print normalize_article_metadata_case(template_str, False)
+    [':title: %(TITLE)s']
+
+    >>> template_str = """
+    ... :TITLE: %(TITLE)s
+    ... :DATE: %(DATE)s
+    ... :SLUG: %(SLUG)s
+    ... """
+    >>> print normalize_article_metadata_case(template_str)
+    [':title: %(title)s', ':date: %(date)s', ':slug: %(slug)s']
+    >>> print normalize_article_metadata_case(template_str, False)
+    [':title: %(TITLE)s', ':date: %(DATE)s', ':slug: %(SLUG)s']
+    '''
+
+    new_str_lines = []
+    if not isinstance(template_str, list):
+        template_str = template_str.replace('\r\n', '\n').replace('\r', '\n').split('\n')
+    regex_key = re.compile(":?(\w+):")
+    regex_var = re.compile("%\((\w+)\)s")
+
+    for line in template_str:
+        isMD = True
+        regex = re.compile("^:\w+:")
+        if len(regex.findall(line)) > 0:
+            isMD = False
+
+        find_all = regex_key.findall(line)
+        if len(find_all) > 0:
+            template_key = find_all[0]
+            if isMD:
+                new_template_key = template_key.strip().capitalize()
+            else:
+                new_template_key = template_key.strip().lower()
+            new_line = line.replace("%s:" % template_key, "%s:" % new_template_key)
+
+            if normalize_template_var:
+                find_all = regex_var.findall(line)
+                if len(find_all) > 0:
+                    template_var = find_all[0]
+                    if isMD:
+                        new_template_var = template_var.strip().capitalize()
+                    else:
+                        new_template_var = template_var.strip().lower()
+                    new_line = new_line.replace("%("+template_var+")s", "%("+new_template_var+")s")
+
+            new_str_lines.append(new_line)
+    return new_str_lines

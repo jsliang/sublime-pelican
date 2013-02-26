@@ -7,7 +7,7 @@ import PelicanPluginTools
 
 class PelicanUpdateDateCommand(sublime_plugin.TextCommand):
     def run(self, edit):
-        date_region = self.view.find(':?date:\s*', 0)
+        date_region = self.view.find(':?date:\s*', 0, sublime.IGNORECASE)
         if not date_region:
             return
 
@@ -157,10 +157,10 @@ class PelicanInsertTagCategoryThread(threading.Thread):
         meta_type = PelicanPluginTools.detect_article_type(self.view)
 
         if self.mode == "tag":
-            region = self.view.find('tags:', 0)
+            region = self.view.find('tags:', 0, sublime.IGNORECASE)
             template = PelicanPluginTools.normalize_line_endings(self.view, PelicanPluginTools.pelican_tags_template[meta_type])
         else:
-            region = self.view.find('category:', 0)
+            region = self.view.find('category:', 0, sublime.IGNORECASE)
             template = PelicanPluginTools.normalize_line_endings(self.view, PelicanPluginTools.pelican_categories_template[meta_type])
 
         if not region:
@@ -172,9 +172,9 @@ class PelicanInsertTagCategoryThread(threading.Thread):
             self.view.end_edit(edit)
 
             if self.mode == "tag":
-                region = self.view.find('tags:', 0)
+                region = self.view.find('tags:', 0, sublime.IGNORECASE)
             else:
-                region = self.view.find('category:', 0)
+                region = self.view.find('category:', 0, sublime.IGNORECASE)
 
         content_start = region.end()
         content_end = self.view.line(region).end()

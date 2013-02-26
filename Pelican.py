@@ -119,8 +119,13 @@ class PelicanInsertMetadataCommand(sublime_plugin.TextCommand):
             old_metadata_end = metadata_regions[len(metadata_regions) - 1].end()
             old_metadata_region = sublime.Region(old_metadata_begin, old_metadata_end)
 
-        if metadata["Date"] is "":
-            metadata["Date"] = PelicanPluginTools.strDateNow()
+        # initialize date field if it's empty
+        metadata_key_date = "Date"
+        for key in metadata.keys():
+            if key.lower() == "date":
+                metadata_key_date = key
+        if metadata[metadata_key_date] is "":
+            metadata[metadata_key_date] = PelicanPluginTools.strDateNow()
 
         e = self.view.begin_edit()
         article_metadata_template = PelicanPluginTools.normalize_line_endings(self.view, "\n".join(article_metadata_template_lines))
@@ -131,8 +136,13 @@ class PelicanInsertMetadataCommand(sublime_plugin.TextCommand):
             self.view.insert(e, 0, article_metadata_str)
         self.view.end_edit(e)
 
+        # initialize slug field if it's empty
+        metadata_key_slug = "Slug"
+        for key in metadata.keys():
+            if key.lower() == "slug":
+                metadata_key_slug = key
         force_slug_regeneration = PelicanPluginTools.load_setting(self.view, "force_slug_regeneration", False)
-        if force_slug_regeneration or len(metadata["Slug"]) is 0:
+        if force_slug_regeneration or len(metadata[metadata_key_slug]) is 0:
             self.view.run_command('pelican_generate_slug')
 
         # scroll to top

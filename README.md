@@ -180,7 +180,7 @@ To prevent automatic slug generation from annoyly affecting other Markdown/reStr
 
 ## Known Issues
 
-There are [some compatability issues with Windows](https://github.com/jsliang/sublime-pelican/issues?labels=bug&state=open).
+There are [some issues on Windows](https://github.com/jsliang/sublime-pelican/issues?labels=bug&state=open).
 
 If you find any bugs, please report them in [issues](https://github.com/jsliang/sublime-pelican/issues).
 

@@ -27,8 +27,6 @@ pelican_categories_template = {
 
 default_filter = '.*\\.(md|markdown|mkd|rst)$'
 
-global_settings = sublime.load_settings("Pelican.sublime-settings")
-
 pelican_article_views = []
 
 def addPelicanArticle(view):
@@ -68,6 +66,8 @@ def load_setting(view, setting_name, default_value):
         if default_value:
             return default_value
         return None
+
+    global_settings = sublime.load_settings("Pelican.sublime-settings")
 
     return view.settings().get(setting_name, global_settings.get(setting_name, default_value))
 

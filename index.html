@@ -108,11 +108,15 @@ Fields not listed in the metadata template are preserved too.</p>
 <li>
 <p><strong>Pelican: Insert Category</strong></p>
 
+<p><img src="http://jsliang.com/sublime-pelican/sublimepelican_insert_category.png" alt="Screenshot of Pelican: Insert Category"></p>
+
 <p>If you think it's hard to remember what categories you've used when writing articles, then this command is made for you.
 This command lists categories you've used in your Pelican site in the quick panel, allowing you to fuzzily select and insert a previously used category quickly.</p>
 </li>
 <li>
 <p><strong>Pelican: Insert Tag</strong></p>
+
+<p><img src="http://jsliang.com/sublime-pelican/sublimepelican_insert_tag.png" alt="Screenshot of Pelican: Insert Tag"></p>
 
 <p>If you think it's hard to remember what tags you've used when writing articles, then this command is made for you.
 This command lists tags you've used in your Pelican site in the quick panel, allowing you to fuzzily select and insert a previously used tag quickly.</p>
@@ -182,14 +186,14 @@ If you want to force slug regeneration on each save, you have to set <code>force
     // Metadata template for Markdown articles
     "md":
         [
-            "title: %(title)s",
-            "slug: %(slug)s",
-            "date: %(date)s",
-            "tags: %(tags)s",
-            "category: %(category)s",
-            "author: %(author)s",
-            "lang: %(lang)s",
-            "summary: %(summary)s"
+            "Title: %(title)s",
+            "Slug: %(slug)s",
+            "Date: %(date)s",
+            "Tags: %(tags)s",
+            "Category: %(category)s",
+            "Author: %(author)s",
+            "Lang: %(lang)s",
+            "Summary: %(summary)s"
         ],
 
     // Metadata template for reStructuredText articles
@@ -244,8 +248,6 @@ Effective only if <code>use_input_folder_in_makefile</code> is set to <code>fals
 </li>
 <li>  <a href="http://wbond.net/sublime_packages/package_control">Sublime Package Control</a>
 </li>
-<li>  <a href="http://documentup.com/">DocumentUp</a>
-</li>
 </ul><h2>License</h2>
 
 <p>SublimePelican is licensed under the MIT license.</p>
@@ -257,36 +259,8 @@ Effective only if <code>use_input_folder_in_makefile</code> is set to <code>fals
 <p>The above copyright notice and this permission notice shall be included in all copies or substantial portions of the Software.</p>
 
 <p>THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.</p>
-
-        <script type="text/javascript">
-                var gaJsHost = (("https:" == document.location.protocol) ? "https://ssl." : "http://www.");
-                document.write(unescape("%3Cscript src='" + gaJsHost + "google-analytics.com/ga.js' type='text/javascript'%3E%3C/script%3E"));
-              </script>
-              <script type="text/javascript">
-                try {
-                  var pageTracker = _gat._getTracker("UA-37740364-1");
-                pageTracker._trackPageview();
-                } catch(err) {}
-              </script>
-        <h2>Comments</h2>
-        <div id="disqus_thread"></div>
-        <script type="text/javascript">
-            /* * * CONFIGURATION VARIABLES: EDIT BEFORE PASTING INTO YOUR WEBPAGE * * */
-            var disqus_shortname = 'jsliang'; // required: replace example with your forum shortname
-    
-            /* * * DON'T EDIT BELOW THIS LINE * * */
-            (function() {
-                var dsq = document.createElement('script'); dsq.type = 'text/javascript'; dsq.async = true;
-                dsq.src = 'http://' + disqus_shortname + '.disqus.com/embed.js';
-                (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
-            })();
-        </script>
-        <noscript>Please enable JavaScript to view the <a href="http://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
-        <a href="http://disqus.com" class="dsq-brlink">comments powered by <span class="logo-disqus">Disqus</span></a>
-
-    </section>
-
-</div>
+      </section>
+    </div>
 
     <!-- FOOTER  -->
     <div id="footer_wrap" class="outer">
@@ -295,6 +269,18 @@ Effective only if <code>use_input_folder_in_makefile</code> is set to <code>fals
         <p>Published with <a href="http://pages.github.com">GitHub Pages</a></p>
       </footer>
     </div>
+
+              <script type="text/javascript">
+            var gaJsHost = (("https:" == document.location.protocol) ? "https://ssl." : "http://www.");
+            document.write(unescape("%3Cscript src='" + gaJsHost + "google-analytics.com/ga.js' type='text/javascript'%3E%3C/script%3E"));
+          </script>
+          <script type="text/javascript">
+            try {
+              var pageTracker = _gat._getTracker("UA-37740364-1");
+            pageTracker._trackPageview();
+            } catch(err) {}
+          </script>
+
 
   </body>
 </html>

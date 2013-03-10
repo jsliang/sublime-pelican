@@ -189,7 +189,6 @@ If you find any bugs, please report them in [issues](https://github.com/jsliang/
 *   [Pelican](http://getpelican.com/)
 *   [Sublime Text](http://www.sublimetext.com/)
 *   [Sublime Package Control](http://wbond.net/sublime_packages/package_control)
-*   [DocumentUp](http://documentup.com/)
 
 ## License
 

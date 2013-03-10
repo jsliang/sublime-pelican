@@ -133,14 +133,14 @@ Instead, customize your settings in **Preferences** > **Package Settings** > **S
     // Metadata template for Markdown articles
     "md":
         [
-            "title: %(title)s",
-            "slug: %(slug)s",
-            "date: %(date)s",
-            "tags: %(tags)s",
-            "category: %(category)s",
-            "author: %(author)s",
-            "lang: %(lang)s",
-            "summary: %(summary)s"
+            "Title: %(title)s",
+            "Slug: %(slug)s",
+            "Date: %(date)s",
+            "Tags: %(tags)s",
+            "Category: %(category)s",
+            "Author: %(author)s",
+            "Lang: %(lang)s",
+            "Summary: %(summary)s"
         ],
 
     // Metadata template for reStructuredText articles

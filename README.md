@@ -69,10 +69,14 @@ Right click on a file being edit, and access the commands under the **SublimePel
 
 *   **Pelican: Insert Category**
 
+    ![Screenshot of Pelican: Insert Category](http://jsliang.com/sublime-pelican/sublimepelican_insert_category.png)
+
     If you think it's hard to remember what categories you've used when writing articles, then this command is made for you.
     This command lists categories you've used in your Pelican site in the quick panel, allowing you to fuzzily select and insert a previously used category quickly.
 
 *   **Pelican: Insert Tag**
+
+    ![Screenshot of Pelican: Insert Tag](http://jsliang.com/sublime-pelican/sublimepelican_insert_tag.png)
 
     If you think it's hard to remember what tags you've used when writing articles, then this command is made for you.
     This command lists tags you've used in your Pelican site in the quick panel, allowing you to fuzzily select and insert a previously used tag quickly.

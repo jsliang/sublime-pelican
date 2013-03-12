@@ -150,18 +150,21 @@ class PelicanInsertMetadataCommand(sublime_plugin.TextCommand):
 
 class PelicanInsertTagCommand(sublime_plugin.TextCommand):
     def run(self, edit):
-        thread = PelicanInsertTagCategoryThread(self, "tag")
+        articles_paths = PelicanPluginTools.get_article_paths(window=self.view.window())
+        thread = PelicanInsertTagCategoryThread(self, articles_paths, "tag")
         thread.start()
 
 class PelicanInsertCategoryCommand(sublime_plugin.TextCommand):
     def run(self, edit):
-        thread = PelicanInsertTagCategoryThread(self, "category")
+        articles_paths = PelicanPluginTools.get_article_paths(window=self.view.window())
+        thread = PelicanInsertTagCategoryThread(self, articles_paths, "category")
         thread.start()
 
 class PelicanInsertTagCategoryThread(threading.Thread):
-    def __init__(self, txtcmd, mode):
+    def __init__(self, txtcmd, article_paths, mode):
         self.window = txtcmd.view.window()
         self.view = txtcmd.view
+        self.article_paths = article_paths
         self.mode = mode
         threading.Thread.__init__(self)
 
@@ -232,7 +235,7 @@ class PelicanInsertTagCategoryThread(threading.Thread):
         self.view.show(content_line)
 
     def run(self):
-        self.results = PelicanPluginTools.get_categories_tags(self.window, mode = self.mode)
+        self.results = PelicanPluginTools.get_categories_tags(self.article_paths, mode = self.mode)
 
         def show_quick_panel():
             if not self.results:

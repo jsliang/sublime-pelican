@@ -144,27 +144,31 @@ def parse_makefile(window):
             return makefile_params
     return None
 
-def get_categories_tags(window, mode = "tag"):
+def get_article_paths(window):
+    article_paths = []
+
     # load INPUTDIR
     inputdir = None
     makefile_params = parse_makefile(window)
     if makefile_params and "INPUTDIR" in makefile_params:
         inputdir = makefile_params['INPUTDIR']
     else:
-        return
+        return []
 
     # get paths of all articles in INPUTDIR
-    articles_paths = []
     inputdir_structure = os.walk(inputdir)
     if inputdir_structure:
         for (dirpath, dirnames, filenames) in inputdir_structure:
             for filename in filenames:
                 article_path = os.path.join(dirpath, filename)
                 if re.search(default_filter, article_path):
-                    articles_paths.append(article_path)
+                    article_paths.append(article_path)
     else:
-        return
+        return []
 
+    return article_paths
+
+def get_categories_tags(articles_paths, mode = "tag"):
     # retrieve categories or tags
     results = []
     for article_path in articles_paths:

@@ -182,11 +182,9 @@ To prevent automatic slug generation from annoyly affecting other Markdown/reStr
     Default value: `"content/.*\\.(md|markdown|mkd|rst)$"`
 
 
-## Known Issues
+## Comments and Bug Reports
 
-There are [some issues on Windows](https://github.com/jsliang/sublime-pelican/issues?labels=bug&state=open).
-
-If you find any bugs, please report them in [issues](https://github.com/jsliang/sublime-pelican/issues).
+If you have any comments, or if you find any bugs, feel free to post them in [issues](https://github.com/jsliang/sublime-pelican/issues).
 
 ## Thanks
 

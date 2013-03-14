@@ -9,7 +9,7 @@ The plugin prepares metadata fields for you, with the ability to fill in current
 
 ### Installation with Package Control
 
-The easiest way to install SublimePelican is via [Sublime Package Control](http://wbond.net/sublime_packages/package_control) by [Will Bond](http://wbond.net/).
+The easiest way to install SublimePelican is via [Will Bond](http://wbond.net/)'s [Sublime Package Control](http://wbond.net/sublime_packages/package_control).
 Package Control automatically updates SublimePelican to the latest version for you.
 
 1.  If you haven't installed Sublime Package Control, follow the steps here: http://wbond.net/sublime_packages/package_control/installation

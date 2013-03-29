@@ -1,12 +1,17 @@
-import sublime, sublime_plugin
+import sublime
+import sublime_plugin
 import re
 import PelicanPluginTools
 
+
 class PelicanArticleClose(sublime_plugin.EventListener):
+
     def on_close(self, view):
         PelicanPluginTools.removePelicanArticle(view)
 
+
 class PelicanAutogenSlug(sublime_plugin.EventListener):
+
     def isInTitleLine(self, view):
         if len(view.sel()) > 0:
             current_line = view.line(view.sel()[0].begin())
@@ -36,7 +41,7 @@ class PelicanAutogenSlug(sublime_plugin.EventListener):
         slug_region = view.find(':?slug:\s*.+', 0, sublime.IGNORECASE)
         if slug_region:
             slug_line = view.substr(view.line(slug_region.begin()))
-            regex = re.compile(":?slug:(.*)",re.IGNORECASE)
+            regex = re.compile(":?slug:(.*)", re.IGNORECASE)
             find_all = regex.findall(slug_line)
             if len(find_all) > 0:
                 slug_str = find_all[0].strip()

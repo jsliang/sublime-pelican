@@ -1,11 +1,14 @@
 # -*- coding: utf-8 -*-
 
-import sublime, sublime_plugin
+import sublime
+import sublime_plugin
 import re
 import threading
 import PelicanPluginTools
 
+
 class PelicanUpdateDateCommand(sublime_plugin.TextCommand):
+
     def run(self, edit):
         date_region = self.view.find(':?date:\s*', 0, sublime.IGNORECASE)
         if not date_region:
@@ -20,7 +23,9 @@ class PelicanUpdateDateCommand(sublime_plugin.TextCommand):
 
         self.view.show(new_datestr_region)
 
+
 class PelicanGenerateSlugCommand(sublime_plugin.TextCommand):
+
     def slugify(self, value):
         """
         Normalizes string, converts to lowercase, removes non-alpha characters,
@@ -37,7 +42,7 @@ class PelicanGenerateSlugCommand(sublime_plugin.TextCommand):
         if title_region:
             orig_title_str = self.view.substr(title_region).strip()
 
-            regex = re.compile(":?title:(?P<title>.+)\s*",re.IGNORECASE)
+            regex = re.compile(":?title:(?P<title>.+)\s*", re.IGNORECASE)
             r = regex.search(orig_title_str)
             if not r:
                 return
@@ -48,7 +53,8 @@ class PelicanGenerateSlugCommand(sublime_plugin.TextCommand):
 
             meta_type = PelicanPluginTools.detect_article_type(self.view)
 
-            pelican_slug_template = PelicanPluginTools.normalize_line_endings(self.view, PelicanPluginTools.pelican_slug_template[meta_type])
+            pelican_slug_template = PelicanPluginTools.normalize_line_endings(
+                self.view, PelicanPluginTools.pelican_slug_template[meta_type])
             slug_region = self.view.find(':?slug:.+\s*', 0, sublime.IGNORECASE)
             if slug_region:
                 self.view.replace(edit, slug_region, pelican_slug_template % slug)
@@ -58,27 +64,34 @@ class PelicanGenerateSlugCommand(sublime_plugin.TextCommand):
 
 
 class PelicanNewMarkdownCommand(sublime_plugin.WindowCommand):
+
     def run(self):
         new_view = self.window.new_file()
         PelicanPluginTools.addPelicanArticle(new_view)
         new_view.run_command('pelican_insert_metadata', {"meta_type": "md"})
 
+
 class PelicanNewRestructuredtextCommand(sublime_plugin.WindowCommand):
+
     def run(self):
         new_view = self.window.new_file()
         PelicanPluginTools.addPelicanArticle(new_view)
         new_view.run_command('pelican_insert_metadata', {"meta_type": "rst"})
 
+
 class PelicanSelectMetadataCommand(sublime_plugin.TextCommand):
-    def run(self, edit, mode = "single"):
+
+    def run(self, edit, mode="single"):
         self.view.sel().clear()
         metadata_regions = PelicanPluginTools.get_metadata_regions(self.view, mode)
         for region in metadata_regions:
             self.view.sel().add(region)
         self.view.show(self.view.sel())
 
+
 class PelicanInsertMetadataCommand(sublime_plugin.TextCommand):
-    def run(self, edit, meta_type = None):
+
+    def run(self, edit, meta_type=None):
         if meta_type is None:
             meta_type = PelicanPluginTools.detect_article_type(self.view)
 
@@ -107,7 +120,7 @@ class PelicanInsertMetadataCommand(sublime_plugin.TextCommand):
                 find_all = regex.findall(metadata_str)
                 if len(find_all) > 0:
                     for (field_name, field_value) in find_all:
-                        field_data = ( field_name.strip(), field_value.strip() )
+                        field_data = (field_name.strip(), field_value.strip())
                         if not field_name in metadata:
                             new_meta = "%s: %s" % field_data
                             if meta_type is "rst":
@@ -128,7 +141,8 @@ class PelicanInsertMetadataCommand(sublime_plugin.TextCommand):
             metadata[metadata_key_date] = PelicanPluginTools.strDateNow()
 
         e = self.view.begin_edit()
-        article_metadata_template = PelicanPluginTools.normalize_line_endings(self.view, "\n".join(article_metadata_template_lines))
+        article_metadata_template = PelicanPluginTools.normalize_line_endings(
+            self.view, "\n".join(article_metadata_template_lines))
         article_metadata_str = article_metadata_template % metadata
         if len(metadata_regions) > 0:
             self.view.replace(e, old_metadata_region, article_metadata_str)
@@ -148,19 +162,25 @@ class PelicanInsertMetadataCommand(sublime_plugin.TextCommand):
         # scroll to top
         self.view.show(0)
 
+
 class PelicanInsertTagCommand(sublime_plugin.TextCommand):
+
     def run(self, edit):
         articles_paths = PelicanPluginTools.get_article_paths(window=self.view.window())
         thread = PelicanInsertTagCategoryThread(self, articles_paths, "tag")
         thread.start()
 
+
 class PelicanInsertCategoryCommand(sublime_plugin.TextCommand):
+
     def run(self, edit):
         articles_paths = PelicanPluginTools.get_article_paths(window=self.view.window())
         thread = PelicanInsertTagCategoryThread(self, articles_paths, "category")
         thread.start()
 
+
 class PelicanInsertTagCategoryThread(threading.Thread):
+
     def __init__(self, txtcmd, article_paths, mode):
         self.window = txtcmd.view.window()
         self.view = txtcmd.view
@@ -176,7 +196,8 @@ class PelicanInsertTagCategoryThread(threading.Thread):
             template = PelicanPluginTools.normalize_line_endings(self.view, PelicanPluginTools.pelican_tags_template[meta_type])
         else:
             region = self.view.find('category:', 0, sublime.IGNORECASE)
-            template = PelicanPluginTools.normalize_line_endings(self.view, PelicanPluginTools.pelican_categories_template[meta_type])
+            template = PelicanPluginTools.normalize_line_endings(
+                self.view, PelicanPluginTools.pelican_categories_template[meta_type])
 
         if not region:
             self.view.run_command('pelican_select_metadata', {'mode': 'single'})
@@ -210,7 +231,7 @@ class PelicanInsertTagCategoryThread(threading.Thread):
         self.view.sel().add(old_content_region)
 
         if len(old_content_str) > 0 and self.mode == "tag":
-            current_entries = [ x.strip() for x in old_content_str.split(',') ]
+            current_entries = [x.strip() for x in old_content_str.split(',')]
 
             if not picked_str in current_entries:
                 current_entries.append(picked_str)
@@ -235,7 +256,7 @@ class PelicanInsertTagCategoryThread(threading.Thread):
         self.view.show(content_line)
 
     def run(self):
-        self.results = PelicanPluginTools.get_categories_tags(self.article_paths, mode = self.mode)
+        self.results = PelicanPluginTools.get_categories_tags(self.article_paths, mode=self.mode)
 
         def show_quick_panel():
             if not self.results:

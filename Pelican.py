@@ -200,6 +200,14 @@ class PelicanInsertTagCommand(sublime_plugin.TextCommand):
         thread.start()
 
 
+class PelicanInsertToViewCommand(sublime_plugin.TextCommand):
+
+    def run(self, edit, insert_string):
+        if self.view.sel()[0]:
+            insert_position = self.view.sel()[0].end()
+            self.view.insert(edit, insert_position, insert_string)
+
+
 class PelicanInsertCategoryCommand(sublime_plugin.TextCommand):
 
     def run(self, edit):
@@ -207,6 +215,14 @@ class PelicanInsertCategoryCommand(sublime_plugin.TextCommand):
         thread = PelicanInsertTagCategoryThread(
             self, articles_paths, "category")
         thread.start()
+
+
+class PelicanReplaceSelectionInViewCommand(sublime_plugin.TextCommand):
+
+    def run(self, edit, new_string):
+        if self.view.sel()[0]:
+            replace_region = self.view.sel()[0]
+            self.view.replace(edit, replace_region, new_string)
 
 
 class PelicanInsertTagCategoryThread(threading.Thread):
@@ -234,8 +250,8 @@ class PelicanInsertTagCategoryThread(threading.Thread):
             self.view.run_command(
                 'pelican_select_metadata', {'mode': 'single'})
 
-            insert_position = self.view.sel()[0].end()
-            self.view.insert(edit, insert_position, template)
+            self.view.run_command(
+                'pelican_insert_to_view', {'insert_string': template})
 
             if self.mode == "tag":
                 region = self.view.find('tags:', 0, sublime.IGNORECASE)
@@ -275,7 +291,8 @@ class PelicanInsertTagCategoryThread(threading.Thread):
 
         new_content_str = " " + new_content_str
 
-        self.view.replace(edit, self.view.sel()[0], new_content_str)
+        self.view.run_command(
+            'pelican_replace_selection_in_view', {'new_string': new_content_str})
 
         content_line = self.view.line(self.view.sel()[0])
 

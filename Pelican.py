@@ -1,4 +1,5 @@
 # -*- coding: utf-8 -*-
+import codecs
 import datetime
 import os
 import re
@@ -515,7 +516,7 @@ def get_categories_tags(articles_paths, mode="tag"):
         else:
             regex = re.compile("tags:(.*)", re.IGNORECASE)
 
-        with open(article_path) as f:
+        with codecs.open(article_path, 'r', 'utf-8') as f:
             content_str = f.read()
 
         regex_results = regex.findall(content_str)

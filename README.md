@@ -1,6 +1,6 @@
-# SublimePelican: Pelican integration to Sublime Text 2
+# SublimePelican: Pelican integration to Sublime Text
 
-**SublimePelican** is a [Sublime Text 2](http://www.sublimetext.com/) plugin that makes writing [Pelican](http://getpelican.com/) articles easier and faster.
+**SublimePelican** is a [Sublime Text](http://www.sublimetext.com/) plugin that makes writing [Pelican](http://getpelican.com/) articles easier and faster.
 
 The plugin prepares metadata fields for you, with the ability to fill in current date, to generate slug, and to list categories and tags you've used.
 [More features](https://github.com/jsliang/sublime-pelican/issues?labels=enhancement&page=1&state=open) to be added.
@@ -13,7 +13,7 @@ The easiest way to install SublimePelican is via [Will Bond](http://wbond.net/)'
 Package Control automatically updates SublimePelican to the latest version for you.
 
 1.  If you haven't installed Sublime Package Control, follow the steps here: http://wbond.net/sublime_packages/package_control/installation
-2.  Open Sublime Text 2 and bring up the Command Palette (OS X: `Command+Shift+P`; Linux/Windows: `Control+Shift+P`).
+2.  Open Sublime Text and bring up the Command Palette (OS X: `Command+Shift+P`; Linux/Windows: `Control+Shift+P`).
 3.  Select "Package Control: Install Package", and wait for Package Control to fetch the package list.
 4.  When the list appears in the quick panel, type `Pelican` to select Pelican.
 
@@ -21,14 +21,14 @@ Package Control automatically updates SublimePelican to the latest version for y
 ### Installation without Git
 
 1.  Download the [latest source from GitHub](https://nodeload.github.com/jsliang/sublime-pelican/zip/master).
-2.  Copy the `sublime-pelican-master` folder to your Sublime Text 2 Packages directory.
+2.  Copy the `sublime-pelican-master` folder to your Sublime Text Packages directory.
 3.  Rename the `sublime-pelican-master` folder to `Pelican`.
 
-If you're not sure where your Sublime Text 2 Packages directory is, open Sublime Text 2 and select menu item **Preference** > **Browse Packages...**
+If you're not sure where your Sublime Text Packages directory is, open Sublime Text and select menu item **Preference** > **Browse Packages...**
 
 ### Installation with Git
 
-Clone this repository into your Sublime Text 2 Packages directory:
+Clone this repository into your Sublime Text Packages directory:
 
     git clone https://github.com/jsliang/sublime-pelican.git
     mv sublime-pelican Pelican
@@ -37,7 +37,7 @@ which is equivalent to:
 
     git clone https://github.com/jsliang/sublime-pelican.git Pelican
 
-If you're not sure where your Sublime Text 2 Packages directory is, open Sublime Text 2 and select menu item **Preference** > **Browse Packages...**
+If you're not sure where your Sublime Text Packages directory is, open Sublime Text and select menu item **Preference** > **Browse Packages...**
 
 ## Usage
 

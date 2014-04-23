@@ -4,7 +4,7 @@
   <head>
     <meta charset='utf-8' />
     <meta http-equiv="X-UA-Compatible" content="chrome=1" />
-    <meta name="description" content="SublimePelican : A plugin for Pelican integration to Sublime Text 2." />
+    <meta name="description" content="SublimePelican : A plugin for Pelican integration to Sublime Text." />
 
     <link rel="stylesheet" type="text/css" media="screen" href="stylesheets/stylesheet.css">
 
@@ -19,7 +19,7 @@
           <a id="forkme_banner" href="https://github.com/jsliang/sublime-pelican">View on GitHub</a>
 
           <h1 id="project_title">SublimePelican</h1>
-          <h2 id="project_tagline">A plugin for Pelican integration to Sublime Text 2.</h2>
+          <h2 id="project_tagline">A plugin for Pelican integration to Sublime Text.</h2>
 
             <section id="downloads">
               <a class="zip_download_link" href="https://github.com/jsliang/sublime-pelican/zipball/master">Download this project as a .zip file</a>
@@ -31,16 +31,19 @@
     <!-- MAIN CONTENT -->
     <div id="main_content_wrap" class="outer">
       <section id="main_content" class="inner">
-        <h1>SublimePelican: Pelican integration to Sublime Text 2</h1>
+        <h1>
+<a name="sublimepelican-pelican-integration-to-sublime-text" class="anchor" href="#sublimepelican-pelican-integration-to-sublime-text"><span class="octicon octicon-link"></span></a>SublimePelican: Pelican integration to Sublime Text</h1>
 
-<p><strong>SublimePelican</strong> is a <a href="http://www.sublimetext.com/">Sublime Text 2</a> plugin that makes writing <a href="http://getpelican.com/">Pelican</a> articles easier and faster.</p>
+<p><strong>SublimePelican</strong> is a <a href="http://www.sublimetext.com/">Sublime Text</a> plugin that makes writing <a href="http://getpelican.com/">Pelican</a> articles easier and faster.</p>
 
 <p>The plugin prepares metadata fields for you, with the ability to fill in current date, to generate slug, and to list categories and tags you've used.
 <a href="https://github.com/jsliang/sublime-pelican/issues?labels=enhancement&amp;page=1&amp;state=open">More features</a> to be added.</p>
 
-<h2>Installation</h2>
+<h2>
+<a name="installation" class="anchor" href="#installation"><span class="octicon octicon-link"></span></a>Installation</h2>
 
-<h3>Installation with Package Control</h3>
+<h3>
+<a name="installation-with-package-control" class="anchor" href="#installation-with-package-control"><span class="octicon octicon-link"></span></a>Installation with Package Control</h3>
 
 <p>The easiest way to install SublimePelican is via <a href="http://wbond.net/">Will Bond</a>'s <a href="http://wbond.net/sublime_packages/package_control">Sublime Package Control</a>.
 Package Control automatically updates SublimePelican to the latest version for you.</p>
@@ -48,20 +51,22 @@ Package Control automatically updates SublimePelican to the latest version for y
 <ol>
 <li> If you haven't installed Sublime Package Control, follow the steps here: <a href="http://wbond.net/sublime_packages/package_control/installation">http://wbond.net/sublime_packages/package_control/installation</a>
 </li>
-<li> Open Sublime Text 2 and bring up the Command Palette (OS X: <code>Command+Shift+P</code>; Linux/Windows: <code>Control+Shift+P</code>).</li>
+<li> Open Sublime Text and bring up the Command Palette (OS X: <code>Command+Shift+P</code>; Linux/Windows: <code>Control+Shift+P</code>).</li>
 <li> Select "Package Control: Install Package", and wait for Package Control to fetch the package list.</li>
 <li> When the list appears in the quick panel, type <code>Pelican</code> to select Pelican.</li>
-</ol><h3>Installation without Git</h3>
+</ol><h3>
+<a name="installation-without-git" class="anchor" href="#installation-without-git"><span class="octicon octicon-link"></span></a>Installation without Git</h3>
 
 <ol>
 <li> Download the <a href="https://nodeload.github.com/jsliang/sublime-pelican/zip/master">latest source from GitHub</a>.</li>
-<li> Copy the <code>sublime-pelican-master</code> folder to your Sublime Text 2 Packages directory.</li>
+<li> Copy the <code>sublime-pelican-master</code> folder to your Sublime Text Packages directory.</li>
 <li> Rename the <code>sublime-pelican-master</code> folder to <code>Pelican</code>.</li>
-</ol><p>If you're not sure where your Sublime Text 2 Packages directory is, open Sublime Text 2 and select menu item <strong>Preference</strong> &gt; <strong>Browse Packages...</strong></p>
+</ol><p>If you're not sure where your Sublime Text Packages directory is, open Sublime Text and select menu item <strong>Preference</strong> &gt; <strong>Browse Packages...</strong></p>
 
-<h3>Installation with Git</h3>
+<h3>
+<a name="installation-with-git" class="anchor" href="#installation-with-git"><span class="octicon octicon-link"></span></a>Installation with Git</h3>
 
-<p>Clone this repository into your Sublime Text 2 Packages directory:</p>
+<p>Clone this repository into your Sublime Text Packages directory:</p>
 
 <pre><code>git clone https://github.com/jsliang/sublime-pelican.git
 mv sublime-pelican Pelican
@@ -72,20 +77,24 @@ mv sublime-pelican Pelican
 <pre><code>git clone https://github.com/jsliang/sublime-pelican.git Pelican
 </code></pre>
 
-<p>If you're not sure where your Sublime Text 2 Packages directory is, open Sublime Text 2 and select menu item <strong>Preference</strong> &gt; <strong>Browse Packages...</strong></p>
+<p>If you're not sure where your Sublime Text Packages directory is, open Sublime Text and select menu item <strong>Preference</strong> &gt; <strong>Browse Packages...</strong></p>
 
-<h2>Usage</h2>
+<h2>
+<a name="usage" class="anchor" href="#usage"><span class="octicon octicon-link"></span></a>Usage</h2>
 
-<h3>Access commands from Command Palette</h3>
+<h3>
+<a name="access-commands-from-command-palette" class="anchor" href="#access-commands-from-command-palette"><span class="octicon octicon-link"></span></a>Access commands from Command Palette</h3>
 
 <ol>
 <li> After installation, bring up the Command Palette (OS X: <code>Command+Shift+P</code>; Linux/Windows: <code>Control+Shift+P</code>).</li>
 <li> Type <code>Pelican</code> in Command Palette to view a list of available commands.</li>
-</ol><h3>Access commands from Context Menu</h3>
+</ol><h3>
+<a name="access-commands-from-context-menu" class="anchor" href="#access-commands-from-context-menu"><span class="octicon octicon-link"></span></a>Access commands from Context Menu</h3>
 
 <p>Right click on a file being edit, and access the commands under the <strong>SublimePelican</strong> item.</p>
 
-<h2>SublimePelican Commands</h2>
+<h2>
+<a name="sublimepelican-commands" class="anchor" href="#sublimepelican-commands"><span class="octicon octicon-link"></span></a>SublimePelican Commands</h2>
 
 <ul>
 <li>
@@ -132,16 +141,19 @@ This command lists tags you've used in your Pelican site in the quick panel, all
 <p>This command generates the slug field from article title.
 <em>Known issue: Non-ASCII characters are omitted (see issue <a href="https://github.com/jsliang/sublime-pelican/issues/1">#1</a>).</em></p>
 </li>
-</ul><h2>Settings</h2>
+</ul><h2>
+<a name="settings" class="anchor" href="#settings"><span class="octicon octicon-link"></span></a>Settings</h2>
 
 <p>For the latest information on what SublimePelican settings are available, select the menu item <strong>Preferences</strong> &gt; <strong>Package Settings</strong> &gt; <strong>SublimePelican</strong> &gt; <strong>Settings - Default</strong>.</p>
 
 <p>DO NOT edit the settings in "Settings - Default" as changes will be lost when SublimePelican is updated.
 Instead, customize your settings in <strong>Preferences</strong> &gt; <strong>Package Settings</strong> &gt; <strong>SublimePelican</strong> &gt; <strong>Settings - User</strong>.</p>
 
-<h3>Smart metadata fields generation</h3>
+<h3>
+<a name="smart-metadata-fields-generation" class="anchor" href="#smart-metadata-fields-generation"><span class="octicon octicon-link"></span></a>Smart metadata fields generation</h3>
 
-<h4>Slug generation</h4>
+<h4>
+<a name="slug-generation" class="anchor" href="#slug-generation"><span class="octicon octicon-link"></span></a>Slug generation</h4>
 
 <ul>
 <li>
@@ -156,7 +168,7 @@ Set to <code>true</code> to force slug regeneration.</p>
 <p><strong>generate_slug_from_title</strong></p>
 
 <ul>
-<li>  Set to <code>"none"</code> to disable slug generation</li>
+<li><p>Set to <code>"none"</code> to disable slug generation</p></li>
 <li>
 <p>Set to <code>"title_change"</code> to generate slug when article title changes</p>
 
@@ -172,7 +184,8 @@ If you want to force slug regeneration on each save, you have to set <code>force
 </ul>
 <p>Default value: <code>"save"</code></p>
 </li>
-</ul><h3>Customizable metadata template</h3>
+</ul><h3>
+<a name="customizable-metadata-template" class="anchor" href="#customizable-metadata-template"><span class="octicon octicon-link"></span></a>Customizable metadata template</h3>
 
 <ul>
 <li>
@@ -211,7 +224,8 @@ If you want to force slug regeneration on each save, you have to set <code>force
 }
 </code></pre>
 
-<h3>File Path Filter for Pelican Articles</h3>
+<h3>
+<a name="file-path-filter-for-pelican-articles" class="anchor" href="#file-path-filter-for-pelican-articles"><span class="octicon octicon-link"></span></a>File Path Filter for Pelican Articles</h3>
 
 <p>To prevent automatic slug generation from annoyly affecting other Markdown/reStrcturedText files that are not Pelican articles, SublimePelican processes only the Markdown/reStructuredText files under the <code>INPUTDIR</code> configured in your Pelican Makefile.</p>
 
@@ -233,11 +247,13 @@ Effective only if <code>use_input_folder_in_makefile</code> is set to <code>fals
 
 <p>Default value: <code>"content/.*\\.(md|markdown|mkd|rst)$"</code></p>
 </li>
-</ul><h2>Comments and Bug Reports</h2>
+</ul><h2>
+<a name="comments-and-bug-reports" class="anchor" href="#comments-and-bug-reports"><span class="octicon octicon-link"></span></a>Comments and Bug Reports</h2>
 
 <p>If you have any comments, or if you find any bugs, feel free to post them in <a href="https://github.com/jsliang/sublime-pelican/issues">issues</a>.</p>
 
-<h2>Thanks</h2>
+<h2>
+<a name="thanks" class="anchor" href="#thanks"><span class="octicon octicon-link"></span></a>Thanks</h2>
 
 <ul>
 <li>  <a href="http://getpelican.com/">Pelican</a>
@@ -246,7 +262,8 @@ Effective only if <code>use_input_folder_in_makefile</code> is set to <code>fals
 </li>
 <li>  <a href="http://wbond.net/sublime_packages/package_control">Sublime Package Control</a>
 </li>
-</ul><h2>License</h2>
+</ul><h2>
+<a name="license" class="anchor" href="#license"><span class="octicon octicon-link"></span></a>License</h2>
 
 <p>SublimePelican is licensed under the MIT license.</p>
 
@@ -257,32 +274,6 @@ Effective only if <code>use_input_folder_in_makefile</code> is set to <code>fals
 <p>The above copyright notice and this permission notice shall be included in all copies or substantial portions of the Software.</p>
 
 <p>THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.</p>
-
-        <script type="text/javascript">
-                var gaJsHost = (("https:" == document.location.protocol) ? "https://ssl." : "http://www.");
-                document.write(unescape("%3Cscript src='" + gaJsHost + "google-analytics.com/ga.js' type='text/javascript'%3E%3C/script%3E"));
-              </script>
-              <script type="text/javascript">
-                try {
-                  var pageTracker = _gat._getTracker("UA-37740364-1");
-                pageTracker._trackPageview();
-                } catch(err) {}
-              </script>
-        <h2>Comments</h2>
-        <div id="disqus_thread"></div>
-        <script type="text/javascript">
-            /* * * CONFIGURATION VARIABLES: EDIT BEFORE PASTING INTO YOUR WEBPAGE * * */
-            var disqus_shortname = 'jsliang'; // required: replace example with your forum shortname
-    
-            /* * * DON'T EDIT BELOW THIS LINE * * */
-            (function() {
-                var dsq = document.createElement('script'); dsq.type = 'text/javascript'; dsq.async = true;
-                dsq.src = 'http://' + disqus_shortname + '.disqus.com/embed.js';
-                (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
-            })();
-        </script>
-        <noscript>Please enable JavaScript to view the <a href="http://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
-        <a href="http://disqus.com" class="dsq-brlink">comments powered by <span class="logo-disqus">Disqus</span></a>
       </section>
     </div>
 

@@ -88,7 +88,7 @@ Right click on a file being edit, and access the commands under the **SublimePel
 *   **Pelican: Update Slug using Title**
 
     This command generates the slug field from article title.
-    *Known issue: Non-ASCII characters are omitted (see issue [#1](https://github.com/jsliang/sublime-pelican/issues/1)).*
+    *Known issue: Non-ASCII characters are omitted in Sublime Text 2 (see issue [#1](https://github.com/jsliang/sublime-pelican/issues/1)).*
 
 ## Settings
 

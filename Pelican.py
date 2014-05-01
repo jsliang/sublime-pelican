@@ -1,11 +1,10 @@
-# -*- coding: utf-8 -*-
+from __future__ import unicode_literals
 import codecs
 import datetime
 import os
 import re
 import sublime
 import sublime_plugin
-import sys
 import threading
 
 pelican_slug_template = {
@@ -364,10 +363,6 @@ class PelicanAutogenSlug(sublime_plugin.EventListener):
                         return
 
         view.run_command('pelican_generate_slug')
-
-if sys.getdefaultencoding() != 'utf-8':
-    reload(sys)
-    sys.setdefaultencoding('utf-8')
 
 
 def addPelicanArticle(view):

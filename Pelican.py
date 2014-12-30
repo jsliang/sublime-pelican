@@ -388,9 +388,13 @@ def isPelicanArticle(view):
             view, "use_input_folder_in_makefile", True)
         if use_input_folder_in_makefile:
             makefile_params = parse_makefile(view.window())
-            if makefile_params and "INPUTDIR" in makefile_params:
-                filepath_filter = makefile_params[
-                    'INPUTDIR'] + "/" + default_filter
+            inputdir = None
+            if makefile_params and "INPUTDIR_"+sublime.platform() in makefile_params:
+                inputdir = makefile_params["INPUTDIR_"+sublime.platform()]
+            elif makefile_params and "INPUTDIR" in makefile_params:
+                inputdir = makefile_params["INPUTDIR"]
+            if inputdir is not None:
+                filepath_filter = inputdir + "/" + default_filter
 
         if re.search(filepath_filter, view.file_name()):
             return True
@@ -500,8 +504,12 @@ def get_article_paths(window):
     # load INPUTDIR
     inputdir = None
     makefile_params = parse_makefile(window)
-    if makefile_params and "INPUTDIR" in makefile_params:
-        inputdir = makefile_params['INPUTDIR']
+    if makefile_params and "INPUTDIR_"+sublime.platform() in makefile_params:
+        inputdir = makefile_params["INPUTDIR_"+sublime.platform()]
+        print(inputdir)
+    elif makefile_params and "INPUTDIR" in makefile_params:
+        inputdir = makefile_params["INPUTDIR"]
+        print(inputdir)
     else:
         return []
 

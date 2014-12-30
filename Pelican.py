@@ -506,10 +506,8 @@ def get_article_paths(window):
     makefile_params = parse_makefile(window)
     if makefile_params and "INPUTDIR_"+sublime.platform() in makefile_params:
         inputdir = makefile_params["INPUTDIR_"+sublime.platform()]
-        print(inputdir)
     elif makefile_params and "INPUTDIR" in makefile_params:
         inputdir = makefile_params["INPUTDIR"]
-        print(inputdir)
     else:
         return []
 

@@ -7,6 +7,13 @@ import sublime
 import sublime_plugin
 import threading
 
+VERSION = int(sublime.version())
+ST2 = VERSION < 3000
+if (ST2):
+    from lib.moveToPosts import getMoveInfo
+else:
+    from Pelican.lib.moveToPosts import getMoveInfo
+
 pelican_slug_template = {
     "md": "Slug: %s\n",
     "rst": ":slug: %s\n",
@@ -25,6 +32,41 @@ pelican_categories_template = {
 default_filter = '.*\\.(md|markdown|mkd|rst)$'
 
 pelican_article_views = []
+
+class PelicanMovePostToContents(sublime_plugin.TextCommand):
+
+    def run(self,edit):
+        openfile = self.view.file_name()
+        (fullPath,newFile) = getMoveInfo(openfile)
+        thread = PelicanMovePostToContentsThread(
+            self.view, fullPath, newFile)
+        thread.start()
+
+class PelicanMovePostToContentsThread(threading.Thread):
+
+    def __init__(self, view, fullPath, newFile):
+        self.window = view.window()
+        self.view = view
+        self.fullPath = fullPath
+        self.newFile = newFile
+        threading.Thread.__init__(self)
+
+    def run(self):
+        if self.view.is_dirty():
+            # something to save the view
+            self.window.run_command("save_file")
+
+        # something to close the view
+        self.view.set_scratch( True )
+        self.window.run_command("close_file")
+
+        try:
+            os.rename(self.fullPath,self.newFile)
+        except OSError as err:
+            sublime.status_message("Error: %s" % err.strerror)
+        else:
+            self.window.open_file(self.newFile)
+            sublime.status_message("Moved to %s" % (self.newFile))
 
 
 class PelicanUpdateDateCommand(sublime_plugin.TextCommand):

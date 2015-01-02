@@ -39,11 +39,8 @@ def getMoveInfo(file):
 		if not os.path.isdir(folder):
 			raise
 
-	# Create the sequence number
-	sequence = len(glob(os.path.join(folder,datePrefix+"*.md"))) + 1
-
-	# File format: YYYYMMDD-seq-name
-	newFile = os.path.join( folder, "%s-%s-%s" % (datePrefix,sequence,fileName) )
+	# File format: YYYYMMDD-name
+	newFile = os.path.join( folder, "%s-%s" % (datePrefix,fileName) )
 
 	return (fullPath,newFile)
 

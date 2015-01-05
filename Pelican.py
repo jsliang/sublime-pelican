@@ -6,6 +6,7 @@ import re
 import sublime
 import sublime_plugin
 import threading
+import platform, functools
 
 VERSION = int(sublime.version())
 ST2 = VERSION < 3000
@@ -132,11 +133,44 @@ class PelicanGenerateSlugCommand(sublime_plugin.TextCommand):
 
 class PelicanNewMarkdownCommand(sublime_plugin.WindowCommand):
 
-    def run(self):
-        new_view = self.window.new_file()
-        addPelicanArticle(new_view)
-        new_view.run_command('pelican_insert_metadata', {"meta_type": "md"})
+    def slugify(self, value):
+        """
+        Normalizes string, converts to lowercase, removes non-alpha characters,
+        and converts spaces to hyphens.
 
+        Took from django sources.
+        """
+        value = re.sub('[^\w\s-]', '', value).strip().lower()
+        value = re.sub('[-\s]+', '-', value)
+        return value
+
+    def run(self):
+        blog_path = load_setting(self.window.active_view(), "blog_path_%s" % platform.system(), None)
+        if not blog_path:
+            new_view = self.window.new_file()
+            self.populate_view(new_view)
+        else:
+            draft_path = os.path.join(blog_path,"drafts")
+            self.window.run_command('hide_panel')
+            self.window.show_input_panel("Post Title:", "", functools.partial(self.on_done, draft_path), None, None)
+
+    def populate_view(self,view,title,slug):
+        addPelicanArticle(view)
+        view.run_command('pelican_insert_metadata', {"meta_type": "md"})
+        view.settings().set('open_with_edit', True)
+
+    def on_done(self,path,name):
+        slug = self.slugify(name)
+        full_name = os.path.join(path,"%s.md" % slug)
+        content = "Title: %s\nSlug: %s\n" % (name,slug)
+        open(full_name, 'w+', encoding='utf8', newline='').write(content)
+        new_view = self.window.open_file(full_name)
+        def do_finish():
+            if new_view.is_loading():
+                sublime.set_timeout(do_finish,100)
+            else:
+                self.populate_view(new_view,name,slug)
+        do_finish()
 
 class PelicanNewRestructuredtextCommand(sublime_plugin.WindowCommand):
 

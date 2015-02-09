@@ -376,7 +376,7 @@ class PelicanInsertTagCategoryThread(threading.Thread):
         self.view.show(content_line)
 
     def run(self):
-        self.results = get_categories_tags(self.article_paths, mode=self.mode)
+        self.results = get_categories_tags_from_meta(self.article_paths, mode=self.mode)
 
         def show_quick_panel():
             if not self.results:
@@ -600,6 +600,55 @@ def get_article_paths(window):
 
     return article_paths
 
+def get_categories_tags_from_meta(articles_paths, mode="tag"):
+    results = []
+    # Download the metadata
+    import urllib.request,urllib.error,json
+
+    metajson = ""
+    cache_path = os.path.join(sublime.packages_path(),"Pelican")
+    if not os.path.exists(cache_path):
+        os.mkdir(cache_path)
+    cache_file = os.path.join(cache_path,"meta-minorthoughts.json")
+
+
+    try:
+        response = urllib.request.urlopen('http://minorthoughts.com/meta.json')
+        metajson = response.read().decode("utf-8")
+    except urllib.error.URLError as e:
+        pass
+
+    try:
+        if metajson is "":
+            # Try to load last from file
+            with open(cache_file,'r') as f:
+                metajson = f.read()
+        else:
+            # Try to save latest to file
+            with open(cache_file,'w') as f:
+                f.write(metajson)
+    except Exception as e:
+        print( e )
+
+    if metajson is not "": # We got something either from URL or file
+        metadata = json.loads(metajson)
+        if 'cats' in metadata and mode == "category":
+            results = metadata['cats']
+        elif 'tags' in metadata and mode == "tag":
+            results = metadata['tags']
+        elif 'posts' in metadata and mode == 'post':
+            results = metadata['posts']
+
+        if len(results) == 0:
+            return None
+
+        list_results = sorted(list(set(results)))
+        if '' in list_results:
+            list_results.remove('')
+
+        return list_results
+    else:
+        return None
 
 def get_categories_tags(articles_paths, mode="tag"):
     # retrieve categories or tags

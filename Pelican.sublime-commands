@@ -1,5 +1,6 @@
 [
     { "caption": "Pelican: Insert Metadata", "command": "pelican_insert_metadata" },
+    { "caption": "Insert Link to Post", "command": "pelican_link_to_post" },
     { "caption": "Pelican: New Article (Markdown)", "command": "pelican_new_markdown" },
     { "caption": "Pelican: New Article (reStructuredText)", "command": "pelican_new_restructuredtext" },
     { "caption": "Pelican: Select Article Metadata", "command": "pelican_select_metadata" },

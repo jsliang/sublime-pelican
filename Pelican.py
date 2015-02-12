@@ -34,6 +34,13 @@ default_filter = '.*\\.(md|markdown|mkd|rst)$'
 
 pelican_article_views = []
 
+class PelicanLinkToPost(sublime_plugin.TextCommand):
+    def run(self,edit):
+        articles_paths = get_article_paths(window=self.view.window())
+        thread = PelicanInsertTagCategoryThread(
+            self, articles_paths, "post")
+        thread.start()
+
 class PelicanMovePostToContents(sublime_plugin.TextCommand):
 
     def run(self,edit):
@@ -375,17 +382,40 @@ class PelicanInsertTagCategoryThread(threading.Thread):
         self.view.sel().add(content_line)
         self.view.show(content_line)
 
+    def on_done_post(self, picked):
+        if picked == -1:
+            return
+
+        picked_str = self.results[picked]
+        path = self.results_full[picked_str]
+
+        self.view.run_command(
+            'insert', {'characters': "{filename}/%s" % path})
+
     def run(self):
         self.results = get_categories_tags_from_meta(self.article_paths, mode=self.mode)
+        if self.mode == "post":
+            self.results_full = self.results
+            self.results = sorted(list(set(self.results)))
 
-        def show_quick_panel():
+        def show_quick_panel_meta():
             if not self.results:
                 sublime.error_message(
                     ('%s: There is no %s found.') % (__name__, self.mode))
                 return
             self.window.show_quick_panel(self.results, self.on_done)
 
-        sublime.set_timeout(show_quick_panel, 10)
+        def show_quick_panel_post():
+            if not self.results:
+                sublime.error_message(
+                    ('%s: There is no %s found.') % (__name__, self.mode))
+                return
+            self.window.show_quick_panel(self.results, self.on_done_post)
+
+        if self.mode != "post":
+            sublime.set_timeout(show_quick_panel_meta, 10)
+        else:
+            sublime.set_timeout(show_quick_panel_post, 10)
 
 
 class PelicanArticleClose(sublime_plugin.EventListener):
@@ -642,9 +672,12 @@ def get_categories_tags_from_meta(articles_paths, mode="tag"):
         if len(results) == 0:
             return None
 
-        list_results = sorted(list(set(results)))
-        if '' in list_results:
-            list_results.remove('')
+        if mode != "post":
+            list_results = sorted(list(set(results)))
+            if '' in list_results:
+                list_results.remove('')
+        else:
+            list_results = results
 
         return list_results
     else:

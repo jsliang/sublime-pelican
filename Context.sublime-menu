@@ -3,6 +3,7 @@
     { "id": "SublimePelican", "caption": "SublimePelican", "children": [
         { "caption": "Insert Category", "command": "pelican_insert_category" },
         { "caption": "Insert Tag", "command": "pelican_insert_tag" },
+        { "caption": "Insert Link to Post", "command": "pelican_link_to_post" },
         { "caption": "-" },
         { "caption": "New Article (Markdown)", "command": "pelican_new_markdown" },
         { "caption": "New Article (reStructuredText)", "command": "pelican_new_restructuredtext" },

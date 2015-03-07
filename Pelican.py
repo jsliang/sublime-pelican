@@ -6,6 +6,14 @@ import re
 import sublime
 import sublime_plugin
 import threading
+import platform, functools
+
+VERSION = int(sublime.version())
+ST2 = VERSION < 3000
+if (ST2):
+    from lib.moveToPosts import getMoveInfo
+else:
+    from Pelican.lib.moveToPosts import getMoveInfo
 
 pelican_slug_template = {
     "md": "Slug: %s\n",
@@ -25,6 +33,48 @@ pelican_categories_template = {
 default_filter = '.*\\.(md|markdown|mkd|rst)$'
 
 pelican_article_views = []
+
+class PelicanLinkToPost(sublime_plugin.TextCommand):
+    def run(self,edit):
+        articles_paths = get_article_paths(window=self.view.window())
+        thread = PelicanInsertTagCategoryThread(
+            self, articles_paths, "post")
+        thread.start()
+
+class PelicanMovePostToContents(sublime_plugin.TextCommand):
+
+    def run(self,edit):
+        openfile = self.view.file_name()
+        (fullPath,newFile) = getMoveInfo(openfile)
+        thread = PelicanMovePostToContentsThread(
+            self.view, fullPath, newFile)
+        thread.start()
+
+class PelicanMovePostToContentsThread(threading.Thread):
+
+    def __init__(self, view, fullPath, newFile):
+        self.window = view.window()
+        self.view = view
+        self.fullPath = fullPath
+        self.newFile = newFile
+        threading.Thread.__init__(self)
+
+    def run(self):
+        if self.view.is_dirty():
+            # something to save the view
+            self.window.run_command("save_file")
+
+        # something to close the view
+        self.view.set_scratch( True )
+        self.window.run_command("close_file")
+
+        try:
+            os.rename(self.fullPath,self.newFile)
+        except OSError as err:
+            sublime.status_message("Error: %s" % err.strerror)
+        else:
+            self.window.open_file(self.newFile)
+            sublime.status_message("Moved to %s" % (self.newFile))
 
 
 class PelicanUpdateDateCommand(sublime_plugin.TextCommand):
@@ -90,11 +140,44 @@ class PelicanGenerateSlugCommand(sublime_plugin.TextCommand):
 
 class PelicanNewMarkdownCommand(sublime_plugin.WindowCommand):
 
-    def run(self):
-        new_view = self.window.new_file()
-        addPelicanArticle(new_view)
-        new_view.run_command('pelican_insert_metadata', {"meta_type": "md"})
+    def slugify(self, value):
+        """
+        Normalizes string, converts to lowercase, removes non-alpha characters,
+        and converts spaces to hyphens.
 
+        Took from django sources.
+        """
+        value = re.sub('[^\w\s-]', '', value).strip().lower()
+        value = re.sub('[-\s]+', '-', value)
+        return value
+
+    def run(self):
+        blog_path = load_setting(self.window.active_view(), "blog_path_%s" % platform.system(), None)
+        if not blog_path:
+            new_view = self.window.new_file()
+            self.populate_view(new_view)
+        else:
+            draft_path = os.path.join(blog_path,"drafts")
+            self.window.run_command('hide_panel')
+            self.window.show_input_panel("Post Title:", "", functools.partial(self.on_done, draft_path), None, None)
+
+    def populate_view(self,view,title,slug):
+        addPelicanArticle(view)
+        view.run_command('pelican_insert_metadata', {"meta_type": "md"})
+        view.settings().set('open_with_edit', True)
+
+    def on_done(self,path,name):
+        slug = self.slugify(name)
+        full_name = os.path.join(path,"%s.md" % slug)
+        content = "Title: %s\nSlug: %s\n" % (name,slug)
+        open(full_name, 'w+', encoding='utf8', newline='').write(content)
+        new_view = self.window.open_file(full_name)
+        def do_finish():
+            if new_view.is_loading():
+                sublime.set_timeout(do_finish,100)
+            else:
+                self.populate_view(new_view,name,slug)
+        do_finish()
 
 class PelicanNewRestructuredtextCommand(sublime_plugin.WindowCommand):
 
@@ -299,17 +382,40 @@ class PelicanInsertTagCategoryThread(threading.Thread):
         self.view.sel().add(content_line)
         self.view.show(content_line)
 
-    def run(self):
-        self.results = get_categories_tags(self.article_paths, mode=self.mode)
+    def on_done_post(self, picked):
+        if picked == -1:
+            return
 
-        def show_quick_panel():
+        picked_str = self.results[picked]
+        path = self.results_full[picked_str]
+
+        self.view.run_command(
+            'insert', {'characters': "{filename}/%s" % path})
+
+    def run(self):
+        self.results = get_categories_tags_from_meta(self.article_paths, mode=self.mode)
+        if self.mode == "post":
+            self.results_full = self.results
+            self.results = sorted(list(set(self.results)))
+
+        def show_quick_panel_meta():
             if not self.results:
                 sublime.error_message(
                     ('%s: There is no %s found.') % (__name__, self.mode))
                 return
             self.window.show_quick_panel(self.results, self.on_done)
 
-        sublime.set_timeout(show_quick_panel, 10)
+        def show_quick_panel_post():
+            if not self.results:
+                sublime.error_message(
+                    ('%s: There is no %s found.') % (__name__, self.mode))
+                return
+            self.window.show_quick_panel(self.results, self.on_done_post)
+
+        if self.mode != "post":
+            sublime.set_timeout(show_quick_panel_meta, 10)
+        else:
+            sublime.set_timeout(show_quick_panel_post, 10)
 
 
 class PelicanArticleClose(sublime_plugin.EventListener):
@@ -388,9 +494,13 @@ def isPelicanArticle(view):
             view, "use_input_folder_in_makefile", True)
         if use_input_folder_in_makefile:
             makefile_params = parse_makefile(view.window())
-            if makefile_params and "INPUTDIR" in makefile_params:
-                filepath_filter = makefile_params[
-                    'INPUTDIR'] + "/" + default_filter
+            inputdir = None
+            if makefile_params and "INPUTDIR_"+sublime.platform() in makefile_params:
+                inputdir = makefile_params["INPUTDIR_"+sublime.platform()]
+            elif makefile_params and "INPUTDIR" in makefile_params:
+                inputdir = makefile_params["INPUTDIR"]
+            if inputdir is not None:
+                filepath_filter = inputdir + "/" + default_filter
 
         if re.search(filepath_filter, view.file_name()):
             return True
@@ -500,8 +610,10 @@ def get_article_paths(window):
     # load INPUTDIR
     inputdir = None
     makefile_params = parse_makefile(window)
-    if makefile_params and "INPUTDIR" in makefile_params:
-        inputdir = makefile_params['INPUTDIR']
+    if makefile_params and "INPUTDIR_"+sublime.platform() in makefile_params:
+        inputdir = makefile_params["INPUTDIR_"+sublime.platform()]
+    elif makefile_params and "INPUTDIR" in makefile_params:
+        inputdir = makefile_params["INPUTDIR"]
     else:
         return []
 
@@ -518,6 +630,58 @@ def get_article_paths(window):
 
     return article_paths
 
+def get_categories_tags_from_meta(articles_paths, mode="tag"):
+    results = []
+    # Download the metadata
+    import urllib.request,urllib.error,json
+
+    metajson = ""
+    cache_path = os.path.join(sublime.packages_path(),"Pelican")
+    if not os.path.exists(cache_path):
+        os.mkdir(cache_path)
+    cache_file = os.path.join(cache_path,"meta-minorthoughts.json")
+
+
+    try:
+        response = urllib.request.urlopen('http://minorthoughts.com/meta.json')
+        metajson = response.read().decode("utf-8")
+    except urllib.error.URLError as e:
+        pass
+
+    try:
+        if metajson is "":
+            # Try to load last from file
+            with open(cache_file,'r') as f:
+                metajson = f.read()
+        else:
+            # Try to save latest to file
+            with open(cache_file,'w') as f:
+                f.write(metajson)
+    except Exception as e:
+        print( e )
+
+    if metajson is not "": # We got something either from URL or file
+        metadata = json.loads(metajson)
+        if 'cats' in metadata and mode == "category":
+            results = metadata['cats']
+        elif 'tags' in metadata and mode == "tag":
+            results = metadata['tags']
+        elif 'posts' in metadata and mode == 'post':
+            results = metadata['posts']
+
+        if len(results) == 0:
+            return None
+
+        if mode != "post":
+            list_results = sorted(list(set(results)))
+            if '' in list_results:
+                list_results.remove('')
+        else:
+            list_results = results
+
+        return list_results
+    else:
+        return None
 
 def get_categories_tags(articles_paths, mode="tag"):
     # retrieve categories or tags

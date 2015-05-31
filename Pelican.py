@@ -106,7 +106,15 @@ class PelicanGenerateSlugCommand(sublime_plugin.TextCommand):
 
         Took from django sources.
         """
-        value = re.sub('[^\w\s-]', '', value).strip().lower()
+        # value must be unicode per se
+        import unicodedata
+        if ST2:
+            from lib.unidecode import unidecode
+        else:
+            from Pelican.lib.unidecode import unidecode
+        value = unicodedata.normalize('NFKD', value).lower()
+        value = unidecode(value, ST2)
+        value = re.sub('[^\w\s-]', '', value).strip()
         value = re.sub('[-\s]+', '-', value)
         return value
 

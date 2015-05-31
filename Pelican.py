@@ -34,6 +34,26 @@ default_filter = '.*\\.(md|markdown|mkd|rst)$'
 
 pelican_article_views = []
 
+
+def slugify(value):
+        """
+        Normalizes string, converts to lowercase, removes non-alpha characters,
+        and converts spaces to hyphens.
+
+        Took from django sources.
+        """
+        # value must be unicode per se
+        import unicodedata
+        if ST2:
+            from lib.unidecode import unidecode
+        else:
+            from Pelican.lib.unidecode import unidecode
+        value = unicodedata.normalize('NFKD', value).lower()
+        value = unidecode(value, ST2)
+        value = re.sub('[^\w\s-]', '', value).strip()
+        value = re.sub('[-\s]+', '-', value)
+        return value
+
 class PelicanLinkToPost(sublime_plugin.TextCommand):
     def run(self,edit):
         articles_paths = get_article_paths(window=self.view.window())
@@ -99,25 +119,6 @@ class PelicanUpdateDateCommand(sublime_plugin.TextCommand):
 
 class PelicanGenerateSlugCommand(sublime_plugin.TextCommand):
 
-    def slugify(self, value):
-        """
-        Normalizes string, converts to lowercase, removes non-alpha characters,
-        and converts spaces to hyphens.
-
-        Took from django sources.
-        """
-        # value must be unicode per se
-        import unicodedata
-        if ST2:
-            from lib.unidecode import unidecode
-        else:
-            from Pelican.lib.unidecode import unidecode
-        value = unicodedata.normalize('NFKD', value).lower()
-        value = unidecode(value, ST2)
-        value = re.sub('[^\w\s-]', '', value).strip()
-        value = re.sub('[-\s]+', '-', value)
-        return value
-
     def run(self, edit):
         title_region = self.view.find(':?title:.+\s*', 0, sublime.IGNORECASE)
         if title_region:
@@ -130,7 +131,7 @@ class PelicanGenerateSlugCommand(sublime_plugin.TextCommand):
 
             title_str = r.groupdict()['title'].strip()
 
-            slug = self.slugify(title_str)
+            slug = slugify(title_str)
 
             meta_type = detect_article_type(self.view)
 
@@ -148,17 +149,6 @@ class PelicanGenerateSlugCommand(sublime_plugin.TextCommand):
 
 class PelicanNewMarkdownCommand(sublime_plugin.WindowCommand):
 
-    def slugify(self, value):
-        """
-        Normalizes string, converts to lowercase, removes non-alpha characters,
-        and converts spaces to hyphens.
-
-        Took from django sources.
-        """
-        value = re.sub('[^\w\s-]', '', value).strip().lower()
-        value = re.sub('[-\s]+', '-', value)
-        return value
-
     def run(self):
         blog_path = load_setting(self.window.active_view(), "blog_path_%s" % platform.system(), None)
         if not blog_path:
@@ -175,7 +165,7 @@ class PelicanNewMarkdownCommand(sublime_plugin.WindowCommand):
         view.settings().set('open_with_edit', True)
 
     def on_done(self,path,name):
-        slug = self.slugify(name)
+        slug = slugify(name)
         full_name = os.path.join(path,"%s.md" % slug)
         content = "Title: %s\nSlug: %s\n" % (name,slug)
         open(full_name, 'w+', encoding='utf8', newline='').write(content)

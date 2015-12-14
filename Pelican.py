@@ -412,7 +412,14 @@ class PelicanInsertTagCategoryThread(threading.Thread):
             'insert', {'characters': "{filename}/%s" % path})
 
     def run(self):
-        self.results = get_categories_tags_from_meta(self.article_paths, mode=self.mode)
+        blog_details = get_blog_details(self.view)
+        if "metadata_url" in blog_details and blog_details["metadata_url"] != "":
+            blog_name = blog_details["name"]
+            metadata_url = blog_details["metadata_url"]
+            self.results = get_categories_tags_from_meta(blog_name, metadata_url, mode=self.mode)
+        else:
+            self.results = get_categories_tags(self.article_paths, mode=self.mode)
+        
         if self.mode == "post":
             self.results_full = self.results
             self.results = sorted(list(set(self.results)))
@@ -623,6 +630,7 @@ def parse_makefile(window):
     return None
 
 
+
 def get_input_path(window):
     # load INPUTDIR
     inputdir = None
@@ -638,7 +646,7 @@ def get_article_paths(window):
     article_paths = []
 
     # load INPUTDIR
-    inputdir = get_input_path(window)
+    inputdir = search_for_root(window)
     if inputdir=="":
         return []
 
@@ -655,7 +663,7 @@ def get_article_paths(window):
 
     return article_paths
 
-def get_categories_tags_from_meta(articles_paths, mode="tag"):
+def get_categories_tags_from_meta(name, url, mode="tag"):
     results = []
     # Download the metadata
     import urllib.request,urllib.error,json
@@ -664,11 +672,11 @@ def get_categories_tags_from_meta(articles_paths, mode="tag"):
     cache_path = os.path.join(sublime.packages_path(),"Pelican")
     if not os.path.exists(cache_path):
         os.mkdir(cache_path)
-    cache_file = os.path.join(cache_path,"meta-minorthoughts.json")
+    cache_file = os.path.join(cache_path,"meta-%s.json" % name)
 
 
     try:
-        response = urllib.request.urlopen('http://minorthoughts.com/meta.json')
+        response = urllib.request.urlopen(url)
         metajson = response.read().decode("utf-8")
     except urllib.error.URLError as e:
         pass
@@ -848,3 +856,59 @@ def normalize_article_metadata_case(template_str, normalize_template_var=True):
 
             new_str_lines.append(new_line)
     return new_str_lines
+
+# Get the details of the blog from the config file
+#   "all_blogs": {
+#    "myblog":
+#    {
+#      "blog_path_windows": "C:\\Users\\MyUserName\\Dropbox\\blogFolder",
+#      "blog_path_osx": "/Users/Me/Dropbox/blogFolder",
+#      "metadata_url": "http://myblog.com/meta.json"
+#    }
+#  },
+#  
+#  Returns a dictionary with three keys:
+#  - name
+#  - metadata_url
+#  - root
+# 
+#  If there's nothing configured, it will return an empty dictionary
+#  
+def get_blog_details(view):
+    current_filename = view.file_name()
+    current_folder = os.path.dirname(current_filename)
+    current_blog = {}
+    allBlogs = load_setting(view, "all_blogs", None)
+    root = ""
+    metaURL = ""
+
+    if allBlogs is not None:
+        for blog in allBlogs:
+            blogSettings = allBlogs[blog]
+            if "blog_path_%s" % sublime.platform() in blogSettings:
+                blogRoot = blogSettings["blog_path_%s" % sublime.platform()]
+            if "blog_path" in blogSettings:
+                blogRoot = blogSettings["blog_path"]
+            if blogRoot != "" and os.path.commonprefix([blogRoot,current_folder]) == blogRoot: # The current folder is underneath the listed blog root
+                root = blogRoot
+                if "metadata_url" in blogSettings:
+                    metaURL = blogSettings["metadata_url"]
+                break
+
+    if root != "":
+        current_blog["name"] = blog
+        current_blog["metadata_url"] = metaURL
+        current_blog["root"] = root
+    return current_blog
+
+# Look in multiple places to figure out what our root directory is
+# First check the config file for explicitly defined blogs
+# Next check for a Makefile with an INPUTDIR
+# 
+def search_for_root(window):
+    view = window.active_view()
+    details = get_blog_details(view)
+    if "root" in details:
+        return details["root"]
+    return get_input_path(window)
+

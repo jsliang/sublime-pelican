@@ -7,13 +7,10 @@ import sublime
 import sublime_plugin
 import threading
 import platform, functools
+from datetime import date
 
 VERSION = int(sublime.version())
 ST2 = VERSION < 3000
-if (ST2):
-    from lib.moveToPosts import getMoveInfo
-else:
-    from Pelican.lib.moveToPosts import getMoveInfo
 
 pelican_slug_template = {
     "md": "Slug: %s\n",
@@ -44,8 +41,30 @@ class PelicanLinkToPost(sublime_plugin.TextCommand):
 class PelicanMovePostToContents(sublime_plugin.TextCommand):
 
     def run(self,edit):
+        root = get_input_path(window=self.view.window())
+
         openfile = self.view.file_name()
-        (fullPath,newFile) = getMoveInfo(openfile)
+        fullPath = os.path.abspath(openfile)
+        fileName = os.path.basename(fullPath)
+    
+        today = date.today()
+        yearName = today.strftime("%Y")
+        monthName = today.strftime("%m")
+        datePrefix = today.strftime("%Y%m%d")
+
+        # Construct the destination folder: content/posts/YYYY/MM
+        folder = os.path.join(root,"content","posts",yearName,monthName)
+
+        # Check if the destination exists, create it if not
+        try:
+            os.makedirs(folder)
+        except OSError:
+            if not os.path.isdir(folder):
+                raise
+
+        # File format: YYYYMMDD-name
+        newFile = os.path.join( folder, "%s-%s" % (datePrefix,fileName) )
+
         thread = PelicanMovePostToContentsThread(
             self.view, fullPath, newFile)
         thread.start()
@@ -604,17 +623,23 @@ def parse_makefile(window):
     return None
 
 
-def get_article_paths(window):
-    article_paths = []
-
+def get_input_path(window):
     # load INPUTDIR
     inputdir = None
     makefile_params = parse_makefile(window)
     if makefile_params and "INPUTDIR_"+sublime.platform() in makefile_params:
-        inputdir = makefile_params["INPUTDIR_"+sublime.platform()]
+        return makefile_params["INPUTDIR_"+sublime.platform()]
     elif makefile_params and "INPUTDIR" in makefile_params:
-        inputdir = makefile_params["INPUTDIR"]
+        return makefile_params["INPUTDIR"]
     else:
+        return ""    
+
+def get_article_paths(window):
+    article_paths = []
+
+    # load INPUTDIR
+    inputdir = get_input_path(window)
+    if inputdir=="":
         return []
 
     # get paths of all articles in INPUTDIR

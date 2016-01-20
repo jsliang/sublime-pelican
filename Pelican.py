@@ -470,27 +470,25 @@ def parse_makefile(window):
         return None
 
     # parse parameters in Makefile
-    regex = re.compile("(\S+)=(.*)")
-    makefile_content = ""
+    origin_makefile_params = []
     with open(makefile_path, 'r') as f:
-        makefile_content = f.read()
+        for line in f.readlines():
+            m = re.match(r'^(\S+)=(.*)', line)
+            if m:
+                origin_makefile_params.append((m.group(1), m.group(2)))
 
-    if len(makefile_content) > 0:
-        origin_makefile_params = []
-        origin_makefile_params = regex.findall(makefile_content)
+    if len(origin_makefile_params) > 0:
 
-        if len(origin_makefile_params) > 0:
+        makefile_params = {"CURDIR": makefile_dir}
 
-            makefile_params = {"CURDIR": makefile_dir}
+        for (key, value) in origin_makefile_params:
+            if not key in makefile_params:
+                # replace "$(var)" to "%(var)s"
+                value = re.sub(r"\$\((\S+)\)", r"%(\1)s", value)
 
-            for (key, value) in origin_makefile_params:
-                if not key in makefile_params:
-                    # replace "$(var)" to "%(var)s"
-                    value = re.sub(r"\$\((\S+)\)", r"%(\1)s", value)
+                makefile_params[key] = value % makefile_params
 
-                    makefile_params[key] = value % makefile_params
-
-            return makefile_params
+        return makefile_params
     return None
 
 

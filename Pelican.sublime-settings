@@ -1,10 +1,4 @@
 {
-  // ====================
-  // Force the blog paths
-  // ====================
-  "blog_path_Windows": "C:\\Users\\jmartin\\Dropbox\\secondcrack\\minorthoughts",
-  "blog_path_Darwin": "/Users/jmartin/Dropbox/secondcrack/minorthoughts",
-
   // ===============
   // Slug generation
   // ===============

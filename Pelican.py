@@ -157,7 +157,10 @@ class PelicanGenerateSlugCommand(sublime_plugin.TextCommand):
             else:
                 slug_insert_position = title_region.end()
                 self.view.insert(
-                    edit, slug_insert_position, pelican_slug_template_result % slug)
+                    edit,
+                    slug_insert_position,
+                    pelican_slug_template_result % slug
+                )
 
 
 class PelicanNewMarkdownCommand(sublime_plugin.WindowCommand):
@@ -431,9 +434,16 @@ class PelicanInsertTagCategoryThread(threading.Thread):
         if "metadata_url" in blog_details and blog_details["metadata_url"] != "":
             blog_name = blog_details["name"]
             metadata_url = blog_details["metadata_url"]
-            self.results = get_categories_tags_from_meta(blog_name, metadata_url, mode=self.mode)
+            self.results = get_categories_tags_from_meta(
+                blog_name,
+                metadata_url,
+                mode=self.mode
+            )
         else:
-            self.results = get_categories_tags(self.article_paths, mode=self.mode)
+            self.results = get_categories_tags(
+                self.article_paths,
+                mode=self.mode
+            )
 
         if self.mode == "post":
             self.results_full = self.results
@@ -649,7 +659,6 @@ def parse_makefile(window):
     return None
 
 
-
 def get_input_path(window):
     # load INPUTDIR
     inputdir = None
@@ -659,14 +668,15 @@ def get_input_path(window):
     elif makefile_params and "INPUTDIR" in makefile_params:
         return makefile_params["INPUTDIR"]
     else:
-        return ""    
+        return ""
+
 
 def get_article_paths(window):
     article_paths = []
 
     # load INPUTDIR
     inputdir = search_for_root(window)
-    if inputdir=="":
+    if inputdir == "":
         return []
 
     # get paths of all articles in INPUTDIR
@@ -916,7 +926,8 @@ def get_blog_details(view):
                 blogRoot = blogSettings["blog_path_%s" % sublime.platform()]
             if "blog_path" in blogSettings:
                 blogRoot = blogSettings["blog_path"]
-            if blogRoot != "" and os.path.commonprefix([blogRoot,current_folder]) == blogRoot: # The current folder is underneath the listed blog root
+            if blogRoot != "" and os.path.commonprefix([blogRoot, current_folder]) == blogRoot:
+                # The current folder is underneath the listed blog root
                 root = blogRoot
                 if "metadata_url" in blogSettings:
                     metaURL = blogSettings["metadata_url"]

@@ -861,8 +861,10 @@ def normalize_article_metadata_case(template_str, normalize_template_var=True):
 #   "all_blogs": {
 #    "myblog":
 #    {
-#      "blog_path_windows": "C:\\Users\\MyUserName\\Dropbox\\blogFolder",
-#      "blog_path_osx": "/Users/Me/Dropbox/blogFolder",
+#      "blog_path_windows": "C:\\Users\\MyUserName\\Dropbox\\blogFolder\\blog",
+#      "blog_path_osx": "/Users/Me/Dropbox/blogFolder/blog",
+#      "draft_path_windows": "C:\\Users\\MyUserName\\Dropbox\\blogFolder\\drafts\\blog",
+#      "draft_path_osx": "/Users/Me/Dropbox/blogFolder/drafts/blog",
 #      "metadata_url": "http://myblog.com/meta.json"
 #    }
 #  },
@@ -889,11 +891,16 @@ def get_blog_details(view):
                 blogRoot = blogSettings["blog_path_%s" % sublime.platform()]
             if "blog_path" in blogSettings:
                 blogRoot = blogSettings["blog_path"]
-            if blogRoot != "" and os.path.commonprefix([blogRoot,current_folder]) == blogRoot: # The current folder is underneath the listed blog root
+            if "draft_path_%s" % sublime.platform() in blogSettings:
+                draftPath = blogSettings["draft_path_%s" % sublime.platform()]
+            if "draft_path" in blogSettings:
+                draftPath = blogSettings["draft_path"]
+            if (blogRoot != "" and os.path.commonprefix([blogRoot,current_folder]) == blogRoot) or (draftPath != "" and os.path.commonprefix([draftPath,current_folder]) == draftPath): # The current folder is underneath the listed blog root
                 root = blogRoot
                 if "metadata_url" in blogSettings:
                     metaURL = blogSettings["metadata_url"]
                 break
+
 
     if root != "":
         current_blog["name"] = blog

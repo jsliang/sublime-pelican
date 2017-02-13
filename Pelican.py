@@ -198,10 +198,10 @@ class PelicanNewMarkdownCommand(sublime_plugin.WindowCommand):
         view.run_command('pelican_insert_metadata', {"meta_type": "md"})
         view.settings().set('open_with_edit', True)
 
-    def on_done(self,path,name):
+    def on_done(self, path, name):
         slug = slugify(name)
-        full_name = os.path.join(path,"%s.md" % slug)
-        content = "Title: %s\nSlug: %s\n" % (name,slug)
+        full_name = os.path.join(path, "%s.md" % slug)
+        content = "Title: %s\nSlug: %s\n" % (name, slug)
         open(full_name, 'w+', encoding='utf8', newline='').write(content)
         new_view = self.window.open_file(full_name)
 
@@ -933,7 +933,6 @@ def get_blog_details(view):
                 if "metadata_url" in blogSettings:
                     metaURL = blogSettings["metadata_url"]
                 break
-
 
     if root != "":
         current_blog["name"] = blog

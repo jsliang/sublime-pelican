@@ -33,6 +33,26 @@ default_filter = '.*\\.(md|markdown|mkd|rst)$'
 pelican_article_views = []
 
 
+def slugify(value):
+        """
+        Normalizes string, converts to lowercase, removes non-alpha characters,
+        and converts spaces to hyphens.
+
+        Took from django sources.
+        """
+        # value must be unicode per se
+        import unicodedata
+        if ST2:
+            from lib.unidecode import unidecode
+        else:
+            from Pelican.lib.unidecode import unidecode
+        value = unicodedata.normalize('NFKD', value).lower()
+        value = unidecode(value, ST2)
+        value = re.sub('[^\w\s-]', '', value).strip()
+        value = re.sub('[-\s]+', '-', value)
+        return value
+
+
 class PelicanLinkToPost(sublime_plugin.TextCommand):
     def run(self, edit):
         articles_paths = get_article_paths(window=self.view.window())
@@ -121,17 +141,6 @@ class PelicanUpdateDateCommand(sublime_plugin.TextCommand):
 
 class PelicanGenerateSlugCommand(sublime_plugin.TextCommand):
 
-    def slugify(self, value):
-        """
-        Normalizes string, converts to lowercase, removes non-alpha characters,
-        and converts spaces to hyphens.
-
-        Took from django sources.
-        """
-        value = re.sub('[^\w\s-]', '', value).strip().lower()
-        value = re.sub('[-\s]+', '-', value)
-        return value
-
     def run(self, edit):
         title_region = self.view.find(':?title:.+\s*', 0, sublime.IGNORECASE)
         if title_region:
@@ -144,7 +153,7 @@ class PelicanGenerateSlugCommand(sublime_plugin.TextCommand):
 
             title_str = r.groupdict()['title'].strip()
 
-            slug = self.slugify(title_str)
+            slug = slugify(title_str)
 
             meta_type = detect_article_type(self.view)
 
@@ -164,17 +173,6 @@ class PelicanGenerateSlugCommand(sublime_plugin.TextCommand):
 
 
 class PelicanNewMarkdownCommand(sublime_plugin.WindowCommand):
-
-    def slugify(self, value):
-        """
-        Normalizes string, converts to lowercase, removes non-alpha characters,
-        and converts spaces to hyphens.
-
-        Took from django sources.
-        """
-        value = re.sub('[^\w\s-]', '', value).strip().lower()
-        value = re.sub('[-\s]+', '-', value)
-        return value
 
     def run(self):
         blog_path = load_setting(
@@ -200,10 +198,10 @@ class PelicanNewMarkdownCommand(sublime_plugin.WindowCommand):
         view.run_command('pelican_insert_metadata', {"meta_type": "md"})
         view.settings().set('open_with_edit', True)
 
-    def on_done(self, path, name):
-        slug = self.slugify(name)
-        full_name = os.path.join(path, "%s.md" % slug)
-        content = "Title: %s\nSlug: %s\n" % (name, slug)
+    def on_done(self,path,name):
+        slug = slugify(name)
+        full_name = os.path.join(path,"%s.md" % slug)
+        content = "Title: %s\nSlug: %s\n" % (name,slug)
         open(full_name, 'w+', encoding='utf8', newline='').write(content)
         new_view = self.window.open_file(full_name)
 
@@ -635,27 +633,25 @@ def parse_makefile(window):
         return None
 
     # parse parameters in Makefile
-    regex = re.compile("(\S+)=(.*)")
-    makefile_content = ""
+    origin_makefile_params = []
     with open(makefile_path, 'r') as f:
-        makefile_content = f.read()
+        for line in f.readlines():
+            m = re.match(r'^(\S+)=(.*)', line)
+            if m:
+                origin_makefile_params.append((m.group(1), m.group(2)))
 
-    if len(makefile_content) > 0:
-        origin_makefile_params = []
-        origin_makefile_params = regex.findall(makefile_content)
+    if len(origin_makefile_params) > 0:
 
-        if len(origin_makefile_params) > 0:
+        makefile_params = {"CURDIR": makefile_dir}
 
-            makefile_params = {"CURDIR": makefile_dir}
+        for (key, value) in origin_makefile_params:
+            if not key in makefile_params:
+                # replace "$(var)" to "%(var)s"
+                value = re.sub(r"\$\((\S+)\)", r"%(\1)s", value)
 
-            for (key, value) in origin_makefile_params:
-                if not key in makefile_params:
-                    # replace "$(var)" to "%(var)s"
-                    value = re.sub(r"\$\((\S+)\)", r"%(\1)s", value)
+                makefile_params[key] = value % makefile_params
 
-                    makefile_params[key] = value % makefile_params
-
-            return makefile_params
+        return makefile_params
     return None
 
 
@@ -896,8 +892,10 @@ def normalize_article_metadata_case(template_str, normalize_template_var=True):
 #   "all_blogs": {
 #    "myblog":
 #    {
-#      "blog_path_windows": "C:\\Users\\MyUserName\\Dropbox\\blogFolder",
-#      "blog_path_osx": "/Users/Me/Dropbox/blogFolder",
+#      "blog_path_windows": "C:\\Users\\MyUserName\\Dropbox\\blogFolder\\blog",
+#      "blog_path_osx": "/Users/Me/Dropbox/blogFolder/blog",
+#      "draft_path_windows": "C:\\Users\\MyUserName\\Dropbox\\blogFolder\\drafts\\blog",
+#      "draft_path_osx": "/Users/Me/Dropbox/blogFolder/drafts/blog",
 #      "metadata_url": "http://myblog.com/meta.json"
 #    }
 #  },
@@ -926,12 +924,16 @@ def get_blog_details(view):
                 blogRoot = blogSettings["blog_path_%s" % sublime.platform()]
             if "blog_path" in blogSettings:
                 blogRoot = blogSettings["blog_path"]
-            if blogRoot != "" and os.path.commonprefix([blogRoot, current_folder]) == blogRoot:
-                # The current folder is underneath the listed blog root
+            if "draft_path_%s" % sublime.platform() in blogSettings:
+                draftPath = blogSettings["draft_path_%s" % sublime.platform()]
+            if "draft_path" in blogSettings:
+                draftPath = blogSettings["draft_path"]
+            if (blogRoot != "" and os.path.commonprefix([blogRoot,current_folder]) == blogRoot) or (draftPath != "" and os.path.commonprefix([draftPath,current_folder]) == draftPath): # The current folder is underneath the listed blog root
                 root = blogRoot
                 if "metadata_url" in blogSettings:
                     metaURL = blogSettings["metadata_url"]
                 break
+
 
     if root != "":
         current_blog["name"] = blog

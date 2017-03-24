@@ -6,7 +6,8 @@ import re
 import sublime
 import sublime_plugin
 import threading
-import platform, functools
+import functools
+import platform
 from datetime import date
 
 VERSION = int(sublime.version())
@@ -51,29 +52,30 @@ def slugify(value):
         value = re.sub('[-\s]+', '-', value)
         return value
 
+
 class PelicanLinkToPost(sublime_plugin.TextCommand):
-    def run(self,edit):
+    def run(self, edit):
         articles_paths = get_article_paths(window=self.view.window())
         thread = PelicanInsertTagCategoryThread(
             self, articles_paths, "post")
         thread.start()
 
+
 class PelicanMovePostToContents(sublime_plugin.TextCommand):
 
-    def run(self,edit):
+    def run(self, edit):
         root = get_input_path(window=self.view.window())
 
         openfile = self.view.file_name()
         fullPath = os.path.abspath(openfile)
         fileName = os.path.basename(fullPath)
-    
         today = date.today()
         yearName = today.strftime("%Y")
         monthName = today.strftime("%m")
         datePrefix = today.strftime("%Y%m%d")
 
         # Construct the destination folder: content/posts/YYYY/MM
-        folder = os.path.join(root,"content","posts",yearName,monthName)
+        folder = os.path.join(root, "content", "posts", yearName, monthName)
 
         # Check if the destination exists, create it if not
         try:
@@ -83,11 +85,12 @@ class PelicanMovePostToContents(sublime_plugin.TextCommand):
                 raise
 
         # File format: YYYYMMDD-name
-        newFile = os.path.join( folder, "%s-%s" % (datePrefix,fileName) )
+        newFile = os.path.join(folder, "%s-%s" % (datePrefix, fileName))
 
         thread = PelicanMovePostToContentsThread(
             self.view, fullPath, newFile)
         thread.start()
+
 
 class PelicanMovePostToContentsThread(threading.Thread):
 
@@ -104,11 +107,11 @@ class PelicanMovePostToContentsThread(threading.Thread):
             self.window.run_command("save_file")
 
         # something to close the view
-        self.view.set_scratch( True )
+        self.view.set_scratch(True)
         self.window.run_command("close_file")
 
         try:
-            os.rename(self.fullPath,self.newFile)
+            os.rename(self.fullPath, self.newFile)
         except OSError as err:
             sublime.status_message("Error: %s" % err.strerror)
         else:
@@ -163,38 +166,52 @@ class PelicanGenerateSlugCommand(sublime_plugin.TextCommand):
             else:
                 slug_insert_position = title_region.end()
                 self.view.insert(
-                    edit, slug_insert_position, pelican_slug_template_result % slug)
+                    edit,
+                    slug_insert_position,
+                    pelican_slug_template_result % slug
+                )
 
 
 class PelicanNewMarkdownCommand(sublime_plugin.WindowCommand):
 
     def run(self):
-        blog_path = load_setting(self.window.active_view(), "blog_path_%s" % platform.system(), None)
+        blog_path = load_setting(
+            self.window.active_view(),
+            "blog_path_%s" % platform.system(),
+            None
+        )
         if not blog_path:
             new_view = self.window.new_file()
             self.populate_view(new_view)
         else:
-            draft_path = os.path.join(blog_path,"drafts")
+            draft_path = os.path.join(blog_path, "drafts")
             self.window.run_command('hide_panel')
-            self.window.show_input_panel("Post Title:", "", functools.partial(self.on_done, draft_path), None, None)
+            self.window.show_input_panel(
+                "Post Title:", "", functools.partial(
+                    self.on_done, draft_path),
+                None,
+                None
+            )
 
-    def populate_view(self,view,title,slug):
+    def populate_view(self, view, title, slug):
         addPelicanArticle(view)
         view.run_command('pelican_insert_metadata', {"meta_type": "md"})
         view.settings().set('open_with_edit', True)
 
-    def on_done(self,path,name):
+    def on_done(self, path, name):
         slug = slugify(name)
-        full_name = os.path.join(path,"%s.md" % slug)
-        content = "Title: %s\nSlug: %s\n" % (name,slug)
+        full_name = os.path.join(path, "%s.md" % slug)
+        content = "Title: %s\nSlug: %s\n" % (name, slug)
         open(full_name, 'w+', encoding='utf8', newline='').write(content)
         new_view = self.window.open_file(full_name)
+
         def do_finish():
             if new_view.is_loading():
-                sublime.set_timeout(do_finish,100)
+                sublime.set_timeout(do_finish, 100)
             else:
-                self.populate_view(new_view,name,slug)
+                self.populate_view(new_view, name, slug)
         do_finish()
+
 
 class PelicanNewRestructuredtextCommand(sublime_plugin.WindowCommand):
 
@@ -226,9 +243,9 @@ class PelicanInsertMetadataCommand(sublime_plugin.TextCommand):
         article_metadata_template_lines = normalize_article_metadata_case(
             article_metadata_template_lines)
         if article_metadata_template_lines:
-            for article_metadata_template_line in article_metadata_template_lines:
+            for line in article_metadata_template_lines:
                 regex = re.compile(":?(\w+):")
-                find_all = regex.findall(article_metadata_template_line)
+                find_all = regex.findall(line)
                 if len(find_all) > 0:
                     metadata_key = find_all[0]
                     if not metadata_key in article_metadata_template_keys:
@@ -391,7 +408,9 @@ class PelicanInsertTagCategoryThread(threading.Thread):
         new_content_str = " " + new_content_str
 
         self.view.run_command(
-            'pelican_replace_selection_in_view', {'new_string': new_content_str})
+            'pelican_replace_selection_in_view',
+            {'new_string': new_content_str}
+        )
 
         content_line = self.view.line(self.view.sel()[0])
 
@@ -409,15 +428,21 @@ class PelicanInsertTagCategoryThread(threading.Thread):
         self.view.run_command(
             'insert', {'characters': "{filename}/%s" % path})
 
-    def run(self):
         blog_details = get_blog_details(self.view)
         if "metadata_url" in blog_details and blog_details["metadata_url"] != "":
             blog_name = blog_details["name"]
             metadata_url = blog_details["metadata_url"]
-            self.results = get_categories_tags_from_meta(blog_name, metadata_url, mode=self.mode)
+            self.results = get_categories_tags_from_meta(
+                blog_name,
+                metadata_url,
+                mode=self.mode
+            )
         else:
-            self.results = get_categories_tags(self.article_paths, mode=self.mode)
-        
+            self.results = get_categories_tags(
+                self.article_paths,
+                mode=self.mode
+            )
+
         if self.mode == "post":
             self.results_full = self.results
             self.results = sorted(list(set(self.results)))
@@ -518,9 +543,10 @@ def isPelicanArticle(view):
             view, "use_input_folder_in_makefile", True)
         if use_input_folder_in_makefile:
             makefile_params = parse_makefile(view.window())
+            inputdir_key = "INPUTDIR_" + sublime.platform()
             inputdir = None
-            if makefile_params and "INPUTDIR_"+sublime.platform() in makefile_params:
-                inputdir = makefile_params["INPUTDIR_"+sublime.platform()]
+            if makefile_params and inputdir_key in makefile_params:
+                inputdir = makefile_params[inputdir_key]
             elif makefile_params and "INPUTDIR" in makefile_params:
                 inputdir = makefile_params["INPUTDIR"]
             if inputdir is not None:
@@ -545,7 +571,10 @@ def load_setting(view, setting_name, default_value):
 
     global_settings = sublime.load_settings("Pelican.sublime-settings")
 
-    return view.settings().get(setting_name, global_settings.get(setting_name, default_value))
+    return view.settings().get(
+        setting_name,
+        global_settings.get(setting_name, default_value)
+    )
 
 
 def normalize_line_endings(view, string):
@@ -626,7 +655,6 @@ def parse_makefile(window):
     return None
 
 
-
 def get_input_path(window):
     # load INPUTDIR
     inputdir = None
@@ -636,14 +664,15 @@ def get_input_path(window):
     elif makefile_params and "INPUTDIR" in makefile_params:
         return makefile_params["INPUTDIR"]
     else:
-        return ""    
+        return ""
+
 
 def get_article_paths(window):
     article_paths = []
 
     # load INPUTDIR
     inputdir = search_for_root(window)
-    if inputdir=="":
+    if inputdir == "":
         return []
 
     # get paths of all articles in INPUTDIR
@@ -659,17 +688,19 @@ def get_article_paths(window):
 
     return article_paths
 
+
 def get_categories_tags_from_meta(name, url, mode="tag"):
     results = []
     # Download the metadata
-    import urllib.request,urllib.error,json
+    import urllib.request
+    import urllib.error
+    import json
 
     metajson = ""
-    cache_path = os.path.join(sublime.packages_path(),"Pelican")
+    cache_path = os.path.join(sublime.packages_path(), "Pelican")
     if not os.path.exists(cache_path):
         os.mkdir(cache_path)
-    cache_file = os.path.join(cache_path,"meta-%s.json" % name)
-
+    cache_file = os.path.join(cache_path, "meta-%s.json" % name)
 
     try:
         response = urllib.request.urlopen(url)
@@ -680,16 +711,17 @@ def get_categories_tags_from_meta(name, url, mode="tag"):
     try:
         if metajson is "":
             # Try to load last from file
-            with open(cache_file,'r') as f:
+            with open(cache_file, 'r') as f:
                 metajson = f.read()
         else:
             # Try to save latest to file
-            with open(cache_file,'w') as f:
+            with open(cache_file, 'w') as f:
                 f.write(metajson)
     except Exception as e:
-        print( e )
+        print(e)
 
-    if metajson is not "": # We got something either from URL or file
+    if metajson is not "":
+        # We got something either from URL or file
         metadata = json.loads(metajson)
         if 'cats' in metadata and mode == "category":
             results = metadata['cats']
@@ -711,6 +743,7 @@ def get_categories_tags_from_meta(name, url, mode="tag"):
         return list_results
     else:
         return None
+
 
 def get_categories_tags(articles_paths, mode="tag"):
     # retrieve categories or tags
@@ -782,9 +815,9 @@ def normalize_article_metadata_case(template_str, normalize_template_var=True):
     Markdown
 
     >>> template_str = "title: %(title)s"
-    >>> print normalize_article_metadata_case(template_str)
+    >>> print(normalize_article_metadata_case(template_str))
     ['Title: %(Title)s']
-    >>> print normalize_article_metadata_case(template_str, False)
+    >>> print(normalize_article_metadata_case(template_str, False))
     ['Title: %(title)s']
 
     >>> template_str = """
@@ -792,17 +825,17 @@ def normalize_article_metadata_case(template_str, normalize_template_var=True):
     ... date: %(date)s
     ... slug: %(slug)s
     ... """
-    >>> print normalize_article_metadata_case(template_str)
+    >>> print(normalize_article_metadata_case(template_str))
     ['Title: %(Title)s', 'Date: %(Date)s', 'Slug: %(Slug)s']
-    >>> print normalize_article_metadata_case(template_str, False)
+    >>> print(normalize_article_metadata_case(template_str, False))
     ['Title: %(title)s', 'Date: %(date)s', 'Slug: %(slug)s']
 
     reStructuredText
 
     >>> template_str = ":TITLE: %(TITLE)s"
-    >>> print normalize_article_metadata_case(template_str)
+    >>> print(normalize_article_metadata_case(template_str))
     [':title: %(title)s']
-    >>> print normalize_article_metadata_case(template_str, False)
+    >>> print(normalize_article_metadata_case(template_str, False))
     [':title: %(TITLE)s']
 
     >>> template_str = """
@@ -810,9 +843,9 @@ def normalize_article_metadata_case(template_str, normalize_template_var=True):
     ... :DATE: %(DATE)s
     ... :SLUG: %(SLUG)s
     ... """
-    >>> print normalize_article_metadata_case(template_str)
+    >>> print(normalize_article_metadata_case(template_str))
     [':title: %(title)s', ':date: %(date)s', ':slug: %(slug)s']
-    >>> print normalize_article_metadata_case(template_str, False)
+    >>> print(normalize_article_metadata_case(template_str, False))
     [':title: %(TITLE)s', ':date: %(DATE)s', ':slug: %(SLUG)s']
     '''
 
@@ -848,7 +881,9 @@ def normalize_article_metadata_case(template_str, normalize_template_var=True):
                     else:
                         new_template_var = template_var.strip().lower()
                     new_line = new_line.replace(
-                        "%(" + template_var + ")s", "%(" + new_template_var + ")s")
+                        "%(" + template_var + ")s",
+                        "%(" + new_template_var + ")s"
+                    )
 
             new_str_lines.append(new_line)
     return new_str_lines
@@ -864,14 +899,16 @@ def normalize_article_metadata_case(template_str, normalize_template_var=True):
 #      "metadata_url": "http://myblog.com/meta.json"
 #    }
 #  },
-#  
+#
 #  Returns a dictionary with three keys:
 #  - name
 #  - metadata_url
 #  - root
-# 
+#
 #  If there's nothing configured, it will return an empty dictionary
-#  
+#
+
+
 def get_blog_details(view):
     current_filename = view.file_name()
     current_folder = os.path.dirname(current_filename)
@@ -897,7 +934,6 @@ def get_blog_details(view):
                     metaURL = blogSettings["metadata_url"]
                 break
 
-
     if root != "":
         current_blog["name"] = blog
         current_blog["metadata_url"] = metaURL
@@ -907,11 +943,11 @@ def get_blog_details(view):
 # Look in multiple places to figure out what our root directory is
 # First check the config file for explicitly defined blogs
 # Next check for a Makefile with an INPUTDIR
-# 
+
+
 def search_for_root(window):
     view = window.active_view()
     details = get_blog_details(view)
     if "root" in details:
         return details["root"]
     return get_input_path(window)
-

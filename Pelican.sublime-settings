@@ -1,33 +1,81 @@
 {
-	"article_metadata_template": {
-    // Metadata template for Markdown articles, comments see in base.html file
+  // ===============
+  // Slug generation
+  // ===============
+
+  // By default, slug is not automatically generated if a slug has been
+  //   defined in the article.
+  // Set to `true` to force slug regeneration.
+  "force_slug_regeneration": false,
+
+  // Set to `"none"` to disable slug generation
+  // Set to `"title_change"` to generate slug when article title changes
+  //   Note that when set to `"title_change"`, slug will be regenerated
+  //     everytime you type in the title line, even if
+  //     `force_slug_regeneration` is set to `false`.
+  // Set to `"save"` to generate slug on save
+  //   If you want to force slug regeneration on each save, you have to set
+  //     `force_slug_regeneration` to `true`.
+  //   By default, slug is not automatically generated if a slug has been
+  //     defined in the article. This is to prevent unwanted slug change.
+  "generate_slug_from_title": "save",
+
+
+
+  // ==============================
+  // Customizable metadata template
+  // ==============================
+
+  // Metadata template for Markdown & reStructuredText articles.
+  "article_metadata_template": {
+    // Metadata template for Markdown articles
     "md":
       [
-        "Title: ",
-        "Template: ",
-        "Slug: ",
+        "Title: %(title)s",
+        "Slug: %(slug)s",
         "Date: %(date)s",
         "Modified: %(modified)s",
-        "Version: %(version)s",
+        "Tags: %(tags)s",
+        "Category: %(category)s",
         "Author: %(author)s",
         "Lang: %(lang)s",
-        "Summary: %(summary)s",
-        "PageTitle: %(pagetitle)s",
-		"MetaContent: %(metacontent)s",
-		"PageColors: %(pagecolors)s",
-		"IconLeftOrRight: %(iconleftorright)s",
-		"Tags: %(tags)s",
-        "Category: %(category)s",
-        "Noco: %(noco)s",
-		"Stylesheets: personal/",
-		"JavaScripts: personal/",
-        "JQuery: true",
-        "Mailhu: true",
-        "Fancybox: true",
-        "Rainbow: false",
-		"Tooltipster: false",
-		"ClipboardJs: false",
-		"DetailsPolyfill: false"
+        "Summary: %(summary)s"
+      ],
+
+    // Metadata template for reStructuredText articles
+    "rst":
+      [
+        ":title: %(title)s",
+        ":slug: %(slug)s",
+        ":date: %(date)s",
+        ":tags: %(tags)s",
+        ":category: %(category)s",
+        ":author: %(author)s",
+        ":lang: %(lang)s",
+        ":summary: %(summary)s"
       ]
-      }
+  },
+
+
+
+  // =====================================
+  // File Path Filter for Pelican Articles
+  // =====================================
+
+  // To prevent automatic slug generation from annoyly affecting other
+  //   Markdown/reStrcturedText files that are not Pelican articles,
+  //   SublimePelican processes only the Markdown/reStructuredText files
+  //   under `INPUTDIR` specified in the Makefile.
+
+  // When set to `false`, SublimePelican will use the regular expression
+  //   defined in `filepath_filter` as the file path filter for Pelican
+  //   articles.
+  "use_input_folder_in_makefile": true,
+
+  // File path filter for Pelican articles, written in a Python regular
+  //   expression.
+  // Effective only if `use_input_folder_in_makefile` is set to `false`.
+  // By default, only Markdown/reStructuredText files under `content/`
+  //   directory are deemed as Pelican article files.
+  "filepath_filter": "content/.*\\.(md|markdown|mkd|rst)$"
 }

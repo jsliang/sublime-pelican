@@ -1,4 +1,5 @@
 from __future__ import unicode_literals
+
 import codecs
 import datetime
 import os
@@ -6,12 +7,6 @@ import re
 import sublime
 import sublime_plugin
 import threading
-import functools
-import platform
-from datetime import date
-
-VERSION = int(sublime.version())
-ST2 = VERSION < 3000
 
 pelican_slug_template = {
     "md": "Slug: %s\n",
@@ -33,96 +28,10 @@ default_filter = '.*\\.(md|markdown|mkd|rst)$'
 pelican_article_views = []
 
 
-def slugify(value):
-        """
-        Normalizes string, converts to lowercase, removes non-alpha characters,
-        and converts spaces to hyphens.
-
-        Took from django sources.
-        """
-        # value must be unicode per se
-        import unicodedata
-        if ST2:
-            from lib.unidecode import unidecode
-        else:
-            from Pelican.lib.unidecode import unidecode
-        value = unicodedata.normalize('NFKD', value).lower()
-        value = unidecode(value, ST2)
-        value = re.sub('[^\w\s-]', '', value).strip()
-        value = re.sub('[-\s]+', '-', value)
-        return value
-
-
-class PelicanLinkToPost(sublime_plugin.TextCommand):
-    def run(self, edit):
-        articles_paths = get_article_paths(window=self.view.window())
-        thread = PelicanInsertTagCategoryThread(
-            self, articles_paths, "post")
-        thread.start()
-
-
-class PelicanMovePostToContents(sublime_plugin.TextCommand):
+class PelicanUpdateModifiedDateCommand(sublime_plugin.TextCommand):
 
     def run(self, edit):
-        root = get_input_path(window=self.view.window())
-
-        openfile = self.view.file_name()
-        fullPath = os.path.abspath(openfile)
-        fileName = os.path.basename(fullPath)
-        today = date.today()
-        yearName = today.strftime("%Y")
-        monthName = today.strftime("%m")
-        datePrefix = today.strftime("%Y%m%d")
-
-        # Construct the destination folder: content/posts/YYYY/MM
-        folder = os.path.join(root, "content", "posts", yearName, monthName)
-
-        # Check if the destination exists, create it if not
-        try:
-            os.makedirs(folder)
-        except OSError:
-            if not os.path.isdir(folder):
-                raise
-
-        # File format: YYYYMMDD-name
-        newFile = os.path.join(folder, "%s-%s" % (datePrefix, fileName))
-
-        thread = PelicanMovePostToContentsThread(
-            self.view, fullPath, newFile)
-        thread.start()
-
-
-class PelicanMovePostToContentsThread(threading.Thread):
-
-    def __init__(self, view, fullPath, newFile):
-        self.window = view.window()
-        self.view = view
-        self.fullPath = fullPath
-        self.newFile = newFile
-        threading.Thread.__init__(self)
-
-    def run(self):
-        if self.view.is_dirty():
-            # something to save the view
-            self.window.run_command("save_file")
-
-        # something to close the view
-        self.view.set_scratch(True)
-        self.window.run_command("close_file")
-
-        try:
-            os.rename(self.fullPath, self.newFile)
-        except OSError as err:
-            sublime.status_message("Error: %s" % err.strerror)
-        else:
-            self.window.open_file(self.newFile)
-            sublime.status_message("Moved to %s" % (self.newFile))
-
-
-class PelicanUpdateDateCommand(sublime_plugin.TextCommand):
-
-    def run(self, edit):
-        date_region = self.view.find(':?date:\s*', 0, sublime.IGNORECASE)
+        date_region = self.view.find(':?modified:\s*', 0, sublime.IGNORECASE)
         if not date_region:
             return
 
@@ -141,6 +50,17 @@ class PelicanUpdateDateCommand(sublime_plugin.TextCommand):
 
 class PelicanGenerateSlugCommand(sublime_plugin.TextCommand):
 
+    def slugify(self, value):
+        """
+        Normalizes string, converts to lowercase, removes non-alpha characters,
+        and converts spaces to hyphens.
+
+        Took from django sources.
+        """
+        value = re.sub('[^\w\s-]', '', value).strip().lower()
+        value = re.sub('[-\s]+', '-', value)
+        return value
+
     def run(self, edit):
         title_region = self.view.find(':?title:.+\s*', 0, sublime.IGNORECASE)
         if title_region:
@@ -153,64 +73,29 @@ class PelicanGenerateSlugCommand(sublime_plugin.TextCommand):
 
             title_str = r.groupdict()['title'].strip()
 
-            slug = slugify(title_str)
+            slug = self.slugify(title_str)
 
             meta_type = detect_article_type(self.view)
 
             pelican_slug_template_result = normalize_line_endings(
                 self.view, pelican_slug_template[meta_type])
-            slug_region = self.view.find(':?slug:.+\s*', 0, sublime.IGNORECASE)
+            slug_region = self.view.find(
+                ':?slug:.+\s*', 0, sublime.IGNORECASE)
             if slug_region:
                 self.view.replace(
                     edit, slug_region, pelican_slug_template_result % slug)
             else:
                 slug_insert_position = title_region.end()
                 self.view.insert(
-                    edit,
-                    slug_insert_position,
-                    pelican_slug_template_result % slug
-                )
+                    edit, slug_insert_position, pelican_slug_template_result % slug)
 
 
 class PelicanNewMarkdownCommand(sublime_plugin.WindowCommand):
 
     def run(self):
-        blog_path = load_setting(
-            self.window.active_view(),
-            "blog_path_%s" % platform.system(),
-            None
-        )
-        if not blog_path:
-            new_view = self.window.new_file()
-            self.populate_view(new_view)
-        else:
-            draft_path = os.path.join(blog_path, "drafts")
-            self.window.run_command('hide_panel')
-            self.window.show_input_panel(
-                "Post Title:", "", functools.partial(
-                    self.on_done, draft_path),
-                None,
-                None
-            )
-
-    def populate_view(self, view, title, slug):
-        addPelicanArticle(view)
-        view.run_command('pelican_insert_metadata', {"meta_type": "md"})
-        view.settings().set('open_with_edit', True)
-
-    def on_done(self, path, name):
-        slug = slugify(name)
-        full_name = os.path.join(path, "%s.md" % slug)
-        content = "Title: %s\nSlug: %s\n" % (name, slug)
-        open(full_name, 'w+', encoding='utf8', newline='').write(content)
-        new_view = self.window.open_file(full_name)
-
-        def do_finish():
-            if new_view.is_loading():
-                sublime.set_timeout(do_finish, 100)
-            else:
-                self.populate_view(new_view, name, slug)
-        do_finish()
+        new_view = self.window.new_file()
+        addPelicanArticle(new_view)
+        new_view.run_command('pelican_insert_metadata', {"meta_type": "md"})
 
 
 class PelicanNewRestructuredtextCommand(sublime_plugin.WindowCommand):
@@ -243,9 +128,9 @@ class PelicanInsertMetadataCommand(sublime_plugin.TextCommand):
         article_metadata_template_lines = normalize_article_metadata_case(
             article_metadata_template_lines)
         if article_metadata_template_lines:
-            for line in article_metadata_template_lines:
+            for article_metadata_template_line in article_metadata_template_lines:
                 regex = re.compile(":?(\w+):")
-                find_all = regex.findall(line)
+                find_all = regex.findall(article_metadata_template_line)
                 if len(find_all) > 0:
                     metadata_key = find_all[0]
                     if not metadata_key in article_metadata_template_keys:
@@ -259,7 +144,8 @@ class PelicanInsertMetadataCommand(sublime_plugin.TextCommand):
         if len(metadata_regions) > 0:
             for region in metadata_regions:
                 metadata_str = self.view.substr(region)
-                metadata_str = normalize_article_metadata_case(metadata_str)[0]
+                metadata_str = normalize_article_metadata_case(metadata_str)[
+                    0]
                 regex = re.compile(":?(\w+):(.*)")
                 find_all = regex.findall(metadata_str)
                 if len(find_all) > 0:
@@ -282,6 +168,22 @@ class PelicanInsertMetadataCommand(sublime_plugin.TextCommand):
         metadata_key_date = "Date"
         for key in metadata.keys():
             if key.lower() == "date":
+                metadata_key_date = key
+        if metadata[metadata_key_date] is "":
+            metadata[metadata_key_date] = strDateNow()
+
+        article_metadata_template = normalize_line_endings(
+            self.view, "\n".join(article_metadata_template_lines))
+        article_metadata_str = article_metadata_template % metadata
+        if len(metadata_regions) > 0:
+            self.view.replace(edit, old_metadata_region, article_metadata_str)
+        else:
+            self.view.insert(edit, 0, article_metadata_str)
+
+        # initialize modified field if it's empty
+        metadata_key_date = "Modified"
+        for key in metadata.keys():
+            if key.lower() == "modified":
                 metadata_key_date = key
         if metadata[metadata_key_date] is "":
             metadata[metadata_key_date] = strDateNow()
@@ -408,9 +310,7 @@ class PelicanInsertTagCategoryThread(threading.Thread):
         new_content_str = " " + new_content_str
 
         self.view.run_command(
-            'pelican_replace_selection_in_view',
-            {'new_string': new_content_str}
-        )
+            'pelican_replace_selection_in_view', {'new_string': new_content_str})
 
         content_line = self.view.line(self.view.sel()[0])
 
@@ -418,53 +318,17 @@ class PelicanInsertTagCategoryThread(threading.Thread):
         self.view.sel().add(content_line)
         self.view.show(content_line)
 
-    def on_done_post(self, picked):
-        if picked == -1:
-            return
+    def run(self):
+        self.results = get_categories_tags(self.article_paths, mode=self.mode)
 
-        picked_str = self.results[picked]
-        path = self.results_full[picked_str]
-
-        self.view.run_command(
-            'insert', {'characters': "{filename}/%s" % path})
-
-        blog_details = get_blog_details(self.view)
-        if "metadata_url" in blog_details and blog_details["metadata_url"] != "":
-            blog_name = blog_details["name"]
-            metadata_url = blog_details["metadata_url"]
-            self.results = get_categories_tags_from_meta(
-                blog_name,
-                metadata_url,
-                mode=self.mode
-            )
-        else:
-            self.results = get_categories_tags(
-                self.article_paths,
-                mode=self.mode
-            )
-
-        if self.mode == "post":
-            self.results_full = self.results
-            self.results = sorted(list(set(self.results)))
-
-        def show_quick_panel_meta():
+        def show_quick_panel():
             if not self.results:
                 sublime.error_message(
                     ('%s: There is no %s found.') % (__name__, self.mode))
                 return
             self.window.show_quick_panel(self.results, self.on_done)
 
-        def show_quick_panel_post():
-            if not self.results:
-                sublime.error_message(
-                    ('%s: There is no %s found.') % (__name__, self.mode))
-                return
-            self.window.show_quick_panel(self.results, self.on_done_post)
-
-        if self.mode != "post":
-            sublime.set_timeout(show_quick_panel_meta, 10)
-        else:
-            sublime.set_timeout(show_quick_panel_post, 10)
+        sublime.set_timeout(show_quick_panel, 10)
 
 
 class PelicanArticleClose(sublime_plugin.EventListener):
@@ -537,20 +401,16 @@ def isPelicanArticle(view):
         return True
 
     if view.file_name():
-        filepath_filter = load_setting(view, "filepath_filter", default_filter)
+        filepath_filter = load_setting(
+            view, "filepath_filter", default_filter)
 
         use_input_folder_in_makefile = load_setting(
             view, "use_input_folder_in_makefile", True)
         if use_input_folder_in_makefile:
             makefile_params = parse_makefile(view.window())
-            inputdir_key = "INPUTDIR_" + sublime.platform()
-            inputdir = None
-            if makefile_params and inputdir_key in makefile_params:
-                inputdir = makefile_params[inputdir_key]
-            elif makefile_params and "INPUTDIR" in makefile_params:
-                inputdir = makefile_params["INPUTDIR"]
-            if inputdir is not None:
-                filepath_filter = inputdir + "/" + default_filter
+            if makefile_params and "INPUTDIR" in makefile_params:
+                filepath_filter = makefile_params[
+                    'INPUTDIR'] + "/" + default_filter
 
         if re.search(filepath_filter, view.file_name()):
             return True
@@ -572,9 +432,7 @@ def load_setting(view, setting_name, default_value):
     global_settings = sublime.load_settings("Pelican.sublime-settings")
 
     return view.settings().get(
-        setting_name,
-        global_settings.get(setting_name, default_value)
-    )
+        setting_name, global_settings.get(setting_name, default_value))
 
 
 def normalize_line_endings(view, string):
@@ -655,24 +513,15 @@ def parse_makefile(window):
     return None
 
 
-def get_input_path(window):
-    # load INPUTDIR
-    inputdir = None
-    makefile_params = parse_makefile(window)
-    if makefile_params and "INPUTDIR_"+sublime.platform() in makefile_params:
-        return makefile_params["INPUTDIR_"+sublime.platform()]
-    elif makefile_params and "INPUTDIR" in makefile_params:
-        return makefile_params["INPUTDIR"]
-    else:
-        return ""
-
-
 def get_article_paths(window):
     article_paths = []
 
     # load INPUTDIR
-    inputdir = search_for_root(window)
-    if inputdir == "":
+    inputdir = None
+    makefile_params = parse_makefile(window)
+    if makefile_params and "INPUTDIR" in makefile_params:
+        inputdir = makefile_params['INPUTDIR']
+    else:
         return []
 
     # get paths of all articles in INPUTDIR
@@ -687,62 +536,6 @@ def get_article_paths(window):
         return []
 
     return article_paths
-
-
-def get_categories_tags_from_meta(name, url, mode="tag"):
-    results = []
-    # Download the metadata
-    import urllib.request
-    import urllib.error
-    import json
-
-    metajson = ""
-    cache_path = os.path.join(sublime.packages_path(), "Pelican")
-    if not os.path.exists(cache_path):
-        os.mkdir(cache_path)
-    cache_file = os.path.join(cache_path, "meta-%s.json" % name)
-
-    try:
-        response = urllib.request.urlopen(url)
-        metajson = response.read().decode("utf-8")
-    except urllib.error.URLError as e:
-        pass
-
-    try:
-        if metajson is "":
-            # Try to load last from file
-            with open(cache_file, 'r') as f:
-                metajson = f.read()
-        else:
-            # Try to save latest to file
-            with open(cache_file, 'w') as f:
-                f.write(metajson)
-    except Exception as e:
-        print(e)
-
-    if metajson is not "":
-        # We got something either from URL or file
-        metadata = json.loads(metajson)
-        if 'cats' in metadata and mode == "category":
-            results = metadata['cats']
-        elif 'tags' in metadata and mode == "tag":
-            results = metadata['tags']
-        elif 'posts' in metadata and mode == 'post':
-            results = metadata['posts']
-
-        if len(results) == 0:
-            return None
-
-        if mode != "post":
-            list_results = sorted(list(set(results)))
-            if '' in list_results:
-                list_results.remove('')
-        else:
-            list_results = results
-
-        return list_results
-    else:
-        return None
 
 
 def get_categories_tags(articles_paths, mode="tag"):
@@ -798,7 +591,9 @@ def get_metadata_regions(view, mode):
         if len(regions) > 0:
             region_begin = regions[0].begin()
             region_end = regions[len(regions) - 1].end()
-            result_region_list.append(sublime.Region(region_begin, region_end))
+            result_region_list.append(
+                sublime.Region(
+                    region_begin, region_end))
     elif mode == "multiple":
         for region in regions:
             result_region_list.append(region)
@@ -810,14 +605,15 @@ def get_metadata_regions(view, mode):
     return result_region_list
 
 
-def normalize_article_metadata_case(template_str, normalize_template_var=True):
+def normalize_article_metadata_case(
+        template_str, normalize_template_var=True):
     '''
     Markdown
 
     >>> template_str = "title: %(title)s"
-    >>> print(normalize_article_metadata_case(template_str))
+    >>> print normalize_article_metadata_case(template_str)
     ['Title: %(Title)s']
-    >>> print(normalize_article_metadata_case(template_str, False))
+    >>> print normalize_article_metadata_case(template_str, False)
     ['Title: %(title)s']
 
     >>> template_str = """
@@ -825,17 +621,17 @@ def normalize_article_metadata_case(template_str, normalize_template_var=True):
     ... date: %(date)s
     ... slug: %(slug)s
     ... """
-    >>> print(normalize_article_metadata_case(template_str))
+    >>> print normalize_article_metadata_case(template_str)
     ['Title: %(Title)s', 'Date: %(Date)s', 'Slug: %(Slug)s']
-    >>> print(normalize_article_metadata_case(template_str, False))
+    >>> print normalize_article_metadata_case(template_str, False)
     ['Title: %(title)s', 'Date: %(date)s', 'Slug: %(slug)s']
 
     reStructuredText
 
     >>> template_str = ":TITLE: %(TITLE)s"
-    >>> print(normalize_article_metadata_case(template_str))
+    >>> print normalize_article_metadata_case(template_str)
     [':title: %(title)s']
-    >>> print(normalize_article_metadata_case(template_str, False))
+    >>> print normalize_article_metadata_case(template_str, False)
     [':title: %(TITLE)s']
 
     >>> template_str = """
@@ -843,9 +639,9 @@ def normalize_article_metadata_case(template_str, normalize_template_var=True):
     ... :DATE: %(DATE)s
     ... :SLUG: %(SLUG)s
     ... """
-    >>> print(normalize_article_metadata_case(template_str))
+    >>> print normalize_article_metadata_case(template_str)
     [':title: %(title)s', ':date: %(date)s', ':slug: %(slug)s']
-    >>> print(normalize_article_metadata_case(template_str, False))
+    >>> print normalize_article_metadata_case(template_str, False)
     [':title: %(TITLE)s', ':date: %(DATE)s', ':slug: %(SLUG)s']
     '''
 
@@ -881,73 +677,7 @@ def normalize_article_metadata_case(template_str, normalize_template_var=True):
                     else:
                         new_template_var = template_var.strip().lower()
                     new_line = new_line.replace(
-                        "%(" + template_var + ")s",
-                        "%(" + new_template_var + ")s"
-                    )
+                        "%(" + template_var + ")s", "%(" + new_template_var + ")s")
 
             new_str_lines.append(new_line)
     return new_str_lines
-
-# Get the details of the blog from the config file
-#   "all_blogs": {
-#    "myblog":
-#    {
-#      "blog_path_windows": "C:\\Users\\MyUserName\\Dropbox\\blogFolder\\blog",
-#      "blog_path_osx": "/Users/Me/Dropbox/blogFolder/blog",
-#      "draft_path_windows": "C:\\Users\\MyUserName\\Dropbox\\blogFolder\\drafts\\blog",
-#      "draft_path_osx": "/Users/Me/Dropbox/blogFolder/drafts/blog",
-#      "metadata_url": "http://myblog.com/meta.json"
-#    }
-#  },
-#
-#  Returns a dictionary with three keys:
-#  - name
-#  - metadata_url
-#  - root
-#
-#  If there's nothing configured, it will return an empty dictionary
-#
-
-
-def get_blog_details(view):
-    current_filename = view.file_name()
-    current_folder = os.path.dirname(current_filename)
-    current_blog = {}
-    allBlogs = load_setting(view, "all_blogs", None)
-    root = ""
-    metaURL = ""
-
-    if allBlogs is not None:
-        for blog in allBlogs:
-            blogSettings = allBlogs[blog]
-            if "blog_path_%s" % sublime.platform() in blogSettings:
-                blogRoot = blogSettings["blog_path_%s" % sublime.platform()]
-            if "blog_path" in blogSettings:
-                blogRoot = blogSettings["blog_path"]
-            if "draft_path_%s" % sublime.platform() in blogSettings:
-                draftPath = blogSettings["draft_path_%s" % sublime.platform()]
-            if "draft_path" in blogSettings:
-                draftPath = blogSettings["draft_path"]
-            if (blogRoot != "" and os.path.commonprefix([blogRoot,current_folder]) == blogRoot) or (draftPath != "" and os.path.commonprefix([draftPath,current_folder]) == draftPath): # The current folder is underneath the listed blog root
-                root = blogRoot
-                if "metadata_url" in blogSettings:
-                    metaURL = blogSettings["metadata_url"]
-                break
-
-    if root != "":
-        current_blog["name"] = blog
-        current_blog["metadata_url"] = metaURL
-        current_blog["root"] = root
-    return current_blog
-
-# Look in multiple places to figure out what our root directory is
-# First check the config file for explicitly defined blogs
-# Next check for a Makefile with an INPUTDIR
-
-
-def search_for_root(window):
-    view = window.active_view()
-    details = get_blog_details(view)
-    if "root" in details:
-        return details["root"]
-    return get_input_path(window)

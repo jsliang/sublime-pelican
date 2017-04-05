@@ -1,4 +1,5 @@
 from __future__ import unicode_literals
+
 import codecs
 import datetime
 import os
@@ -27,10 +28,10 @@ default_filter = '.*\\.(md|markdown|mkd|rst)$'
 pelican_article_views = []
 
 
-class PelicanUpdateDateCommand(sublime_plugin.TextCommand):
+class PelicanUpdateModifiedDateCommand(sublime_plugin.TextCommand):
 
     def run(self, edit):
-        date_region = self.view.find(':?date:\s*', 0, sublime.IGNORECASE)
+        date_region = self.view.find(':?modified:\s*', 0, sublime.IGNORECASE)
         if not date_region:
             return
 
@@ -78,7 +79,8 @@ class PelicanGenerateSlugCommand(sublime_plugin.TextCommand):
 
             pelican_slug_template_result = normalize_line_endings(
                 self.view, pelican_slug_template[meta_type])
-            slug_region = self.view.find(':?slug:.+\s*', 0, sublime.IGNORECASE)
+            slug_region = self.view.find(
+                ':?slug:.+\s*', 0, sublime.IGNORECASE)
             if slug_region:
                 self.view.replace(
                     edit, slug_region, pelican_slug_template_result % slug)
@@ -142,7 +144,8 @@ class PelicanInsertMetadataCommand(sublime_plugin.TextCommand):
         if len(metadata_regions) > 0:
             for region in metadata_regions:
                 metadata_str = self.view.substr(region)
-                metadata_str = normalize_article_metadata_case(metadata_str)[0]
+                metadata_str = normalize_article_metadata_case(metadata_str)[
+                    0]
                 regex = re.compile(":?(\w+):(.*)")
                 find_all = regex.findall(metadata_str)
                 if len(find_all) > 0:
@@ -165,6 +168,22 @@ class PelicanInsertMetadataCommand(sublime_plugin.TextCommand):
         metadata_key_date = "Date"
         for key in metadata.keys():
             if key.lower() == "date":
+                metadata_key_date = key
+        if metadata[metadata_key_date] is "":
+            metadata[metadata_key_date] = strDateNow()
+
+        article_metadata_template = normalize_line_endings(
+            self.view, "\n".join(article_metadata_template_lines))
+        article_metadata_str = article_metadata_template % metadata
+        if len(metadata_regions) > 0:
+            self.view.replace(edit, old_metadata_region, article_metadata_str)
+        else:
+            self.view.insert(edit, 0, article_metadata_str)
+
+        # initialize modified field if it's empty
+        metadata_key_date = "Modified"
+        for key in metadata.keys():
+            if key.lower() == "modified":
                 metadata_key_date = key
         if metadata[metadata_key_date] is "":
             metadata[metadata_key_date] = strDateNow()
@@ -382,7 +401,8 @@ def isPelicanArticle(view):
         return True
 
     if view.file_name():
-        filepath_filter = load_setting(view, "filepath_filter", default_filter)
+        filepath_filter = load_setting(
+            view, "filepath_filter", default_filter)
 
         use_input_folder_in_makefile = load_setting(
             view, "use_input_folder_in_makefile", True)
@@ -411,7 +431,8 @@ def load_setting(view, setting_name, default_value):
 
     global_settings = sublime.load_settings("Pelican.sublime-settings")
 
-    return view.settings().get(setting_name, global_settings.get(setting_name, default_value))
+    return view.settings().get(
+        setting_name, global_settings.get(setting_name, default_value))
 
 
 def normalize_line_endings(view, string):
@@ -570,7 +591,9 @@ def get_metadata_regions(view, mode):
         if len(regions) > 0:
             region_begin = regions[0].begin()
             region_end = regions[len(regions) - 1].end()
-            result_region_list.append(sublime.Region(region_begin, region_end))
+            result_region_list.append(
+                sublime.Region(
+                    region_begin, region_end))
     elif mode == "multiple":
         for region in regions:
             result_region_list.append(region)
@@ -582,7 +605,8 @@ def get_metadata_regions(view, mode):
     return result_region_list
 
 
-def normalize_article_metadata_case(template_str, normalize_template_var=True):
+def normalize_article_metadata_case(
+        template_str, normalize_template_var=True):
     '''
     Markdown
 

@@ -42,10 +42,6 @@ class PelicanUpdateModifiedDateCommand(sublime_plugin.TextCommand):
 
         new_datestr_region = sublime.Region(
             date_region.end(), self.view.line(date_region).end())
-        self.view.sel().clear()
-        self.view.sel().add(new_datestr_region)
-
-        self.view.show(new_datestr_region)
 
 
 class PelicanGenerateSlugCommand(sublime_plugin.TextCommand):

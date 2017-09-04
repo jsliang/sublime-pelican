@@ -34,6 +34,7 @@
         "Title: %(title)s",
         "Slug: %(slug)s",
         "Date: %(date)s",
+        "Modified: %(modified)s",
         "Tags: %(tags)s",
         "Category: %(category)s",
         "Author: %(author)s",

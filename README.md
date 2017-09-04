@@ -81,7 +81,7 @@ Right click on a file being edit, and access the commands under the **SublimePel
     If you think it's hard to remember what tags you've used when writing articles, then this command is made for you.
     This command lists tags you've used in your Pelican site in the quick panel, allowing you to fuzzily select and insert a previously used tag quickly.
 
-*   **Pelican: Update Article Date**
+*   **Pelican: Update Modified Date**
 
     This command updates the date metadata field to current date and time.
 
@@ -123,6 +123,26 @@ Instead, customize your settings in **Preferences** > **Package Settings** > **S
         If you want to force slug regeneration on each save, you have to set `force_slug_regeneration` to `true`.
 
     Default value: `"save"`
+
+#### Modified date generation
+
+You can automatically update last modified date:
+
+![Update modified](http://i.imgur.com/L0po0FS.gif)
+
+Please, install [**Hooks**](https://packagecontrol.io/packages/Hooks) package → open any page/article in syntax, that you use for Pelican pages/articles → in Menu bar: `Preferences` → `Settings` - `Syntax Specific` → add in right-side file this lines:
+
+```json
+"on_pre_save_language": [{
+    "command": "pelican_update_modified_date"
+}],
+```
+
+Save file.
+
+Now if you run `save` command for saving your article or page, your modified date will update automatically.
+
+**Note**: command `pelican_update_modified_date` will run in all files for syntax, in which you write your pages and articles, if file contains `:?Modified:\s*` string.
 
 ### Customizable metadata template
 
